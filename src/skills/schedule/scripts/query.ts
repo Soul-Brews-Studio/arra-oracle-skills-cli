@@ -11,7 +11,7 @@ if (!filter || filter === "--help" || filter === "-h") {
   process.exit(filter ? 0 : 1);
 }
 
-const scheduleFile = process.env.SCHEDULE_FILE || "ψ/inbox/schedule.md";
+const scheduleFile = process.env.SCHEDULE_FILE || `${process.env.HOME}/.oracle/ψ/inbox/schedule.md`;
 
 const today = new Date();
 const todayMonth = today.toLocaleString('en', { month: 'short' });

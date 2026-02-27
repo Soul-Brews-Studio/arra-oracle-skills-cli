@@ -1,5 +1,5 @@
 ---
-description: v1.6.1 | Create session retrospective with AI diary and lessons learned. Use when user says "rrr", "retrospective", "wrap up session", "session summary", or at end of work session.
+description: v1.6.2 | Create session retrospective with AI diary and lessons learned. Use when user says "rrr", "retrospective", "wrap up session", "session summary", or at end of work session.
 ---
 
 # /rrr
@@ -18,4 +18,4 @@ Execute the `rrr` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "rrr" in the name.
 
 ---
-*oracle-skills-cli v1.6.1*
+*oracle-skills-cli v1.6.2*

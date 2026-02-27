@@ -1,5 +1,5 @@
 ---
-description: v1.6.1 | Talk to an agent via Oracle threads. Use when user says "talk to", "message", "chat with", or wants to communicate with another agent.
+description: v1.6.2 | Talk to an agent via Oracle threads. Use when user says "talk to", "message", "chat with", or wants to communicate with another agent.
 ---
 
 # /talk-to
@@ -18,4 +18,4 @@ Execute the `talk-to` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "talk-to" in the name.
 
 ---
-*oracle-skills-cli v1.6.1*
+*oracle-skills-cli v1.6.2*

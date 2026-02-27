@@ -16,6 +16,7 @@ export const profiles: Record<string, { include?: string[]; exclude?: string[] }
     include: [
       'trace', 'dig', 'recap', 'learn', 'rrr', 'who-are-you',
       'worktree', 'oracle', 'standup', 'forward', 'fyi', 'merged',
+      'talk-to',
     ],
   },
   full: {}, // all skills (default behavior)

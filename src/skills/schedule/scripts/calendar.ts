@@ -4,7 +4,7 @@ import { $ } from "bun";
 import { existsSync } from "fs";
 
 const ROOT = process.env.ROOT;
-const scheduleFile = ROOT ? `${ROOT}/ψ/inbox/schedule.md` : "ψ/inbox/schedule.md";
+const scheduleFile = ROOT ? `${ROOT}/ψ/inbox/schedule.md` : `${process.env.HOME}/.oracle/ψ/inbox/schedule.md`;
 
 const now = new Date();
 const todayNum = now.getDate();

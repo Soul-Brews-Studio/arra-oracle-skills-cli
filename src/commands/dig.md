@@ -1,5 +1,5 @@
 ---
-description: v1.6.1 | Mine Claude Code sessions — timeline, gaps, repo attribution. Use when user says "dig", "sessions", "past sessions", "timeline", "what did I work on".
+description: v1.6.2 | Mine Claude Code sessions — timeline, gaps, repo attribution. Use when user says "dig", "sessions", "past sessions", "timeline", "what did I work on".
 ---
 
 # /dig
@@ -18,4 +18,4 @@ Execute the `dig` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "dig" in the name.
 
 ---
-*oracle-skills-cli v1.6.1*
+*oracle-skills-cli v1.6.2*

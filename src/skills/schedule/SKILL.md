@@ -24,7 +24,7 @@ Run the query script:
 
 Script handles:
 1. Load markdown extension
-2. Query `ψ/inbox/schedule.md`
+2. Query `~/.oracle/ψ/inbox/schedule.md`
 3. Filter by section or keyword
 4. Output markdown table
 
@@ -39,5 +39,5 @@ Script handles:
 ## See Also
 
 - `scripts/query.ts` - Main query script
-- `ψ/inbox/schedule.md` - Source file
+- `~/.oracle/ψ/inbox/schedule.md` - Source file (shared via vault)
 - DuckDB markdown extension docs

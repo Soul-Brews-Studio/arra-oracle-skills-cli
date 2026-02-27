@@ -1,5 +1,5 @@
 ---
-description: v1.6.1 | Text-to-speech using edge-tts or macOS say. Use when user says "speak", "say", "read aloud", or wants text spoken.
+description: v1.6.2 | Text-to-speech using edge-tts or macOS say. Use when user says "speak", "say", "read aloud", or wants text spoken.
 ---
 
 # /speak
@@ -18,4 +18,4 @@ Execute the `speak` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "speak" in the name.
 
 ---
-*oracle-skills-cli v1.6.1*
+*oracle-skills-cli v1.6.2*

@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Prepare birth props for a new Oracle repo. Creates issue #1 with context (name, theme, purpose) and MCP thread. Use when mother-oracle says "birth", "prepare oracle", or wants to drop props for a new child.
+description: v2.0.7 | Prepare birth props for a new Oracle repo. Creates issue #1 with context (name, theme, purpose) and MCP thread. Use when mother-oracle says "birth", "prepare oracle", or wants to drop props for a new child.
 ---
 
 # /birth
@@ -18,4 +18,5 @@ Execute the `birth` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "birth" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Find projects across git history, repos, docs, and Oracle. Use when user asks "trace", "find project", "where is [project]", "search history". Supports --oracle (fast), --smart (default), --deep (5 subagents). For session mining use /dig.
+description: v2.0.7 | Find projects across git history, repos, docs, and Oracle. Use when user asks "trace", "find project", "where is [project]", "search history". Supports --oracle (fast), --smart (default), --deep (5 subagents). For session mining use /dig.
 ---
 
 # /trace
@@ -18,4 +18,5 @@ Execute the `trace` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "trace" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

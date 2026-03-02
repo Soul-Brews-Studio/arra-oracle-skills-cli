@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Create session retrospective with AI diary and lessons learned. Use when user says "rrr", "retrospective", "wrap up session", "session summary", or at end of work session.
+description: v2.0.7 | Create session retrospective with AI diary and lessons learned. Use when user says "rrr", "retrospective", "wrap up session", "session summary", or at end of work session.
 ---
 
 # /rrr
@@ -18,4 +18,5 @@ Execute the `rrr` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "rrr" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Log information for future reference. Use when user says "fyi", "remember this", "note that", "for your info".
+description: v2.0.7 | Log information for future reference. Use when user says "fyi", "remember this", "note that", "for your info".
 ---
 
 # /fyi
@@ -18,4 +18,5 @@ Execute the `fyi` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "fyi" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Post-Merge Cleanup. Switch to main, pull latest, delete merged branch. Use after PR is merged.
+description: v2.0.7 | Post-Merge Cleanup. Switch to main, pull latest, delete merged branch. Use after PR is merged.
 ---
 
 # /merged
@@ -18,4 +18,5 @@ Execute the `merged` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "merged" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

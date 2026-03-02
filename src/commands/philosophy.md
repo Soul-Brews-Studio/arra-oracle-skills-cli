@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Display Oracle philosophy principles and guidance. Use when user asks about principles, "nothing deleted", Oracle philosophy, or needs alignment check.
+description: v2.0.7 | Display Oracle philosophy principles and guidance. Use when user asks about principles, "nothing deleted", Oracle philosophy, or needs alignment check.
 ---
 
 # /philosophy
@@ -18,4 +18,5 @@ Execute the `philosophy` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "philosophy" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

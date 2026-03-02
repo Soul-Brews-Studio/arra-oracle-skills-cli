@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Manage Oracle family - scan, track, welcome new Oracles. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
+description: v2.0.7 | Manage Oracle family - scan, track, welcome new Oracles. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
 ---
 
 # /oracle-family-scan
@@ -18,4 +18,5 @@ Execute the `oracle-family-scan` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "oracle-family-scan" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

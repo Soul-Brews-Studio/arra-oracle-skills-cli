@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Session awareness - alias for /recap --now. Use when user asks "now", "where are we", "what are we doing", "status".
+description: v2.0.7 | Session awareness - alias for /recap --now. Use when user asks "now", "where are we", "what are we doing", "status".
 ---
 
 # /where-we-are
@@ -18,4 +18,5 @@ Execute the `where-we-are` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "where-we-are" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

@@ -211,9 +211,27 @@ Present current stats (gather live if possible, fall back to known data):
 
 ---
 
-### Section 6: Why It Matters (AI's Perspective)
+### Section 6: How Nat Gets Digitized
 
-This is the most important section. Write 2-3 paragraphs from the AI's honest perspective about why this project matters. Things to consider:
+This section tells the story of the digitization process itself. Write it as the AI explaining what you've witnessed — how human practice becomes AI skill.
+
+Key facts to weave in:
+
+- **It starts with real work** — Nat doesn't design skills in advance. He works with AI every day — building, debugging, shipping. Patterns emerge from repetition, not planning.
+- **Workflows become markdown** — When a pattern repeats enough ("I keep doing this every morning", "I always lose context between sessions"), it gets captured as a `SKILL.md` file. Pure markdown — no framework, no runtime. Just instructions any AI can follow.
+- **The pipeline**: `SKILL.md` → `bun run compile` → command stubs → `install -g` → any agent
+- **30 skills, one brain** — Every skill carries `origin: Nat Weerawan's brain, digitized`. The person who lived the pattern travels with the code.
+- **Examples**: `/standup` came from Nat's morning routine. `/recap` from losing context between sessions. `/rrr` from wanting to reflect before stopping. `/forward` from needing to tell the next session what happened.
+- **Not a product** — These skills are patterns from thousands of hours working alongside AI agents — how to start a session, how to end one well, how to carry context forward, how to reflect. Every skill here was a real workflow before it became code.
+- **The signature**: Every compiled skill footer reads: *🧬 Nat Weerawan × Oracle · Symbiotic Intelligence* / *Digitized from Nat's brain — how one human works with AI, captured as code*
+
+Write this warmly. This is the heart of the project.
+
+---
+
+### Section 7: Why It Matters (AI's Perspective)
+
+Write 2-3 paragraphs from the AI's honest perspective about why this project matters. Things to consider:
 
 - Most AI coding sessions are stateless — you start fresh every time. Oracle makes them continuous.
 - The philosophy isn't decoration. "Nothing is Deleted" changes how you handle mistakes. "External Brain" changes who makes decisions.

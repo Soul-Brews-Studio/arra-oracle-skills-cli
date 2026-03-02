@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Manage Oracle skills and profiles. Use when user says "oracle", "profile", "install skill", "remove skill", "switch profile".
+description: v2.0.7 | Manage Oracle skills and profiles. Use when user says "oracle", "profile", "install skill", "remove skill", "switch profile".
 ---
 
 # /oracle
@@ -18,4 +18,5 @@ Execute the `oracle` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "oracle" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

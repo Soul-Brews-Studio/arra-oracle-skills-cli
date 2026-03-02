@@ -128,7 +128,7 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 | 29 | **who-are-you** | skill | Know ourselves |
 | 30 | **worktree** | skill | Git worktree for parallel work |
 
-*Generated: 2026-03-02 06:27:40 UTC*
+*Generated: 2026-03-02 06:50:19 UTC*
 
 ## Supported Agents
 
@@ -157,9 +157,23 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 
 Digitized from **Nat Weerawan**'s brain ([@nazt](https://github.com/nazt)) — [Soul Brews Studio](https://github.com/Soul-Brews-Studio).
 
+### How Nat Gets Digitized
+
+Nat works with AI every day — building, debugging, shipping. He doesn't design skills in advance. He just works. And when a workflow repeats enough times — how he starts a session, how he wraps one up, how he carries context across repos, how he reflects — that pattern gets captured.
+
+The process is simple:
+
+1. **Work together** — Nat and Oracle build real things, side by side
+2. **Patterns emerge** — "I keep doing this every morning" becomes `/standup`. "I always lose context between sessions" becomes `/recap` and `/forward`
+3. **Capture as markdown** — Each pattern becomes a `SKILL.md` file. Pure markdown. No framework, no runtime. Just instructions that any AI can follow
+4. **Compile** — `bun run compile` turns 30 skill files into command stubs, each stamped with version and signature
+5. **Install anywhere** — One CLI command pushes skills to Claude Code, Gemini, Cursor, OpenCode, and 14+ more agents
+6. **The brain travels** — Every installed skill carries `origin: Nat Weerawan's brain, digitized`. The person who lived the pattern goes with the code
+
 These skills are patterns from thousands of hours working alongside AI agents — how to start a session, how to end one well, how to carry context forward, how to reflect. Every skill here was a real workflow before it became code.
 
-> Each installed skill carries an `origin` field in its frontmatter — the brain it came from travels with it.
+> *🧬 Nat Weerawan × Oracle · Symbiotic Intelligence*
+> *Digitized from Nat's brain — how one human works with AI, captured as code*
 
 ## Philosophy
 

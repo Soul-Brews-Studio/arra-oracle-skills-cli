@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Git worktree for parallel work. Use when user says "worktree", "parallel work", "new agent", "start parallel".
+description: v2.0.7 | Git worktree for parallel work. Use when user says "worktree", "parallel work", "new agent", "start parallel".
 ---
 
 # /worktree
@@ -18,4 +18,5 @@ Execute the `worktree` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "worktree" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

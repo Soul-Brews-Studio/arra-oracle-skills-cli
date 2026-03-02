@@ -61,6 +61,7 @@ Execute the \`${skillName}\` skill with the provided arguments.
 
 ---
 *🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v${pkg.version}*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*
 `;
 
         await writeFile(join(COMMANDS_DIR, `${skillName}.md`), commandContent);

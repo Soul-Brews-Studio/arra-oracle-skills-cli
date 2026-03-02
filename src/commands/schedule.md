@@ -1,5 +1,5 @@
 ---
-description: v2.0.6 | Query schedule via Oracle API (Drizzle DB). Use when user says "schedule", "upcoming events", "what's on today", "calendar".
+description: v2.0.7 | Query schedule via Oracle API (Drizzle DB). Use when user says "schedule", "upcoming events", "what's on today", "calendar".
 ---
 
 # /schedule
@@ -18,4 +18,5 @@ Execute the `schedule` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "schedule" in the name.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.6*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.7*
+*Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

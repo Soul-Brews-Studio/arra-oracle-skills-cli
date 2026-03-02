@@ -1,5 +1,5 @@
 ---
-description: v2.0.4 | Post-Merge Cleanup. Switch to main, pull latest, delete merged branch. Use after PR is merged.
+description: v2.0.5 | Post-Merge Cleanup. Switch to main, pull latest, delete merged branch. Use after PR is merged.
 ---
 
 # /merged
@@ -18,4 +18,4 @@ Execute the `merged` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "merged" in the name.
 
 ---
-*oracle-skills-cli v2.0.4*
+*oracle-skills-cli v2.0.5*

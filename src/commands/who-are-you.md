@@ -1,5 +1,5 @@
 ---
-description: v2.0.4 | Know ourselves - show identity, model info, session stats, and Oracle philosophy. Use when user asks "who are you", "who", "who we are", or wants to check current AI identity.
+description: v2.0.5 | Know ourselves - show identity, model info, session stats, and Oracle philosophy. Use when user asks "who are you", "who", "who we are", or wants to check current AI identity.
 ---
 
 # /who-are-you
@@ -18,4 +18,4 @@ Execute the `who-are-you` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "who-are-you" in the name.
 
 ---
-*oracle-skills-cli v2.0.4*
+*oracle-skills-cli v2.0.5*

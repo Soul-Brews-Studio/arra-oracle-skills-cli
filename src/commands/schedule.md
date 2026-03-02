@@ -1,5 +1,5 @@
 ---
-description: v2.0.4 | Query schedule via Oracle API (Drizzle DB). Use when user says "schedule", "upcoming events", "what's on today", "calendar".
+description: v2.0.5 | Query schedule via Oracle API (Drizzle DB). Use when user says "schedule", "upcoming events", "what's on today", "calendar".
 ---
 
 # /schedule
@@ -18,4 +18,4 @@ Execute the `schedule` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "schedule" in the name.
 
 ---
-*oracle-skills-cli v2.0.4*
+*oracle-skills-cli v2.0.5*

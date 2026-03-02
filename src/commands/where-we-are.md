@@ -1,5 +1,5 @@
 ---
-description: v2.0.4 | Session awareness - alias for /recap --now. Use when user asks "now", "where are we", "what are we doing", "status".
+description: v2.0.5 | Session awareness - alias for /recap --now. Use when user asks "now", "where are we", "what are we doing", "status".
 ---
 
 # /where-we-are
@@ -18,4 +18,4 @@ Execute the `where-we-are` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "where-we-are" in the name.
 
 ---
-*oracle-skills-cli v2.0.4*
+*oracle-skills-cli v2.0.5*

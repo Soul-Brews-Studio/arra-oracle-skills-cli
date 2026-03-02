@@ -1,5 +1,5 @@
 ---
-description: v2.0.3 | What is Oracle — told by the AI itself. Use when someone asks "what is oracle", "about oracle", "tell me about this project", or wants the origin story.
+description: v2.0.4 | What is Oracle — told by the AI itself. Use when someone asks "what is oracle", "about oracle", "tell me about this project", or wants the origin story.
 ---
 
 # /about-oracle
@@ -18,4 +18,4 @@ Execute the `about-oracle` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "about-oracle" in the name.
 
 ---
-*oracle-skills-cli v2.0.3*
+*oracle-skills-cli v2.0.4*

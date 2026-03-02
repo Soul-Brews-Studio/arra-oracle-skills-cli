@@ -1,5 +1,5 @@
 ---
-description: v2.0.3 | Session orientation and awareness. Use when starting a session, after /jump, lost your place, switching context, or when user asks "now", "where are we", "what are we doing", "status".
+description: v2.0.4 | Session orientation and awareness. Use when starting a session, after /jump, lost your place, switching context, or when user asks "now", "where are we", "what are we doing", "status".
 ---
 
 # /recap
@@ -18,4 +18,4 @@ Execute the `recap` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "recap" in the name.
 
 ---
-*oracle-skills-cli v2.0.3*
+*oracle-skills-cli v2.0.4*

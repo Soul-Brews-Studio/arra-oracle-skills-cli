@@ -1,5 +1,5 @@
 ---
-description: v2.0.3 | Manage Oracle family - scan, track, welcome new Oracles. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
+description: v2.0.4 | Manage Oracle family - scan, track, welcome new Oracles. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
 ---
 
 # /oracle-family-scan
@@ -18,4 +18,4 @@ Execute the `oracle-family-scan` skill with the provided arguments.
 **IMPORTANT**: Only use the path above. Do NOT search for or use any other file with "oracle-family-scan" in the name.
 
 ---
-*oracle-skills-cli v2.0.3*
+*oracle-skills-cli v2.0.4*

@@ -52,3 +52,21 @@ jobs:
       - run: bun install
       - run: bun run build
       - run: test -f dist/index.js
+
+  compile:
+    name: Compile (native)
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Build native binary (linux-x64)
+        run: bun run build:native linux-x64
+      - name: Smoke test compiled binary
+        run: |
+          chmod +x dist/oracle-skills-linux-x64
+          ./dist/oracle-skills-linux-x64 --version
+          ./dist/oracle-skills-linux-x64 --help
+          ./dist/oracle-skills-linux-x64 agents
+          ./dist/oracle-skills-linux-x64 install --list

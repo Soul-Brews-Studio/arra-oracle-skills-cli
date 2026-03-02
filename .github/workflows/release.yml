@@ -23,19 +23,53 @@ jobs:
       - name: Run tests
         run: bun test
 
+      - name: Build native binaries
+        run: bun run build:native
+
+      - name: Verify binaries exist
+        run: |
+          ls -lh dist/oracle-skills-*
+          test -f dist/oracle-skills-darwin-arm64
+          test -f dist/oracle-skills-darwin-x64
+          test -f dist/oracle-skills-linux-x64
+          test -f dist/oracle-skills-linux-arm64
+
+      - name: Smoke test (linux-x64)
+        run: |
+          chmod +x dist/oracle-skills-linux-x64
+          ./dist/oracle-skills-linux-x64 --version
+          ./dist/oracle-skills-linux-x64 agents
+          ./dist/oracle-skills-linux-x64 install --list
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
+          files: |
+            dist/oracle-skills-darwin-arm64
+            dist/oracle-skills-darwin-x64
+            dist/oracle-skills-linux-x64
+            dist/oracle-skills-linux-arm64
           body: |
             ## Install
+
+            ### Binary (no Bun required)
 
             ```bash
             curl -fsSL https://raw.githubusercontent.com/Soul-Brews-Studio/oracle-skills-cli/${{ github.ref_name }}/install.sh | bash
             ```
 
-            Or manually:
+            ### bunx (requires Bun)
 
             ```bash
-            bunx oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli#${{ github.ref_name }} install -g -y
+            bunx --bun oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli#${{ github.ref_name }} install -g -y
             ```
+
+            ### Direct download
+
+            | Platform | Binary |
+            |----------|--------|
+            | macOS Apple Silicon | `oracle-skills-darwin-arm64` |
+            | macOS Intel | `oracle-skills-darwin-x64` |
+            | Linux x64 | `oracle-skills-linux-x64` |
+            | Linux ARM64 | `oracle-skills-linux-arm64` |

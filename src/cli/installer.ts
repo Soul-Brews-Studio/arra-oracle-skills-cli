@@ -6,7 +6,18 @@ import { agents } from './agents.js';
 import type { Skill, InstallOptions } from './types.js';
 import { mkdirp, rmrf, cpr, mv, rmf, cp, type ShellMode } from './fs-utils.js';
 import { resolveProfile } from '../profiles.js';
+import {
+  discoverSkills as _discoverSkills,
+  readSkillFile,
+  writeSkillToDir,
+  skillHasHooks,
+  isCompiled,
+  getCommandsDir,
+} from './skill-source.js';
 import pkg from '../../package.json' with { type: 'json' };
+
+// Re-export discoverSkills from skill-source
+export const discoverSkills = _discoverSkills;
 
 // Check if an installed skill was installed by oracle-skills-cli
 async function isOurSkill(skillPath: string): Promise<boolean> {
@@ -18,53 +29,6 @@ async function isOurSkill(skillPath: string): Promise<boolean> {
   } catch {
     return false;
   }
-}
-
-// Check if skill has hooks (needs to be installed as Claude Code plugin)
-function hasHooks(skillPath: string): boolean {
-  return existsSync(join(skillPath, 'hooks', 'hooks.json'));
-}
-
-// Skills are bundled in the repo
-function getSkillsDir(): string {
-  // Get directory relative to this file
-  const thisFile = import.meta.path;
-  return join(dirname(thisFile), '..', 'skills');
-}
-
-// Compiled stubs for flat file agents (OpenCode)
-function getCommandsDir(): string {
-  const thisFile = import.meta.path;
-  return join(dirname(thisFile), '..', 'commands');
-}
-
-export async function discoverSkills(): Promise<Skill[]> {
-  const skillsPath = getSkillsDir();
-
-  if (!existsSync(skillsPath)) {
-    return [];
-  }
-
-  const skillDirs = readdirSync(skillsPath, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && !d.name.startsWith('.') && d.name !== '_template')
-    .map((d) => d.name);
-
-  const skills: Skill[] = [];
-
-  for (const name of skillDirs) {
-    const skillMdPath = join(skillsPath, name, 'SKILL.md');
-    if (existsSync(skillMdPath)) {
-      const content = await Bun.file(skillMdPath).text();
-      const descMatch = content.match(/description:\s*(.+)/);
-      skills.push({
-        name,
-        description: descMatch?.[1]?.trim() || '',
-        path: join(skillsPath, name),
-      });
-    }
-  }
-
-  return skills;
 }
 
 export async function listSkills(): Promise<void> {
@@ -208,7 +172,7 @@ export async function installSkills(
 
     for (const skill of skillsToInstall) {
       // Check if skill has hooks - needs plugin installation
-      if (hasHooks(skill.path)) {
+      if (await skillHasHooks(skill.name)) {
         skillsWithHooks.push(skill);
       }
 
@@ -219,8 +183,12 @@ export async function installSkills(
           await rmrf(destPath, shellMode);
         }
 
-        // Copy skill folder
-        await cpr(skill.path, destPath, shellMode);
+        // Copy skill folder (VFS mode writes from memory, fs mode copies from disk)
+        if (isCompiled()) {
+          await writeSkillToDir(skill.name, destPath);
+        } else {
+          await cpr(skill.path, destPath, shellMode);
+        }
 
         // Inject version into SKILL.md frontmatter and description
         const skillMdPath = join(destPath, 'SKILL.md');
@@ -257,7 +225,11 @@ export async function installSkills(
         }
 
         // Copy entire skill as plugin
-        await cpr(skill.path, pluginDest, shellMode);
+        if (isCompiled()) {
+          await writeSkillToDir(skill.name, pluginDest);
+        } else {
+          await cpr(skill.path, pluginDest, shellMode);
+        }
 
         // Create .claude-plugin/plugin.json if not exists
         const pluginJsonDir = join(pluginDest, '.claude-plugin');

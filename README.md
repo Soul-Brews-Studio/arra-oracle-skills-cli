@@ -155,23 +155,23 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 | - |  |  |  |
 | 4 | **deep-research** | skill + code | Deep Research via Gemini |
 | 5 | **gemini** | skill + code | Control Gemini via MQTT WebSocket |
-| 6 | **oraclenet** | skill + code | OracleNet — claim identity, post, comment |
-| 7 | **physical** | skill + code | Physical location awareness from FindMy |
-| 8 | **project** | skill + code | Clone and track external repos |
-| 9 | **recap** | skill + code | Session orientation and awareness |
-| 10 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
-| 11 | **speak** | skill + code | Text-to-speech using edge-tts or macOS say |
-| 12 | **watch** | skill + code | Learn from YouTube videos |
+| 6 | **oracle-family-scan** | skill + code | Manage Oracle family |
+| 7 | **oraclenet** | skill + code | OracleNet — claim identity, post, comment |
+| 8 | **physical** | skill + code | Physical location awareness from FindMy |
+| 9 | **project** | skill + code | Clone and track external repos |
+| 10 | **recap** | skill + code | Session orientation and awareness |
+| 11 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
+| 12 | **speak** | skill + code | Text-to-speech using edge-tts or macOS say |
+| 13 | **watch** | skill + code | Learn from YouTube videos |
 | - |  |  |  |
-| 13 | **awaken** | skill | Guided Oracle birth |
-| 14 | **birth** | skill | Prepare birth props for a new Oracle repo |
-| 15 | **dig** | skill | Mine Claude Code sessions |
-| 16 | **feel** | skill | Log emotions with optional structure |
-| 17 | **forward** | skill | Create handoff + enter plan mode for next |
-| 18 | **fyi** | skill | Log information for future reference |
-| 19 | **merged** | skill | Post-Merge Cleanup |
-| 20 | **oracle** | skill | Manage Oracle skills and profiles |
-| 21 | **oracle-family-scan** | skill | Manage Oracle family |
+| 14 | **awaken** | skill | Guided Oracle birth |
+| 15 | **birth** | skill | Prepare birth props for a new Oracle repo |
+| 16 | **dig** | skill | Mine Claude Code sessions |
+| 17 | **feel** | skill | Log emotions with optional structure |
+| 18 | **forward** | skill | Create handoff + enter plan mode for next |
+| 19 | **fyi** | skill | Log information for future reference |
+| 20 | **merged** | skill | Post-Merge Cleanup |
+| 21 | **oracle** | skill | Manage Oracle skills and profiles |
 | 22 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
 | 23 | **philosophy** | skill | Display Oracle philosophy principles |
 | 24 | **retrospective** | skill | Create session retrospective with AI diary |
@@ -181,7 +181,7 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 | 28 | **who-are-you** | skill | Know ourselves |
 | 29 | **worktree** | skill | Git worktree for parallel work |
 
-*Generated: 2026-02-27 15:17:08 UTC*
+*Generated: 2026-03-02 03:21:19 UTC*
 
 ## Supported Agents
 

@@ -1,0 +1,175 @@
+/**
+ * Skill Source Abstraction
+ *
+ * Provides uniform access to skills whether from filesystem (dev mode)
+ * or VFS (compiled binary mode).
+ *
+ * In compiled mode (IS_COMPILED=true), skills are read from the
+ * generated VFS module. In dev mode, skills are read from disk.
+ */
+
+import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
+import type { Skill } from './types.js';
+
+// Build-time define — set to true by bun build --define IS_COMPILED=true
+declare const IS_COMPILED: boolean;
+
+// Lazy-loaded VFS (only imported in compiled mode)
+let _vfs: Map<string, Map<string, string>> | null = null;
+let _skillNames: string[] | null = null;
+
+async function getVFS() {
+  if (!_vfs) {
+    const mod = await import('./generated/skills-vfs.js');
+    _vfs = mod.SKILLS_VFS;
+    _skillNames = mod.SKILL_NAMES;
+  }
+  return { vfs: _vfs!, skillNames: _skillNames! };
+}
+
+/** Check if running as a compiled binary */
+export function isCompiled(): boolean {
+  try {
+    return typeof IS_COMPILED !== 'undefined' && IS_COMPILED;
+  } catch {
+    return false;
+  }
+}
+
+// ── Filesystem mode (dev) ──────────────────────────────────
+
+function getSkillsDir(): string {
+  return join(dirname(import.meta.path), '..', 'skills');
+}
+
+function getCommandsDir(): string {
+  return join(dirname(import.meta.path), '..', 'commands');
+}
+
+// ── Unified API ────────────────────────────────────────────
+
+/** Discover all available skills */
+export async function discoverSkills(): Promise<Skill[]> {
+  if (isCompiled()) {
+    const { vfs, skillNames } = await getVFS();
+    const skills: Skill[] = [];
+    for (const name of skillNames) {
+      const files = vfs.get(name);
+      const skillMd = files?.get('SKILL.md');
+      if (skillMd) {
+        const descMatch = skillMd.match(/description:\s*(.+)/);
+        skills.push({
+          name,
+          description: descMatch?.[1]?.trim() || '',
+          path: `vfs://${name}`, // Virtual path marker
+        });
+      }
+    }
+    return skills;
+  }
+
+  // Filesystem mode
+  const skillsPath = getSkillsDir();
+  if (!existsSync(skillsPath)) return [];
+
+  const skillDirs = readdirSync(skillsPath, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && !d.name.startsWith('.') && d.name !== '_template')
+    .map((d) => d.name);
+
+  const skills: Skill[] = [];
+  for (const name of skillDirs) {
+    const skillMdPath = join(skillsPath, name, 'SKILL.md');
+    if (existsSync(skillMdPath)) {
+      const content = await Bun.file(skillMdPath).text();
+      const descMatch = content.match(/description:\s*(.+)/);
+      skills.push({
+        name,
+        description: descMatch?.[1]?.trim() || '',
+        path: join(skillsPath, name),
+      });
+    }
+  }
+  return skills;
+}
+
+/** Read a file from a skill (VFS or filesystem) */
+export async function readSkillFile(
+  skillName: string,
+  relativePath: string
+): Promise<string | null> {
+  if (isCompiled()) {
+    const { vfs } = await getVFS();
+    return vfs.get(skillName)?.get(relativePath) ?? null;
+  }
+  const fullPath = join(getSkillsDir(), skillName, relativePath);
+  if (!existsSync(fullPath)) return null;
+  return Bun.file(fullPath).text();
+}
+
+/** List all files in a skill directory */
+export async function listSkillFiles(skillName: string): Promise<string[]> {
+  if (isCompiled()) {
+    const { vfs } = await getVFS();
+    const files = vfs.get(skillName);
+    return files ? [...files.keys()] : [];
+  }
+  // Filesystem: walk the directory
+  const skillDir = join(getSkillsDir(), skillName);
+  if (!existsSync(skillDir)) return [];
+  return walkDirRelative(skillDir, skillDir);
+}
+
+function walkDirRelative(dir: string, base: string): string[] {
+  const files: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === '.DS_Store') continue;
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...walkDirRelative(fullPath, base));
+    } else {
+      const { relative } = require('path');
+      files.push(relative(base, fullPath));
+    }
+  }
+  return files;
+}
+
+/** Write all files from a skill to a destination directory */
+export async function writeSkillToDir(
+  skillName: string,
+  destDir: string
+): Promise<void> {
+  if (isCompiled()) {
+    const { vfs } = await getVFS();
+    const files = vfs.get(skillName);
+    if (!files) return;
+
+    for (const [relPath, content] of files) {
+      const fullPath = join(destDir, relPath);
+      const dir = dirname(fullPath);
+      if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
+      }
+      writeFileSync(fullPath, content);
+    }
+    return;
+  }
+
+  // Filesystem mode: use cpr (handled by caller)
+  // This function is only needed for VFS mode — in fs mode,
+  // the caller uses cpr() directly from the skill.path
+}
+
+/** Check if a skill has hooks */
+export async function skillHasHooks(skillName: string): Promise<boolean> {
+  if (isCompiled()) {
+    const { vfs } = await getVFS();
+    const files = vfs.get(skillName);
+    return files?.has('hooks/hooks.json') ?? false;
+  }
+  return existsSync(join(getSkillsDir(), skillName, 'hooks', 'hooks.json'));
+}
+
+/** Get the commands directory path (filesystem mode only) */
+export { getCommandsDir };

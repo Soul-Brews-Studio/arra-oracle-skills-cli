@@ -1,8 +1,12 @@
 #!/usr/bin/env bun
 
-// Bun runtime check - must be at the very top
-if (typeof Bun === 'undefined') {
-  console.error(`
+// Build-time define for compiled binaries
+declare const IS_COMPILED: boolean;
+
+// Bun runtime check - skip in compiled mode (binary embeds Bun)
+try {
+  if (!(typeof IS_COMPILED !== 'undefined' && IS_COMPILED) && typeof Bun === 'undefined') {
+    console.error(`
 ❌ oracle-skills requires Bun runtime
 
 You're running with Node.js, but this CLI uses Bun-specific features.
@@ -11,9 +15,15 @@ To fix:
   1. Install Bun: curl -fsSL https://bun.sh/install | bash
   2. Run with: bunx oracle-skills install -g -y
 
+Or install the compiled binary (no Bun needed):
+  curl -fsSL https://raw.githubusercontent.com/Soul-Brews-Studio/oracle-skills-cli/main/install.sh | bash
+
 More info: https://bun.sh
 `);
-  process.exit(1);
+    process.exit(1);
+  }
+} catch {
+  // IS_COMPILED not defined — running in dev mode, check passed
 }
 
 import { program } from 'commander';

@@ -2,6 +2,7 @@ node_modules/
 *.log
 .DS_Store
 dist/
+src/cli/generated/
 
 # AI Brain - ephemeral
 ψ/active/

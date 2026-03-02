@@ -1,6 +1,6 @@
 {
   "name": "oracle-skills",
-  "version": "1.6.6",
+  "version": "2.0.0",
   "description": "Install Oracle skills to Claude Code, OpenCode, Cursor, and 11+ AI coding agents",
   "type": "module",
   "bin": {
@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "bun build src/cli/index.ts --outdir dist --target bun --minify",
+    "build:native": "bun scripts/build-native.ts",
     "dev": "bun run src/cli/index.ts",
     "test": "bun test __tests__/",
     "compile": "bun scripts/compile.ts",

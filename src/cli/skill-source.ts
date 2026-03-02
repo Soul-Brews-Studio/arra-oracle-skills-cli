@@ -21,7 +21,11 @@ let _skillNames: string[] | null = null;
 
 async function getVFS() {
   if (!_vfs) {
-    const mod = await import('./generated/skills-vfs.js');
+    // Dynamic path prevents bundler from resolving at build time.
+    // The VFS module only exists after scripts/generate-vfs.ts runs
+    // (which happens during build:native, not regular build).
+    const vfsPath = './generated/skills-vfs.js';
+    const mod = await import(vfsPath);
     _vfs = mod.SKILLS_VFS;
     _skillNames = mod.SKILL_NAMES;
   }

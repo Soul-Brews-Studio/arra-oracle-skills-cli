@@ -73,10 +73,28 @@ else
 fi
 
 # ── Install method: binary or bunx ─────────────────────────
+#
+# Unified UX: `oracle-skills` always works.
+#   Binary users → native binary at ~/.oracle-skills/bin/oracle-skills (fast)
+#   bunx users   → wrapper script at same path, delegates to bunx (same command)
 
 INSTALL_DIR="$HOME/.oracle-skills/bin"
 BINARY_NAME="oracle-skills-${PLATFORM}"
 BINARY_URL="https://github.com/Soul-Brews-Studio/oracle-skills-cli/releases/download/${ORACLE_SKILLS_VERSION}/${BINARY_NAME}"
+PKG_SPEC="oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli#${ORACLE_SKILLS_VERSION}"
+
+ensure_path() {
+  mkdir -p "$INSTALL_DIR"
+  local path_line="export PATH=\"$INSTALL_DIR:\$PATH\""
+  for rc in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.profile"; do
+    if [ -f "$rc" ] && ! grep -q "oracle-skills/bin" "$rc"; then
+      echo "" >> "$rc"
+      echo "# Oracle Skills CLI" >> "$rc"
+      echo "$path_line" >> "$rc"
+    fi
+  done
+  export PATH="$INSTALL_DIR:$PATH"
+}
 
 try_binary_install() {
   if [ -z "$PLATFORM" ]; then
@@ -89,18 +107,7 @@ try_binary_install() {
   if curl -fsSL "$BINARY_URL" -o "$INSTALL_DIR/oracle-skills" 2>/dev/null; then
     chmod +x "$INSTALL_DIR/oracle-skills"
     echo "✓ Binary installed: $INSTALL_DIR/oracle-skills"
-
-    # Add to PATH if not already there
-    local path_line="export PATH=\"$INSTALL_DIR:\$PATH\""
-    for rc in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.profile"; do
-      if [ -f "$rc" ] && ! grep -q "oracle-skills/bin" "$rc"; then
-        echo "" >> "$rc"
-        echo "# Oracle Skills CLI" >> "$rc"
-        echo "$path_line" >> "$rc"
-      fi
-    done
-    export PATH="$INSTALL_DIR:$PATH"
-
+    ensure_path
     return 0
   else
     echo "⚠️  Binary not available for ${PLATFORM}, falling back to bunx"
@@ -108,8 +115,7 @@ try_binary_install() {
   fi
 }
 
-install_via_bunx() {
-  # Ensure bun is installed
+ensure_bun() {
   if ! command -v bun &> /dev/null; then
     echo "📦 Installing bun..."
     curl -fsSL https://bun.sh/install | bash
@@ -117,25 +123,53 @@ install_via_bunx() {
   else
     echo "✓ bun installed"
   fi
-
-  echo "📦 Installing via bunx..."
-  ~/.bun/bin/bunx --bun \
-    oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli#$ORACLE_SKILLS_VERSION \
-    install -g -y
 }
 
-# Try binary first, fall back to bunx
+install_bunx_wrapper() {
+  ensure_bun
+
+  echo "📦 Installing bunx wrapper..."
+  mkdir -p "$INSTALL_DIR"
+
+  # Create a wrapper script that delegates to bunx
+  cat > "$INSTALL_DIR/oracle-skills" << WRAPPER
+#!/bin/bash
+# Oracle Skills CLI — bunx wrapper (v${ORACLE_SKILLS_VERSION#v})
+# Upgrade to native binary: curl -fsSL https://raw.githubusercontent.com/Soul-Brews-Studio/oracle-skills-cli/main/install.sh | bash
+exec bunx --bun ${PKG_SPEC} "\$@"
+WRAPPER
+  chmod +x "$INSTALL_DIR/oracle-skills"
+  echo "✓ Wrapper installed: $INSTALL_DIR/oracle-skills"
+  ensure_path
+}
+
+# ── Install ─────────────────────────────────────────────────
+
+INSTALL_MODE=""
+
 if [ "$ORACLE_SKILLS_USE_BUNX" = "1" ]; then
-  install_via_bunx
+  install_bunx_wrapper
+  INSTALL_MODE="bunx"
 elif try_binary_install; then
-  # Run install with the compiled binary
-  "$INSTALL_DIR/oracle-skills" install -g -y
+  INSTALL_MODE="binary"
 else
-  install_via_bunx
+  install_bunx_wrapper
+  INSTALL_MODE="bunx"
 fi
 
+# Run skill installation (symlinks, hooks, etc.)
+"$INSTALL_DIR/oracle-skills" install -g -y
+
 echo ""
-echo "✨ Done! Now:"
+if [ "$INSTALL_MODE" = "binary" ]; then
+  echo "✨ Done! (native binary — fast mode)"
+else
+  echo "✨ Done! (bunx wrapper — re-run installer to upgrade to native binary)"
+fi
+echo ""
+echo "Run 'oracle-skills --version' to verify."
+echo ""
+echo "Now:"
 echo ""
 echo "1. Restart Claude Code"
 echo "2. Copy this prompt to the fresh Claude:"

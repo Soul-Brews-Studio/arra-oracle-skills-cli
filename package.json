@@ -11,7 +11,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "bun build src/cli/index.ts --outdir dist --target bun --minify",
+    "build": "bun scripts/ensure-vfs-stub.ts && bun build src/cli/index.ts --outdir dist --target bun --minify",
     "build:native": "bun scripts/build-native.ts",
     "dev": "bun run src/cli/index.ts",
     "test": "bun test __tests__/",

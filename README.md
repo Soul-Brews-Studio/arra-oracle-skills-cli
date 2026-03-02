@@ -95,39 +95,40 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
-| 1 | **learn** | skill + subagent | Explore a codebase |
-| 2 | **rrr** | skill + subagent | Create session retrospective with AI diary |
-| 3 | **trace** | skill + subagent | Find projects across git history, repos |
+| 1 | **about-oracle** | skill + subagent | What is Oracle — told by the AI itself |
+| 2 | **learn** | skill + subagent | Explore a codebase |
+| 3 | **rrr** | skill + subagent | Create session retrospective with AI diary |
+| 4 | **trace** | skill + subagent | Find projects across git history, repos |
 | - |  |  |  |
-| 4 | **deep-research** | skill + code | Deep Research via Gemini |
-| 5 | **gemini** | skill + code | Control Gemini via MQTT WebSocket |
-| 6 | **oracle-family-scan** | skill + code | Manage Oracle family |
-| 7 | **oraclenet** | skill + code | OracleNet — claim identity, post, comment |
-| 8 | **physical** | skill + code | Physical location awareness from FindMy |
-| 9 | **project** | skill + code | Clone and track external repos |
-| 10 | **recap** | skill + code | Session orientation and awareness |
-| 11 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
-| 12 | **speak** | skill + code | Text-to-speech using edge-tts or macOS say |
-| 13 | **watch** | skill + code | Learn from YouTube videos |
+| 5 | **deep-research** | skill + code | Deep Research via Gemini |
+| 6 | **gemini** | skill + code | Control Gemini via MQTT WebSocket |
+| 7 | **oracle-family-scan** | skill + code | Manage Oracle family |
+| 8 | **oraclenet** | skill + code | OracleNet — claim identity, post, comment |
+| 9 | **physical** | skill + code | Physical location awareness from FindMy |
+| 10 | **project** | skill + code | Clone and track external repos |
+| 11 | **recap** | skill + code | Session orientation and awareness |
+| 12 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
+| 13 | **speak** | skill + code | Text-to-speech using edge-tts or macOS say |
+| 14 | **watch** | skill + code | Learn from YouTube videos |
 | - |  |  |  |
-| 14 | **awaken** | skill | Guided Oracle birth |
-| 15 | **birth** | skill | Prepare birth props for a new Oracle repo |
-| 16 | **dig** | skill | Mine Claude Code sessions |
-| 17 | **feel** | skill | Log emotions with optional structure |
-| 18 | **forward** | skill | Create handoff + enter plan mode for next |
-| 19 | **fyi** | skill | Log information for future reference |
-| 20 | **merged** | skill | Post-Merge Cleanup |
-| 21 | **oracle** | skill | Manage Oracle skills and profiles |
-| 22 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 23 | **philosophy** | skill | Display Oracle philosophy principles |
-| 24 | **retrospective** | skill | Create session retrospective with AI diary |
-| 25 | **standup** | skill | Daily standup check |
-| 26 | **talk-to** | skill | Talk to an agent via Oracle threads |
-| 27 | **where-we-are** | skill | Session awareness - alias for /recap --now |
-| 28 | **who-are-you** | skill | Know ourselves |
-| 29 | **worktree** | skill | Git worktree for parallel work |
+| 15 | **awaken** | skill | Guided Oracle birth |
+| 16 | **birth** | skill | Prepare birth props for a new Oracle repo |
+| 17 | **dig** | skill | Mine Claude Code sessions |
+| 18 | **feel** | skill | Log emotions with optional structure |
+| 19 | **forward** | skill | Create handoff + enter plan mode for next |
+| 20 | **fyi** | skill | Log information for future reference |
+| 21 | **merged** | skill | Post-Merge Cleanup |
+| 22 | **oracle** | skill | Manage Oracle skills and profiles |
+| 23 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 24 | **philosophy** | skill | Display Oracle philosophy principles |
+| 25 | **retrospective** | skill | Create session retrospective with AI diary |
+| 26 | **standup** | skill | Daily standup check |
+| 27 | **talk-to** | skill | Talk to an agent via Oracle threads |
+| 28 | **where-we-are** | skill | Session awareness - alias for /recap --now |
+| 29 | **who-are-you** | skill | Know ourselves |
+| 30 | **worktree** | skill | Git worktree for parallel work |
 
-*Generated: 2026-03-02 04:50:40 UTC*
+*Generated: 2026-03-02 05:06:52 UTC*
 
 ## Supported Agents
 

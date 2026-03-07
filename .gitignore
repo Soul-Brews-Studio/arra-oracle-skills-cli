@@ -1,14 +1,20 @@
 node_modules/
 *.log
 .DS_Store
+._*
 dist/
 src/cli/generated/
 
 # AI Brain - symlink to central vault
 ψ
+ψ/
 
 # Claude-mem generated
 **/CLAUDE.md
+
+# Local session artifacts
+*.local.md
+*.local.json
 
 # External clones
 phukhao-oracle/

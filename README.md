@@ -128,7 +128,7 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 | 29 | **who-are-you** | skill | Know ourselves |
 | 30 | **worktree** | skill | Git worktree for parallel work |
 
-*Generated: 2026-03-07 09:38:52 UTC*
+*Generated: 2026-03-07 18:33:02 UTC*
 
 ## Supported Agents
 

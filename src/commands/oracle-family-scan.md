@@ -1,5 +1,5 @@
 ---
-description: v2.0.9 | Oracle Family Registry — scan, query, welcome. 186+ Oracles indexed. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
+description: v2.0.10 | Oracle Family Registry — scan, query, welcome. 186+ Oracles indexed. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
 ---
 
 # /oracle-family-scan
@@ -18,5 +18,5 @@ Execute the `oracle-family-scan` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "oracle-family-scan" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.9*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.10*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

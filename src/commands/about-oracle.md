@@ -1,5 +1,5 @@
 ---
-description: v2.0.9 | What is Oracle — told by the AI itself. Use when someone asks "what is oracle", "about oracle", "tell me about this project", or wants the origin story.
+description: v2.0.10 | What is Oracle — told by the AI itself. Use when someone asks "what is oracle", "about oracle", "tell me about this project", or wants the origin story.
 ---
 
 # /about-oracle
@@ -18,5 +18,5 @@ Execute the `about-oracle` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "about-oracle" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.9*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v2.0.10*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

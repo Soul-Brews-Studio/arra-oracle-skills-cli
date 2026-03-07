@@ -58,17 +58,48 @@ Do NOT `git add` vault files — they are shared state, not committed to repos.
 - [Important file 2]
 ```
 
-## Then: Plan Mode for Approval
+## Then: MUST Enter Plan Mode
+
+**CRITICAL**: You MUST call `EnterPlanMode` after writing the handoff. This is NOT optional. The whole point of /forward is to show the user a plan they can approve for the next session.
 
 **Do NOT commit the handoff file** — it lives in the vault, not the repo.
-After writing the handoff:
+After writing the handoff, gather cleanup context:
+
+```bash
+# Check for things next session might need to clean up
+git status --short
+git branch --list | grep -v '^\* main$' | grep -v '^  main$'
+gh pr list --state open --json number,title,headRefName --jq '.[] | "#\(.number) \(.title) (\(.headRefName))"' 2>/dev/null
+gh issue list --state open --limit 5 --json number,title --jq '.[] | "#\(.number) \(.title)"' 2>/dev/null
+```
+
+Then:
 
 1. **Call `EnterPlanMode`** tool
 3. In plan mode, write a plan file with:
    - What we accomplished this session
    - Pending items carried forward
+   - Cleanup needed (stale branches, open PRs, uncommitted files)
    - Next session goals and scope
    - Reference to handoff file path
+   - **Always end plan with a choice table:**
+
+```markdown
+## Next Session: Pick Your Path
+
+| Option | Command | What It Does |
+|--------|---------|--------------|
+| **Continue** | `/recap` | Pick up where we left off |
+| **Clean up first** | See cleanup list below, then `/recap` | Merge PRs, delete branches, close issues, then continue |
+| **Fresh start** | `/recap --quick` | Minimal context, start something new |
+
+### Cleanup Checklist (if any)
+- [ ] [Open PR to merge]
+- [ ] [Stale branch to delete]
+- [ ] [Issue to close]
+- [ ] [Uncommitted work to commit or stash]
+```
+
 4. **Call `ExitPlanMode`** — user sees the built-in plan approval UI
 
 The user gets the standard plan approval screen with options to approve, modify, or reject. This is the proper way to show plans.

@@ -30,22 +30,45 @@ bun ~/.claude/skills/recap/recap-rich.ts
 Script reads retro summaries, handoff content, tracks, git state. Then LLM adds:
 - **What's next?** (2-3 options based on context)
 
-### Recovery: If no retro or handoff found
+### Step 2: Git context
 
-If the script shows no recent retrospective and no handoff (likely a `/clear` without `/rrr`), recover context from the last session using `/dig`:
+```bash
+git status --short
+git log --oneline -1
+```
+
+Check what's appropriate from git status:
+- **Uncommitted changes?** → show them, suggest commit or stash
+- **On a branch (not main)?** → `git log main..HEAD --oneline` to see branch work
+- **Branch ahead of remote?** → suggest push or PR
+- **Clean on main?** → just show last commit, move on
+
+Only read what matters — don't dump 10 commits if status is clean.
+
+### Step 3: Read latest ψ/ brain files
+
+Sort all ψ/ files by modification time, read the most recent:
+
+```bash
+find ψ/ -name '*.md' -not -name 'CLAUDE.md' -not -name 'README.md' -not -name '.gitkeep' 2>/dev/null | xargs ls -t 2>/dev/null | head -5
+```
+
+Read those top 5 files. This recovers the same context `/compact` restores — handoffs, retros, learnings, drafts, whatever was touched last.
+
+### Step 4: Dig last session
 
 ```bash
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/"*"$(basename "$(pwd)")" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
-python3 ~/.claude/skills/dig/scripts/dig.py 2
+python3 ~/.claude/skills/dig/scripts/dig.py 1
 ```
 
-This gives you the last session's start/end time, message count, first prompt, and summary. Use it to tell the user:
+Include in recap:
 ```
-⚠️ No retro or handoff found — recovered from session log:
-Last session: HH:MM–HH:MM (Xm, N messages)
-Topic: [first prompt summary]
+📡 Last session: HH:MM–HH:MM (Xm, N msgs) — [topic]
 ```
+
+Need more? `/dig 5` or `/dig --timeline`.
 
 Also check pulse context:
 

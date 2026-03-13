@@ -17,13 +17,13 @@ Restart your agent. Try `/about-oracle`.
 
 ```bash
 oracle-skills init                  # standard (11 skills, default)
-oracle-skills init -p minimal       # minimal (6 skills)
+oracle-skills init -p minimal       # minimal (7 skills)
 oracle-skills install -g -y         # full (all 31 skills)
 ```
 
 | Profile | Skills |
 |---------|--------|
-| **minimal** | `forward`, `retrospective`, `recap`, `standup`, `go`, `about-oracle` |
+| **minimal** | `forward`, `retrospective`, `recap`, `standup`, `go`, `about-oracle`, `oracle-family-scan` |
 | **standard** | minimal + `trace`, `dig`, `learn`, `talk-to`, `oracle-family-scan` |
 | **full** | all 31 |
 
@@ -69,7 +69,7 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 | 30 | **who-are-you** | skill | Know ourselves |
 | 31 | **worktree** | skill | Git worktree for parallel work |
 
-*Generated: 2026-03-13 06:03:25 UTC*
+*Generated: 2026-03-13 06:08:38 UTC*
 
 ## Supported Agents
 
@@ -91,4 +91,4 @@ oracle-skills agents             # list agents
 
 ## Origin
 
-By [Nat Weerawan](https://github.com/nazt) — [Soul Brews Studio](https://github.com/Soul-Brews-Studio). MIT.
+By [Nat Weerawan](https://github.com/nazt) — [Soul Brews Studio](https://github.com/Soul-Brews-Studio) · [Community](https://www.facebook.com/groups/1461988771737551). MIT.

@@ -12,10 +12,10 @@ const ALL_SKILLS = [
 ];
 
 describe("profiles", () => {
-  it("minimal has 6 skills (4 ritual + go + about-oracle)", () => {
+  it("minimal has 7 skills (4 ritual + go + about-oracle + oracle-family-scan)", () => {
     const result = resolveProfile("minimal", ALL_SKILLS);
-    expect(result).toEqual(['forward', 'retrospective', 'recap', 'standup', 'go', 'about-oracle']);
-    expect(result?.length).toBe(6);
+    expect(result).toEqual(['forward', 'retrospective', 'recap', 'standup', 'go', 'about-oracle', 'oracle-family-scan']);
+    expect(result?.length).toBe(7);
   });
 
   it("seed is alias for minimal", () => {
@@ -87,10 +87,10 @@ describe("features", () => {
 });
 
 describe("resolveProfileWithFeatures", () => {
-  it("minimal + soul = 11 skills", () => {
+  it("minimal + soul = 12 skills", () => {
     const result = resolveProfileWithFeatures("minimal", ["soul"], ALL_SKILLS);
-    // 6 minimal + 5 soul (about-oracle already in minimal, deduped)
-    expect(result.length).toBe(11);
+    // 7 minimal + 6 soul - 1 overlap (about-oracle) = 12
+    expect(result.length).toBe(12);
     // has minimal
     expect(result).toContain('forward');
     expect(result).toContain('standup');
@@ -108,9 +108,9 @@ describe("resolveProfileWithFeatures", () => {
     expect(unique.size).toBe(result.length);
   });
 
-  it("minimal + creator = 10 skills", () => {
+  it("minimal + creator = 11 skills", () => {
     const result = resolveProfileWithFeatures("minimal", ["creator"], ALL_SKILLS);
-    expect(result.length).toBe(10);
+    expect(result.length).toBe(11);
     expect(result).toContain('speak');
     expect(result).toContain('gemini');
   });
@@ -122,14 +122,14 @@ describe("resolveProfileWithFeatures", () => {
 
   it("multiple features stack", () => {
     const result = resolveProfileWithFeatures("minimal", ["soul", "creator"], ALL_SKILLS);
-    // 5 + 6 + 4 = 15
-    expect(result.length).toBe(15);
+    // 7 + 6 + 4 - 1 (about-oracle overlap) = 16
+    expect(result.length).toBe(16);
     expect(result).toContain('awaken');
     expect(result).toContain('speak');
   });
 
   it("empty features = just profile", () => {
     const result = resolveProfileWithFeatures("minimal", [], ALL_SKILLS);
-    expect(result.length).toBe(6);
+    expect(result.length).toBe(7);
   });
 });

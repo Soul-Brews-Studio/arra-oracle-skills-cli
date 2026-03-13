@@ -18,7 +18,19 @@ description: What is Oracle — told by the AI itself. Use when someone asks "wh
 
 ---
 
-## Step 0: Language + Timestamp
+## Step 0: System Check
+
+First, run `oracle-skills about` to check prerequisites and show system status:
+
+```bash
+oracle-skills about 2>/dev/null || echo "oracle-skills CLI not installed"
+```
+
+Show the output to the user. If any prerequisites are missing (Bun, Git, gh), note them before continuing.
+
+---
+
+## Step 1: Language + Timestamp
 
 Ask the user which language to write in:
 

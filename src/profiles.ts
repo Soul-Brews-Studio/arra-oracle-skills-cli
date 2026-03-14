@@ -43,6 +43,8 @@ export const features: Record<string, string[]> = {
   workspace: ['worktree', 'physical', 'schedule'],
   // creator: content + research + speech
   creator: ['speak', 'deep-research', 'watch', 'gemini'],
+  // pulse: board management + project tracking (pulse-cli integration)
+  pulse: ['pulse-board', 'pulse-add', 'pulse-timeline', 'pulse-scan'],
 };
 
 /**

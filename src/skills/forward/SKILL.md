@@ -59,9 +59,18 @@ Do NOT `git add` vault files — they are shared state, not committed to repos.
 - [Important file 2]
 ```
 
-## Then: MUST Enter Plan Mode
+## Then: MUST Show Plan Approval Box
 
-**CRITICAL**: You MUST call `EnterPlanMode` after writing the handoff. This is NOT optional. The whole point of /forward is to show the user a plan they can approve for the next session.
+**CRITICAL — DO NOT SKIP**: The whole point of /forward is the plan approval UI.
+You MUST do ALL 3 steps in order. If you skip any step, the user cannot approve and clear the session.
+
+1. `EnterPlanMode` — enters plan mode
+2. Write plan file — session summary + next steps
+3. `ExitPlanMode` — **THIS shows the approval box** where user can approve/reject/clear
+
+If you only do EnterPlanMode without ExitPlanMode, the user sees nothing.
+If you skip EnterPlanMode entirely, the user sees nothing.
+ALL 3 STEPS ARE REQUIRED.
 
 **Do NOT commit the handoff file** — it lives in the vault, not the repo.
 After writing the handoff, gather cleanup context:

@@ -1,5 +1,5 @@
 ---
-description: v3.1.0 | Physical location awareness from FindMy. Use when user says "physical", "where am I", "location", "where is nat", or needs to check current physical location.
+description: v3.2.0 | Physical location awareness from FindMy. Use when user says "physical", "where am I", "location", "where is nat", or needs to check current physical location.
 ---
 
 # /physical
@@ -18,5 +18,5 @@ Execute the `physical` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "physical" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.2.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

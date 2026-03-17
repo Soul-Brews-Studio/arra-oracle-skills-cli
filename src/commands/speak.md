@@ -1,5 +1,5 @@
 ---
-description: v3.1.0 | Text-to-speech using edge-tts or macOS say. Use when user says "speak", "say", "read aloud", or wants text spoken.
+description: v3.2.0 | Text-to-speech using edge-tts or macOS say. Use when user says "speak", "say", "read aloud", or wants text spoken.
 argument-hint: "<text>"
 ---
 
@@ -19,5 +19,5 @@ Execute the `speak` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "speak" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.2.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

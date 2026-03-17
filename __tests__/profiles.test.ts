@@ -69,9 +69,10 @@ describe("features", () => {
     expect(features.network).toContain('oraclenet');
   });
 
-  it("workspace has 3 skills", () => {
-    expect(features.workspace.length).toBe(3);
+  it("workspace has 4 skills", () => {
+    expect(features.workspace.length).toBe(4);
     expect(features.workspace).toContain('worktree');
+    expect(features.workspace).toContain('workon');
     expect(features.workspace).toContain('physical');
     expect(features.workspace).toContain('schedule');
   });

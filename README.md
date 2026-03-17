@@ -3,7 +3,7 @@
 [![CI](https://github.com/Soul-Brews-Studio/oracle-skills-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Soul-Brews-Studio/oracle-skills-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/tag/Soul-Brews-Studio/oracle-skills-cli?label=version)](https://github.com/Soul-Brews-Studio/oracle-skills-cli/releases)
 
-Skills for AI coding agents. 28 skills, 18 agents, 4 profiles.
+Skills for AI coding agents. 29 skills, 18 agents, 4 profiles.
 
 ## Install
 
@@ -30,7 +30,7 @@ oracle-skills uninstall -g -s dig   # remove specific skill
 |---------|-------|--------|
 | **minimal** | 8 | `forward`, `rrr`, `recap`, `standup`, `go`, `about-oracle`, `oracle-family-scan`, `oracle-soul-sync-update` |
 | **standard** | 12 | `forward`, `rrr`, `recap`, `standup`, `trace`, `dig`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update` |
-| **full** | 28 | all |
+| **full** | 29 | all |
 
 Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 
@@ -40,7 +40,7 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 |---------|--------|
 | **+soul** | `awaken`, `philosophy`, `who-are-you`, `about-oracle`, `birth`, `feel` |
 | **+network** | `talk-to`, `oracle-family-scan`, `oracle-soul-sync-update`, `oracle`, `oraclenet` |
-| **+workspace** | `worktree`, `physical`, `schedule` |
+| **+workspace** | `worktree`, `workon`, `physical`, `schedule` |
 | **+creator** | `speak`, `deep-research`, `watch`, `gemini` |
 
 <!-- profiles:end -->
@@ -80,9 +80,10 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 | 25 | **talk-to** | skill | Talk to an agent via Oracle threads |
 | 26 | **where-we-are** | skill | Session awareness |
 | 27 | **who-are-you** | skill | Know ourselves |
-| 28 | **worktree** | skill | Git worktree for parallel work |
+| 28 | **workon** | skill | Work on an issue |
+| 29 | **worktree** | skill | Git worktree for parallel work |
 
-*Generated: 2026-03-17 04:06:47 UTC*
+*Generated: 2026-03-17 05:50:11 UTC*
 
 ## Supported Agents
 

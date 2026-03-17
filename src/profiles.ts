@@ -41,7 +41,7 @@ export const features: Record<string, string[]> = {
   // network: multi-oracle communication (talk-to↔trace 87%, family-scan↔forward 62%)
   network: ['talk-to', 'oracle-family-scan', 'oracle-soul-sync-update', 'oracle', 'oraclenet'],
   // workspace: parallel work + ops (path↔worktree 100%)
-  workspace: ['worktree', 'physical', 'schedule'],
+  workspace: ['worktree', 'workon', 'physical', 'schedule'],
   // creator: content + research + speech
   creator: ['speak', 'deep-research', 'watch', 'gemini'],
 };

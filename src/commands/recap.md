@@ -1,5 +1,5 @@
 ---
-description: v3.0.4 | Session orientation and awareness. Use when starting a session, after /jump, lost your place, switching context, or when user asks "now", "where are we", "what are we doing", "status".
+description: v3.1.0 | Session orientation and awareness. Use when starting a session, after /jump, lost your place, switching context, or when user asks "now", "where are we", "what are we doing", "status".
 argument-hint: "[--now | --deep]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `recap` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "recap" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.0.4*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

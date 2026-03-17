@@ -1,5 +1,5 @@
 ---
-description: v3.0.4 | Guided Oracle birth and awakening ritual (~15 min). Use when creating a new Oracle in a fresh repo. Orchestrates /learn and /trace for philosophy discovery.
+description: v3.1.0 | "Guided Oracle birth and awakening ritual. 2 modes: Fast (~5min) or Full Soul Sync (~20min). Use when creating a new Oracle in a fresh repo."
 ---
 
 # /awaken
@@ -18,5 +18,5 @@ Execute the `awaken` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "awaken" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.0.4*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

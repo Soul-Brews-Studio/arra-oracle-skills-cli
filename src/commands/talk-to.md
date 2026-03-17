@@ -1,5 +1,5 @@
 ---
-description: v3.0.4 | Talk to an agent via Oracle threads. Use when user says "talk to", "message", "chat with", or wants to communicate with another agent.
+description: v3.1.0 | Talk to an agent via Oracle threads. Use when user says "talk to", "message", "chat with", or wants to communicate with another agent.
 argument-hint: "<agent-name> [message]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `talk-to` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "talk-to" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.0.4*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

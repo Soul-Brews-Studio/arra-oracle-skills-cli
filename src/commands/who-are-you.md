@@ -1,5 +1,5 @@
 ---
-description: v3.0.4 | Know ourselves - show identity, model info, session stats, and Oracle philosophy. Use when user asks "who are you", "who", "who we are", or wants to check current AI identity.
+description: v3.1.0 | Know ourselves - show identity, model info, session stats, and Oracle philosophy. Use when user asks "who are you", "who", "who we are", or wants to check current AI identity.
 ---
 
 # /who-are-you
@@ -18,5 +18,5 @@ Execute the `who-are-you` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "who-are-you" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.0.4*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

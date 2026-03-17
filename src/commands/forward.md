@@ -1,5 +1,5 @@
 ---
-description: v3.0.4 | Create handoff + enter plan mode for next session. Use when user says "forward", "handoff", "wrap up", or before ending session.
+description: v3.1.0 | Create handoff + enter plan mode for next session. Use when user says "forward", "handoff", "wrap up", or before ending session.
 argument-hint: "[asap | --only]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `forward` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "forward" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.0.4*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

@@ -1,5 +1,5 @@
 ---
-description: v3.0.4 | Deep Research via Gemini. Use when user says "deep research", "research this topic", or needs comprehensive analysis with sources.
+description: v3.1.0 | Deep Research via Gemini. Use when user says "deep research", "research this topic", or needs comprehensive analysis with sources.
 argument-hint: "<topic>"
 ---
 
@@ -19,5 +19,5 @@ Execute the `deep-research` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "deep-research" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.0.4*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

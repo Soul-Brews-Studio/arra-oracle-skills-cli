@@ -1,5 +1,5 @@
 ---
-description: v3.0.4 | Query schedule via Oracle API (Drizzle DB). Use when user says "schedule", "upcoming events", "what's on today", "calendar".
+description: v3.1.0 | Query schedule via Oracle API (Drizzle DB). Use when user says "schedule", "upcoming events", "what's on today", "calendar".
 argument-hint: "[today | tomorrow | week]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `schedule` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "schedule" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.0.4*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.1.0*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

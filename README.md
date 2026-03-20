@@ -3,7 +3,7 @@
 [![CI](https://github.com/Soul-Brews-Studio/oracle-skills-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Soul-Brews-Studio/oracle-skills-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/tag/Soul-Brews-Studio/oracle-skills-cli?label=version)](https://github.com/Soul-Brews-Studio/oracle-skills-cli/releases)
 
-Skills for AI coding agents. 37 skills, 18 agents, 4 profiles.
+Skills for AI coding agents. 39 skills, 18 agents, 4 profiles.
 
 ## Install
 
@@ -30,7 +30,7 @@ oracle-skills uninstall -g -s dig   # remove specific skill
 |---------|-------|--------|
 | **minimal** | 8 | `forward`, `rrr`, `recap`, `standup`, `go`, `about-oracle`, `oracle-family-scan`, `oracle-soul-sync-update` |
 | **standard** | 12 | `forward`, `rrr`, `recap`, `standup`, `trace`, `dig`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update` |
-| **full** | 37 | all |
+| **full** | 39 | all |
 
 Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 
@@ -54,45 +54,47 @@ Oracle skills extend your agent's capabilities with specialized workflows:
 |---|-------|------|-------------|
 | 1 | **about-oracle** | skill + subagent | What is Oracle — told by the AI itself |
 | 2 | **learn** | skill + subagent | Explore a codebase |
-| 3 | **rrr** | skill + subagent | Create session retrospective with AI diary |
-| 4 | **trace** | skill + subagent | Find projects across git history, repos |
+| 3 | **mine** | skill + subagent | Extract a specific topic from ONE session |
+| 4 | **rrr** | skill + subagent | Create session retrospective with AI diary |
+| 5 | **trace** | skill + subagent | Find projects across git history, repos |
+| 6 | **xray** | skill + subagent | Full anatomy scan of ONE session JSONL |
 | - |  |  |  |
-| 5 | **deep-research** | skill + code | Deep Research via Gemini |
-| 6 | **gemini** | skill + code | Control Gemini via MQTT WebSocket |
-| 7 | **oracle-family-scan** | skill + code | Oracle Family Registry |
-| 8 | **oraclenet** | skill + code | OracleNet — claim identity, post, comment |
-| 9 | **physical** | skill + code | Physical location awareness from FindMy |
-| 10 | **project** | skill + code | Clone and track external repos |
-| 11 | **recap** | skill + code | Session orientation and awareness |
-| 12 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
-| 13 | **speak** | skill + code | Text-to-speech using edge-tts or macOS say |
-| 14 | **watch** | skill + code | Learn from YouTube videos |
+| 7 | **deep-research** | skill + code | Deep Research via Gemini |
+| 8 | **gemini** | skill + code | Control Gemini via MQTT WebSocket |
+| 9 | **oracle-family-scan** | skill + code | Oracle Family Registry |
+| 10 | **oraclenet** | skill + code | OracleNet — claim identity, post, comment |
+| 11 | **physical** | skill + code | Physical location awareness from FindMy |
+| 12 | **project** | skill + code | Clone and track external repos |
+| 13 | **recap** | skill + code | Session orientation and awareness |
+| 14 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
+| 15 | **speak** | skill + code | Text-to-speech using edge-tts or macOS say |
+| 16 | **watch** | skill + code | Learn from YouTube videos |
 | - |  |  |  |
-| 15 | **awaken** | skill | Guided Oracle birth |
-| 16 | **birth** | skill | Prepare birth props for a new Oracle repo |
-| 17 | **dig** | skill | Mine Claude Code sessions |
-| 18 | **feel** | skill | Log emotions with optional structure |
-| 19 | **forward** | skill | Create handoff + enter plan mode for next |
-| 20 | **go** | skill | Switch skill profiles and features |
-| 21 | **oracle** | skill | Manage Oracle skills |
-| 22 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 23 | **philosophy** | skill | Display Oracle philosophy principles |
-| 24 | **pulse-add** | skill | Add task to Pulse board |
-| 25 | **pulse-board** | skill | View Pulse Master Board |
-| 26 | **pulse-cleanup** | skill | Detect and remove stale worktrees across all |
-| 27 | **pulse-escalate** | skill | P0 escalation |
-| 28 | **pulse-heartbeat** | skill | Check agent health |
-| 29 | **pulse-resume** | skill | Resume a paused agent |
-| 30 | **pulse-scan** | skill | Scan for untracked issues and oracle activity |
-| 31 | **pulse-start** | skill | Start tracked work |
-| 32 | **pulse-timeline** | skill | ASCII Gantt timeline of Pulse board items |
-| 33 | **standup** | skill | Daily standup check |
-| 34 | **talk-to** | skill | Talk to an agent via Oracle threads |
-| 35 | **where-we-are** | skill | Session awareness |
-| 36 | **who-are-you** | skill | Know ourselves |
-| 37 | **worktree** | skill | Git worktree for parallel work |
+| 17 | **awaken** | skill | Guided Oracle birth |
+| 18 | **birth** | skill | Prepare birth props for a new Oracle repo |
+| 19 | **dig** | skill | Mine Claude Code sessions |
+| 20 | **feel** | skill | Log emotions with optional structure |
+| 21 | **forward** | skill | Create handoff + enter plan mode for next |
+| 22 | **go** | skill | Switch skill profiles and features |
+| 23 | **oracle** | skill | Manage Oracle skills |
+| 24 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 25 | **philosophy** | skill | Display Oracle philosophy principles |
+| 26 | **pulse-add** | skill | Add task to Pulse board |
+| 27 | **pulse-board** | skill | View Pulse Master Board |
+| 28 | **pulse-cleanup** | skill | Detect and remove stale worktrees across all |
+| 29 | **pulse-escalate** | skill | P0 escalation |
+| 30 | **pulse-heartbeat** | skill | Check agent health |
+| 31 | **pulse-resume** | skill | Resume a paused agent |
+| 32 | **pulse-scan** | skill | Scan for untracked issues and oracle activity |
+| 33 | **pulse-start** | skill | Start tracked work |
+| 34 | **pulse-timeline** | skill | ASCII Gantt timeline of Pulse board items |
+| 35 | **standup** | skill | Daily standup check |
+| 36 | **talk-to** | skill | Talk to an agent via Oracle threads |
+| 37 | **where-we-are** | skill | Session awareness |
+| 38 | **who-are-you** | skill | Know ourselves |
+| 39 | **worktree** | skill | Git worktree for parallel work |
 
-*Generated: 2026-03-14 12:25:27 UTC*
+*Generated: 2026-03-20 03:20:29 UTC*
 
 ## Supported Agents
 

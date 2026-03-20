@@ -1,0 +1,75 @@
+name: Auto-add to Pulse Inbox
+
+on:
+  issues:
+    types: [opened, closed]
+  pull_request:
+    types: [opened, closed]
+
+jobs:
+  add-to-inbox:
+    if: >-
+      (github.event_name == 'issues' && github.event.action == 'opened') ||
+      (github.event_name == 'pull_request' && github.event.action == 'opened')
+    runs-on: self-hosted
+    steps:
+      - name: Add to Pulse Inbox Board
+        env:
+          GH_TOKEN: ${{ secrets.PULSE_TOKEN }}
+        run: |
+          export PATH="/usr/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
+          URL="${{ github.event.issue.html_url || github.event.pull_request.html_url }}"
+          TITLE="${{ github.event.issue.title || github.event.pull_request.title }}"
+          gh project item-add 8 --owner laris-co --url "$URL" || true
+          echo "Added $TITLE to Pulse Inbox"
+
+  notify-issue-closed:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'closed'
+    runs-on: self-hosted
+    steps:
+      - name: Notify Pulse of closed issue
+        run: |
+          export PATH="/usr/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
+          REPO="${{ github.repository }}"
+          NUM="#${{ github.event.issue.number }}"
+          TITLE="${{ github.event.issue.title }}"
+          URL="${{ github.event.issue.html_url }}"
+          maw hey pulse-oracle "Issue closed: ${REPO} ${NUM} — ${TITLE} ${URL} — GitHub Actions" || true
+          echo "Notified Pulse: ${REPO} ${NUM} closed"
+
+  notify-pr-merged:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+      - name: Notify Pulse of merged PR
+        env:
+          GH_TOKEN: ${{ secrets.PULSE_TOKEN }}
+        run: |
+          export PATH="/usr/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
+          REPO="${{ github.repository }}"
+          PR="#${{ github.event.pull_request.number }}"
+          TITLE="${{ github.event.pull_request.title }}"
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          URL="${{ github.event.pull_request.html_url }}"
+
+          BODY="### PR Merged
+          - **Repo**: ${REPO}
+          - **PR**: [${PR} ${TITLE}](${URL})
+          - **Author**: ${AUTHOR}
+          - **Branch**: ${BRANCH}"
+
+          # Post to Pulse monitoring Discussion #50
+          gh api graphql \
+            -f query='mutation($id: ID!, $body: String!) { addDiscussionComment(input: {discussionId: $id, body: $body}) { comment { url } } }' \
+            -f id="D_kwDORFUDA84Akwe8" \
+            -f body="${BODY}" || true
+
+          # maw hey Pulse
+          maw hey pulse-oracle "PR merged: ${REPO} ${PR} — ${TITLE} (by ${AUTHOR}) ${URL} — GitHub Actions" || true
+          echo "Notified Pulse: ${REPO} ${PR} merged"

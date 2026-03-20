@@ -84,6 +84,49 @@ Scan recent LINE messages for potential appointments:
    ```
 7. On user approval → call `oracle_schedule_add` for each confirmed appointment
 
+### 8. Auto-post to Pulse Discussion
+
+After generating the standup output, post it as a comment on today's Pulse standup discussion.
+
+1. **Find today's discussion**:
+```bash
+TODAY=$(date "+%Y-%m-%d")
+TODAY_THAI=$(date "+%A" | sed 's/Monday/จันทร์/;s/Tuesday/อังคาร/;s/Wednesday/พุธ/;s/Thursday/พฤหัสบดี/;s/Friday/ศุกร์/;s/Saturday/เสาร์/;s/Sunday/อาทิตย์/')
+DISCUSSION_ID=$(gh api graphql -f query="{ repository(owner: \"laris-co\", name: \"pulse-oracle\") { discussions(first: 5, orderBy: {field: CREATED_AT, direction: DESC}) { nodes { id title } } } }" --jq ".data.repository.discussions.nodes[] | select(.title | test(\"Standup.*$TODAY|Standup.*$TODAY_THAI\")) | .id" | head -1)
+```
+
+2. **If discussion found** → post standup as comment:
+```bash
+gh api graphql -f query='mutation($id: ID!, $body: String!) { addDiscussionComment(input: {discussionId: $id, body: $body}) { comment { url } } }' -f id="$DISCUSSION_ID" -f body="$STANDUP_BODY"
+```
+
+Format the comment body as:
+```markdown
+## [Oracle Name] — Standup
+
+### Done (24h)
+- [commits/progress]
+
+### In Progress
+- [current focus]
+
+### Pending Issues
+- [open issues summary]
+
+### Appointments
+- [schedule items]
+
+### Focus
+- [next action]
+
+---
+🤖 Auto-posted by /standup
+```
+
+3. **If no matching discussion found** → skip silently (Pulse hasn't created today's discussion yet). Do NOT create one.
+
+4. Show confirmation: `✅ Posted to Pulse Discussion #[number]` or skip silently.
+
 ---
 
 ## Output Format

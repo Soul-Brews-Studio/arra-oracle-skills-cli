@@ -45,7 +45,7 @@ export function registerInit(program: Command, version: string) {
           global: true,
           profile: profileName,
           yes: true,
-          commands: true,
+          commands: false,
         });
 
         p.outro(`✨ Initialized with ${profileName} profile! Restart your agent to activate.`);

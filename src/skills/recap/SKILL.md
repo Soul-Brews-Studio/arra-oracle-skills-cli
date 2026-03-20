@@ -12,7 +12,7 @@ trigger: /recap
 ## Usage
 
 ```
-/recap           # Rich: retro summary, handoff, tracks, git, pulse
+/recap           # Rich: retro summary, handoff, tracks, git
 /recap --quick   # Minimal: git + focus only, no file reads
 /recap --now     # Mid-session: timeline + jumps from AI memory
 /recap --now deep # Mid-session: + handoff + tracks + connections

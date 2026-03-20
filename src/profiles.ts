@@ -25,7 +25,7 @@ export const profiles: Record<string, { include?: string[]; exclude?: string[] }
     include: [
       'forward', 'rrr', 'recap', 'standup',
       'trace', 'dig', 'learn', 'talk-to', 'oracle-family-scan',
-      'go', 'about-oracle', 'oracle-soul-sync-update',
+      'go', 'about-oracle', 'oracle-soul-sync-update', 'awaken',
     ],
   },
   // full: everything

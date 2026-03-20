@@ -24,9 +24,9 @@ describe("profiles", () => {
     expect(seed).toEqual(minimal);
   });
 
-  it("standard has 12 skills (minimal + discovery)", () => {
+  it("standard has 13 skills (minimal + discovery + awaken)", () => {
     const result = resolveProfile("standard", ALL_SKILLS);
-    expect(result?.length).toBe(12);
+    expect(result?.length).toBe(13);
     // includes minimal
     expect(result).toContain('forward');
     expect(result).toContain('rrr');
@@ -99,8 +99,8 @@ describe("resolveProfileWithFeatures", () => {
 
   it("standard + network deduplicates talk-to, oracle-family-scan, oracle-soul-sync-update", () => {
     const result = resolveProfileWithFeatures("standard", ["network"], ALL_SKILLS);
-    // standard(12) + network(5) - 3 overlap (talk-to, oracle-family-scan, oracle-soul-sync-update) = 14
-    expect(result.length).toBe(14);
+    // standard(13) + network(5) - 3 overlap (talk-to, oracle-family-scan, oracle-soul-sync-update) = 15
+    expect(result.length).toBe(15);
     const unique = new Set(result);
     expect(unique.size).toBe(result.length);
   });

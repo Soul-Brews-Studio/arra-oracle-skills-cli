@@ -1,6 +1,6 @@
 # oracle-skills
 
-34 skills for AI coding agents. 18 agents supported. Install once, use everywhere.
+35 skills for AI coding agents. 18 agents supported. Install once, use everywhere.
 
 ## Install
 
@@ -36,7 +36,7 @@ Features stack on any profile: `+soul`, `+network`, `+workspace`, `+creator`
 |---------|-------|--------|
 | **minimal** | 8 | `forward`, `rrr`, `recap`, `standup`, `go`, `about-oracle`, `oracle-family-scan`, `oracle-soul-sync-update` |
 | **standard** | 13 | `forward`, `rrr`, `recap`, `standup`, `trace`, `dig`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update`, `awaken` |
-| **full** | 34 | all |
+| **full** | 35 | all |
 
 Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 
@@ -88,11 +88,12 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 | 27 | **release-alpha** | skill | Bump version, compile, test, commit, tag |
 | 28 | **standup** | skill | Daily standup check |
 | 29 | **talk-to** | skill | Talk to another Oracle agent via threads |
-| 30 | **whats-next** | skill | Suggest next action based on open issues |
-| 31 | **where-we-are** | skill | Session awareness |
-| 32 | **who-are-you** | skill | Know ourselves |
-| 33 | **workon** | skill | Work on an issue OR resume a killed worktree |
-| 34 | **worktree** | skill | Git worktree for parallel work |
+| 30 | **what-we-done** | skill | Quick list of what got done |
+| 31 | **whats-next** | skill | Suggest next action based on open issues |
+| 32 | **where-we-are** | skill | Session awareness |
+| 33 | **who-are-you** | skill | Know ourselves |
+| 34 | **workon** | skill | Work on an issue OR resume a killed worktree |
+| 35 | **worktree** | skill | Git worktree for parallel work |
 
 <!-- skills:end -->
 

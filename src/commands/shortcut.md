@@ -1,6 +1,6 @@
 ---
 description: v3.3.0-alpha.10 | Create, list, or remove quick skills on-the-fly. Hot-reloads instantly. Use when user says "shortcut", "create skill for me", "quick skill", "I want a /something", or describes a new command they want. Do NOT trigger for full skill development (use /alpha-feature) or profile management (use /go).
-argument-hint: "create <name> <prompt> | list | remove <name>"
+argument-hint: "create <free text> | list | remove <name>"
 ---
 
 # /shortcut

@@ -1,7 +1,7 @@
 ---
 name: shortcut
 description: Create, list, or remove quick skills on-the-fly. Hot-reloads instantly. Use when user says "shortcut", "create skill for me", "quick skill", "I want a /something", or describes a new command they want. Do NOT trigger for full skill development (use /alpha-feature) or profile management (use /go).
-argument-hint: "create <name> <prompt> | list | remove <name>"
+argument-hint: "create <free text> | list | remove <name>"
 ---
 
 # /shortcut — Create Skills On-The-Fly
@@ -11,18 +11,23 @@ Create a skill from a prompt. Available instantly via hot-reload.
 ## Usage
 
 ```
-/shortcut create "create-plan-for-me" "Analyze what user wants, create plan with steps, create issues, then EnterPlanMode for approval"
-/shortcut create "deploy" "Run bun run build && rsync to server"
-/shortcut create "morning" "Run /standup then /list-issues-pr-pulse then /whats-next"
+/shortcut create plan for me
+/shortcut deploy to production
+/shortcut morning routine
 /shortcut list
-/shortcut remove "deploy"
+/shortcut remove deploy
 ```
+
+Free text — no quotes needed. AI infers the skill name and description.
 
 ## create
 
-### 1. Parse
+### 1. Parse (free text)
 
-- `$ARGUMENTS` after "create": first quoted or single word = name, rest = prompt/description
+User types natural language after "create". AI must:
+1. Convert the free text to a **kebab-case name** (e.g. "create plan for me" → `create-plan-for-me`)
+2. Use the full text as the **skill description/instructions**
+3. If the meaning is unclear, ask the user what the skill should do
 
 ### 2. Generate SKILL.md
 

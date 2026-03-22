@@ -88,7 +88,7 @@ describe("e2e: install with standard profile", () => {
 
     for (const name of skills) {
       const content = await readFile(join(SKILLS_DIR, name, "SKILL.md"), "utf-8");
-      expect(content).toMatch(/v\d+\.\d+\.\d+(-[\w.]+)? G-SKLL \|/);
+      expect(content).toMatch(/v\d+\.\d+\.\d+(-[\w.]+)? G-SKLL(\s\[\w+\])? \|/);
     }
   });
 

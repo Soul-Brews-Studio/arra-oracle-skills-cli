@@ -221,7 +221,7 @@ export async function installSkills(
             const scopeChar = scope === 'Global' ? 'G' : 'L';
             content = content.replace(
               /^(description:\s*)(.+?)(\n)/m,
-              `$1v${pkg.version} ${scopeChar}-SKLL | $2$3`
+              `$1v${pkg.version} ${scopeChar}-SKLL ${pkg.skillTag || ''} | $2$3`.replace('  ', ' ')
             );
             await Bun.write(skillMdPath, content);
           }

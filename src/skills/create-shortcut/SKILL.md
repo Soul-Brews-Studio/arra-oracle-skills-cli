@@ -1,10 +1,10 @@
 ---
-name: shortcut
+name: create-shortcut
 description: Create, list, or remove quick skills on-the-fly. Hot-reloads instantly. Use when user says "shortcut", "create skill for me", "quick skill", "I want a /something", or describes a new command they want. Do NOT trigger for full skill development (use /alpha-feature) or profile management (use /go).
 argument-hint: "create <free text> | list | remove <name>"
 ---
 
-# /shortcut — Create Skills On-The-Fly
+# /create-shortcut — Create Skills On-The-Fly
 
 Create a skill from a prompt. Available instantly via hot-reload.
 

@@ -72,19 +72,19 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 | 16 | **auto-rrr** | skill | Configure auto-rrr |
 | 17 | **awaken** | skill | Guided Oracle birth and awakening ritual |
 | 18 | **birth** | skill | Prepare birth props for a new Oracle repo |
-| 19 | **dig** | skill | Mine Claude Code sessions |
-| 20 | **feel** | skill | Log emotions with optional structure |
-| 21 | **forward** | skill | Create handoff + enter plan mode for next |
-| 22 | **go** | skill | Switch skill profiles and features |
-| 23 | **handover** | skill | Transfer work to another Oracle |
-| 24 | **list-issues-pr-pulse** | skill | List open issues, PRs |
-| 25 | **new-issue** | skill | Create a GitHub issue in the current repo |
-| 26 | **oracle** | skill | Manage Oracle skills |
-| 27 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 28 | **philosophy** | skill | Display Oracle philosophy |
-| 29 | **release-alpha** | skill | Bump version, compile, test, commit, tag |
-| 30 | **resonance** | skill | Capture a resonance moment |
-| 31 | **shortcut** | skill | Create, list, or remove quick skills |
+| 19 | **create-shortcut** | skill | Create, list, or remove quick skills |
+| 20 | **dig** | skill | Mine Claude Code sessions |
+| 21 | **feel** | skill | Log emotions with optional structure |
+| 22 | **forward** | skill | Create handoff + enter plan mode for next |
+| 23 | **go** | skill | Switch skill profiles and features |
+| 24 | **handover** | skill | Transfer work to another Oracle |
+| 25 | **list-issues-pr-pulse** | skill | List open issues, PRs |
+| 26 | **new-issue** | skill | Create a GitHub issue in the current repo |
+| 27 | **oracle** | skill | Manage Oracle skills |
+| 28 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 29 | **philosophy** | skill | Display Oracle philosophy |
+| 30 | **release-alpha** | skill | Bump version, compile, test, commit, tag |
+| 31 | **resonance** | skill | Capture a resonance moment |
 | 32 | **standup** | skill | Daily standup check |
 | 33 | **talk-to** | skill | Talk to another Oracle agent via threads |
 | 34 | **tell** | skill | Send one-way command to another Oracle |

@@ -150,7 +150,11 @@ async function xrayMemory(project?: string, showAll?: boolean) {
   let targetProject: string | undefined;
 
   if (project) {
-    targetProject = allProjects.find((p) => p.includes(project));
+    // Normalize: convert slashes/dots to dashes for matching
+    const needle = project.replace(/[/.]/g, '-');
+    // Prefer exact end match, then shortest substring match
+    const matches = allProjects.filter((p) => p.includes(needle));
+    targetProject = matches.find((p) => p.endsWith(needle)) || matches.sort((a, b) => a.length - b.length)[0];
   } else {
     const encoded = process.cwd().replace(/^\//, '-').replace(/[/.]/g, '-');
     targetProject = allProjects.find((p) => p === encoded);

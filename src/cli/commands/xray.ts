@@ -182,7 +182,7 @@ async function xrayMemory(project?: string, showAll?: boolean) {
 
   if (files.length === 0) { console.log('    (no memories)\n'); return; }
 
-  interface MemEntry { file: string; name: string; type: string; description: string; age: string; ageMs: number; size: number; }
+  interface MemEntry { file: string; name: string; type: string; description: string; age: string; ageMs: number; size: number; snippet: string; }
   const entries: MemEntry[] = [];
   const now = Date.now();
 
@@ -199,19 +199,27 @@ async function xrayMemory(project?: string, showAll?: boolean) {
         const t = fm.match(/type:\s*(.+)/); if (t) type = t[1].trim();
         const d = fm.match(/description:\s*(.+)/); if (d) description = d[1].trim();
       }
+      // Extract body snippet (first 3 non-empty lines after frontmatter)
+      const body = fmMatch ? content.slice(fmMatch[0].length) : content;
+      const bodyLines = body.split('\n').filter((l) => l.trim()).slice(0, 3);
+      const snippet = bodyLines.map((l) => l.trim()).join(' ').slice(0, 120);
+
       const days = Math.floor(ageMs / 86400000);
-      entries.push({ file, name, type, description, age: days > 0 ? `${days}d` : `${Math.floor(ageMs / 3600000)}h`, ageMs, size: stat.size });
+      entries.push({ file, name, type, description, age: days > 0 ? `${days}d` : `${Math.floor(ageMs / 3600000)}h`, ageMs, size: stat.size, snippet });
     } catch {}
   }
 
   entries.sort((a, b) => a.type.localeCompare(b.type) || a.ageMs - b.ageMs);
   const icon: Record<string, string> = { feedback: '📝', reference: '📚', user: '👤', project: '📋', unknown: '❓' };
 
-  console.log(`  ${'Type'.padEnd(12)} ${'Name'.padEnd(38)} ${'Age'.padEnd(6)} Description`);
-  console.log(`  ${'─'.repeat(12)} ${'─'.repeat(38)} ${'─'.repeat(6)} ${'─'.repeat(30)}`);
   for (const e of entries) {
-    const desc = e.description.length > 40 ? e.description.slice(0, 37) + '...' : e.description;
-    console.log(`  ${icon[e.type] || '❓'} ${e.type.padEnd(10)} ${e.name.padEnd(38)} ${e.age.padStart(4)}   ${desc}`);
+    console.log(`  ${icon[e.type] || '❓'} ${e.type.padEnd(10)} ${e.name}  (${e.age})`);
+    console.log(`    ${e.description}`);
+    if (e.snippet) {
+      const snip = e.snippet.length > 100 ? e.snippet.slice(0, 97) + '...' : e.snippet;
+      console.log(`    ▸ ${snip}`);
+    }
+    console.log('');
   }
 
   const typeCounts: Record<string, number> = {};

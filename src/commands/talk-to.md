@@ -1,5 +1,5 @@
 ---
-description: '[core] v3.3.0-alpha.11 | Talk to another Oracle agent via threads. Use when user says "talk to", "message", "chat with", or wants to communicate with another agent (e.g. "talk to pulse", "message neo"). Do NOT trigger for OracleNet social feed (use /oraclenet), skill management (use /oracle), or family registry (use /oracle-family-scan).'
+description: '[core] v3.3.0-alpha.12 | Talk to another Oracle agent via threads. Use when user says "talk to", "message", "chat with", or wants to communicate with another agent (e.g. "talk to pulse", "message neo"). Do NOT trigger for OracleNet social feed (use /oraclenet), skill management (use /oracle), or family registry (use /oracle-family-scan).'
 argument-hint: "<agent-name> [message]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `talk-to` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "talk-to" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.11*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.12*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

@@ -1,5 +1,5 @@
 ---
-description: '[core] v3.3.0-alpha.11 | Quick session retrospective — summary, lessons, next steps. Use when user says "retrospective", "retro", "session summary", "wrap up session". Do NOT trigger for full /rrr (install arra-symbiosis-skills), session orientation (use /recap), or handoff (use /forward).'
+description: '[core] v3.3.0-alpha.12 | Quick session retrospective — summary, lessons, next steps. Use when user says "retrospective", "retro", "session summary", "wrap up session". Do NOT trigger for full /rrr (install arra-symbiosis-skills), session orientation (use /recap), or handoff (use /forward).'
 argument-hint: "[--detail]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `retrospective` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "retrospective" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.11*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.12*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

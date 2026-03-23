@@ -1,5 +1,5 @@
 ---
-description: '[core] v3.3.0-alpha.11 | Switch skill profiles and features. Enable/disable skills instantly. Use when user says "go", "go minimal", "go standard", "go + soul", "switch profile", "enable skills", "disable skills".'
+description: '[core] v3.3.0-alpha.12 | Switch skill profiles and features. Enable/disable skills instantly. Use when user says "go", "go minimal", "go standard", "go + soul", "switch profile", "enable skills", "disable skills".'
 argument-hint: "<minimal|standard|full> [+ soul|network|workspace|creator]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `go` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "go" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.11*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.12*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

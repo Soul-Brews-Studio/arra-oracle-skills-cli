@@ -1,5 +1,5 @@
 ---
-description: '[core] v3.3.0-alpha.11 | Configure auto-rrr and auto-forward triggers based on context window usage. Use when user says "auto rrr", "auto-scale", "configure auto triggers", "change rrr interval", "toggle auto", or wants to adjust when /rrr and /forward auto-trigger. Do NOT trigger for running /rrr manually (use /rrr) or creating handoffs (use /forward).'
+description: '[core] v3.3.0-alpha.12 | Configure auto-rrr and auto-forward triggers based on context window usage. Use when user says "auto rrr", "auto-scale", "configure auto triggers", "change rrr interval", "toggle auto", or wants to adjust when /rrr and /forward auto-trigger. Do NOT trigger for running /rrr manually (use /rrr) or creating handoffs (use /forward).'
 argument-hint: "[on | off | status | rrr:<interval>k | fwd:<interval>k]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `auto-retrospective` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "auto-retrospective" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.11*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v3.3.0-alpha.12*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

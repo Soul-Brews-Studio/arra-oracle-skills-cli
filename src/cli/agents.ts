@@ -148,10 +148,20 @@ export const agents: Record<AgentType, AgentConfig> = {
   },
 };
 
+/** Default agents to install to (unless --agent overrides) */
+export const defaultAgentNames = ['claude-code', 'codex'];
+
 export function detectInstalledAgents(): string[] {
   return Object.entries(agents)
     .filter(([_, config]) => config.detectInstalled())
     .map(([name]) => name);
+}
+
+/** Get default agents (installed subset of defaultAgentNames, fallback to all) */
+export function getDefaultAgents(): string[] {
+  const installed = detectInstalledAgents();
+  const defaults = defaultAgentNames.filter((a) => installed.includes(a));
+  return defaults.length > 0 ? defaults : installed;
 }
 
 export function getAgentNames(): string[] {

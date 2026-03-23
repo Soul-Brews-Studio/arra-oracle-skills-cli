@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
 import * as p from '@clack/prompts';
-import { agents, detectInstalledAgents, getAgentNames } from '../agents.js';
+import { agents, getDefaultAgents, getAgentNames } from '../agents.js';
 import { listSkills, installSkills } from '../installer.js';
 import { profiles, features as featuresDef } from '../../profiles.js';
 import type { ShellMode } from '../fs-utils.js';
@@ -32,7 +32,7 @@ export function registerInstall(program: Command, version: string) {
         let targetAgents: string[] = options.agent || [];
 
         if (targetAgents.length === 0) {
-          const detected = detectInstalledAgents();
+          const detected = getDefaultAgents();
 
           if (detected.length > 0) {
             p.log.info(`Detected agents: ${detected.map((a) => agents[a as keyof typeof agents]?.displayName).join(', ')}`);

@@ -1,6 +1,6 @@
 import type { Command } from 'commander';
 import * as p from '@clack/prompts';
-import { agents, detectInstalledAgents } from '../agents.js';
+import { agents, getDefaultAgents } from '../agents.js';
 import { installSkills } from '../installer.js';
 import { profiles } from '../../profiles.js';
 
@@ -21,7 +21,7 @@ export function registerInit(program: Command, version: string) {
           return;
         }
 
-        const detected = detectInstalledAgents();
+        const detected = getDefaultAgents();
         if (detected.length === 0) {
           p.log.error('No agents detected. Install Claude Code, Codex, or another supported agent first.');
           return;

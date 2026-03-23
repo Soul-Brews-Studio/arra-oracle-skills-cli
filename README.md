@@ -52,24 +52,24 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 |---|-------|------|-------------|
 | 1 | **about-oracle** | skill + subagent | What is Oracle |
 | 2 | **learn** | skill + subagent | Explore a codebase |
-| 3 | **trace** | skill + subagent | Find projects, code |
 | - |  |  |  |
-| 4 | **oracle-family-scan** | skill + code | Oracle Family Registry |
-| 5 | **project** | skill + code | Clone and track external repos |
-| 6 | **recap** | skill + code | Session orientation and awareness |
-| 7 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
+| 3 | **oracle-family-scan** | skill + code | Oracle Family Registry |
+| 4 | **project** | skill + code | Clone and track external repos |
+| 5 | **recap** | skill + code | Session orientation and awareness |
+| 6 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
 | - |  |  |  |
-| 8 | **auto-retrospective** | skill | Configure auto-rrr |
-| 9 | **awaken** | skill | Guided Oracle birth and awakening ritual |
-| 10 | **forward** | skill | Create handoff + enter plan mode for next |
-| 11 | **go** | skill | Switch skill profiles and features |
-| 12 | **inbox** | skill | Read and write to Oracle inbox |
-| 13 | **memory** | skill | Scan and manage Claude Code auto-memory |
-| 14 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 15 | **philosophy** | skill | Display Oracle philosophy |
-| 16 | **retrospective** | skill | Quick session retrospective |
-| 17 | **standup** | skill | Daily standup check |
-| 18 | **talk-to** | skill | Talk to another Oracle agent via threads |
+| 7 | **auto-retrospective** | skill | Configure auto-rrr |
+| 8 | **awaken** | skill | Guided Oracle birth and awakening ritual |
+| 9 | **forward** | skill | Create handoff + enter plan mode for next |
+| 10 | **go** | skill | Switch skill profiles and features |
+| 11 | **inbox** | skill | Read and write to Oracle inbox |
+| 12 | **memory** | skill | Scan and manage Claude Code auto-memory |
+| 13 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 14 | **philosophy** | skill | Display Oracle philosophy |
+| 15 | **retrospective** | skill | Quick session retrospective |
+| 16 | **standup** | skill | Daily standup check |
+| 17 | **talk-to** | skill | Talk to another Oracle agent via threads |
+| 18 | **trace** | skill | v3.3.1 G-SKLL | Find projects, code |
 | 19 | **where-we-are** | skill | Session awareness |
 | 20 | **who-are-you** | skill | Know ourselves |
 

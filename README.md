@@ -1,6 +1,6 @@
 # oracle-skills
 
-21 skills for AI coding agents. 18 agents supported.
+22 skills for AI coding agents. 18 agents supported.
 
 ## Install
 
@@ -29,8 +29,8 @@ oracle-skills uninstall -g -y         # remove all
 
 | Profile | Count | Skills |
 |---------|-------|--------|
-| **standard** | 15 | `forward`, `retrospective`, `recap`, `standup`, `trace`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update`, `awaken`, `inbox`, `memory`, `create-shortcut` |
-| **full** | 21 | all |
+| **standard** | 16 | `forward`, `retrospective`, `rrr`, `recap`, `standup`, `trace`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update`, `awaken`, `inbox`, `memory`, `create-shortcut` |
+| **full** | 22 | all |
 
 Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 
@@ -68,11 +68,12 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 | 14 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
 | 15 | **philosophy** | skill | Display Oracle philosophy |
 | 16 | **retrospective** | skill | Quick session retrospective |
-| 17 | **standup** | skill | Daily standup check |
-| 18 | **talk-to** | skill | Talk to another Oracle agent via threads |
-| 19 | **trace** | skill | v3.3.1 G-SKLL | Find projects, code |
-| 20 | **where-we-are** | skill | Session awareness |
-| 21 | **who-are-you** | skill | Know ourselves |
+| 17 | **rrr** | skill | Quick session retrospective (alias for |
+| 18 | **standup** | skill | Daily standup check |
+| 19 | **talk-to** | skill | Talk to another Oracle agent via threads |
+| 20 | **trace** | skill | v3.3.1 G-SKLL | Find projects, code |
+| 21 | **where-we-are** | skill | Session awareness |
+| 22 | **who-are-you** | skill | Know ourselves |
 
 <!-- skills:end -->
 

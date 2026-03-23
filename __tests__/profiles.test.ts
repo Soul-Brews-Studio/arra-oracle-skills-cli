@@ -8,7 +8,7 @@ const ALL_SKILLS = [
   'oracle-soul-sync-update',
   'schedule', 'project',
   'where-we-are', 'auto-retrospective',
-  'inbox', 'memory', 'create-shortcut',
+  'inbox', 'memory', 'create-shortcut', 'rrr',
 ];
 
 describe("profiles", () => {
@@ -16,15 +16,15 @@ describe("profiles", () => {
     expect(Object.keys(profiles)).toEqual(['seed', 'standard', 'full']);
   });
 
-  it("seed has 10 skills", () => {
+  it("seed has 11 skills", () => {
     const result = resolveProfile("seed", ALL_SKILLS);
-    expect(result).toEqual(['forward', 'retrospective', 'recap', 'standup', 'go', 'about-oracle', 'oracle-family-scan', 'oracle-soul-sync-update', 'inbox', 'memory']);
-    expect(result?.length).toBe(10);
+    expect(result).toEqual(['forward', 'retrospective', 'rrr', 'recap', 'standup', 'go', 'about-oracle', 'oracle-family-scan', 'oracle-soul-sync-update', 'inbox', 'memory']);
+    expect(result?.length).toBe(11);
   });
 
   it("standard has 15 skills", () => {
     const result = resolveProfile("standard", ALL_SKILLS);
-    expect(result?.length).toBe(15);
+    expect(result?.length).toBe(16);
     expect(result).toContain('forward');
     expect(result).toContain('retrospective');
     expect(result).toContain('recap');
@@ -69,10 +69,10 @@ describe("features", () => {
 });
 
 describe("resolveProfileWithFeatures", () => {
-  it("seed + soul = 13 skills", () => {
+  it("seed + soul = 14 skills", () => {
     const result = resolveProfileWithFeatures("seed", ["soul"], ALL_SKILLS);
-    // 10 seed + 4 soul - 1 overlap (about-oracle) = 13
-    expect(result.length).toBe(13);
+    // 11 seed + 4 soul - 1 overlap (about-oracle) = 14
+    expect(result.length).toBe(14);
     expect(result).toContain('forward');
     expect(result).toContain('awaken');
     expect(result).toContain('philosophy');
@@ -80,16 +80,16 @@ describe("resolveProfileWithFeatures", () => {
 
   it("standard + network deduplicates", () => {
     const result = resolveProfileWithFeatures("standard", ["network"], ALL_SKILLS);
-    // standard(15) + network(3) - 3 overlap = 15
-    expect(result.length).toBe(15);
+    // standard(16) + network(3) - 3 overlap = 16
+    expect(result.length).toBe(16);
     const unique = new Set(result);
     expect(unique.size).toBe(result.length);
   });
 
-  it("seed + workspace = 12 skills", () => {
+  it("seed + workspace = 13 skills", () => {
     const result = resolveProfileWithFeatures("seed", ["workspace"], ALL_SKILLS);
-    // 10 + 2 = 12
-    expect(result.length).toBe(12);
+    // 11 + 2 = 13
+    expect(result.length).toBe(13);
     expect(result).toContain('schedule');
     expect(result).toContain('project');
   });
@@ -101,14 +101,14 @@ describe("resolveProfileWithFeatures", () => {
 
   it("multiple features stack", () => {
     const result = resolveProfileWithFeatures("seed", ["soul", "workspace"], ALL_SKILLS);
-    // 10 + 4 + 2 - 1 (about-oracle overlap) = 15
-    expect(result.length).toBe(15);
+    // 11 + 4 + 2 - 1 (about-oracle overlap) = 16
+    expect(result.length).toBe(16);
     expect(result).toContain('awaken');
     expect(result).toContain('schedule');
   });
 
   it("empty features = just profile", () => {
     const result = resolveProfileWithFeatures("seed", [], ALL_SKILLS);
-    expect(result.length).toBe(10);
+    expect(result.length).toBe(11);
   });
 });

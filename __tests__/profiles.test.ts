@@ -8,7 +8,7 @@ const ALL_SKILLS = [
   'oracle-soul-sync-update',
   'schedule', 'project',
   'where-we-are', 'auto-retrospective',
-  'inbox', 'memory', 'create-shortcut', 'rrr',
+  'inbox', 'memory', 'create-shortcut', 'rrr', 'contacts',
 ];
 
 describe("profiles", () => {
@@ -24,7 +24,7 @@ describe("profiles", () => {
 
   it("standard has 15 skills", () => {
     const result = resolveProfile("standard", ALL_SKILLS);
-    expect(result?.length).toBe(16);
+    expect(result?.length).toBe(17);
     expect(result).toContain('forward');
     expect(result).toContain('retrospective');
     expect(result).toContain('recap');
@@ -80,8 +80,8 @@ describe("resolveProfileWithFeatures", () => {
 
   it("standard + network deduplicates", () => {
     const result = resolveProfileWithFeatures("standard", ["network"], ALL_SKILLS);
-    // standard(16) + network(3) - 3 overlap = 16
-    expect(result.length).toBe(16);
+    // standard(17) + network(3) - 3 overlap = 17
+    expect(result.length).toBe(17);
     const unique = new Set(result);
     expect(unique.size).toBe(result.length);
   });

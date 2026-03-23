@@ -13,7 +13,7 @@ export const profiles: Record<string, { include?: string[]; exclude?: string[] }
     include: [
       'forward', 'retrospective', 'rrr', 'recap', 'standup',
       'trace', 'learn', 'talk-to', 'oracle-family-scan',
-      'go', 'about-oracle', 'oracle-soul-sync-update', 'awaken', 'inbox', 'memory', 'create-shortcut',
+      'go', 'about-oracle', 'oracle-soul-sync-update', 'awaken', 'inbox', 'memory', 'create-shortcut', 'contacts',
     ],
   },
   full: {},

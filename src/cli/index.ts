@@ -40,6 +40,7 @@ import { registerAbout } from './commands/about.js';
 import { registerAwaken } from './commands/awaken.js';
 import { registerXray } from './commands/xray.js';
 import { registerShortcut } from './commands/shortcut.js';
+import { registerContacts } from './commands/contacts.js';
 
 const VERSION = pkg.version;
 
@@ -60,5 +61,6 @@ registerAbout(program, VERSION);
 registerAwaken(program, VERSION);
 registerXray(program, VERSION);
 registerShortcut(program);
+registerContacts(program);
 
 program.parse();

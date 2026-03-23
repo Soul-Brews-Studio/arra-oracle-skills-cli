@@ -182,7 +182,8 @@ async function xrayMemory(project?: string, showAll?: boolean) {
   console.log(`\n  ╔══════════════════════════════════════════╗`);
   console.log(`  ║  🧠 X-Ray Memory                          ║`);
   console.log(`  ╚══════════════════════════════════════════╝`);
-  console.log(`  📁 ${shortName}\n`);
+  console.log(`  📁 ${shortName}`);
+  console.log(`  📂 ${memDir}\n`);
 
   if (files.length === 0) { console.log('    (no memories)\n'); return; }
 
@@ -218,6 +219,7 @@ async function xrayMemory(project?: string, showAll?: boolean) {
 
   for (const e of entries) {
     console.log(`  ${icon[e.type] || '❓'} ${e.type.padEnd(10)} ${e.name}  (${e.age})`);
+    console.log(`    📄 ${join(memDir, e.file)}`);
     console.log(`    ${e.description}`);
     if (e.snippet) {
       const snip = e.snippet.length > 100 ? e.snippet.slice(0, 97) + '...' : e.snippet;

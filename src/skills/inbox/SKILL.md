@@ -34,13 +34,15 @@ Read and write timestamped notes to `ψ/inbox/`.
 Every inbox item follows this pattern:
 
 ```
-YYYY-MM-DD_HHMM_<topic-slug>.md
+YYYYMMDD_HHMM_<topic-slug>_from_<sender>.md
 ```
 
-Example: `2026-03-23_2112_fix-auth-bug.md`
+Example: `20260323_2112_fix-auth-bug_from_peter.md`
 
 **Rules**:
+- Date: compact `YYYYMMDD` (no dashes)
 - Topic slug: lowercase, hyphens, no spaces
+- Sender: who wrote it (oracle name or human name)
 - Timestamp: local time (from `date`)
 - Always at root of `ψ/inbox/` (not in subdirectories)
 
@@ -63,7 +65,7 @@ ls -1t "$INBOX"/*.md 2>/dev/null | grep -v schedule.md | head -10
 
 For each file, show:
 ```
-📥 2026-03-23 21:12 — fix-auth-bug
+📥 20260323 21:12 — fix-auth-bug (from peter)
    First 2 lines of content...
 ```
 
@@ -89,9 +91,10 @@ Read and display full content.
 ### `/inbox write <topic>`
 
 ```bash
-TS=$(date +%Y-%m-%d_%H%M)
+TS=$(date +%Y%m%d_%H%M)
 SLUG=$(echo "<topic>" | tr ' ' '-' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
-FILE="$INBOX/${TS}_${SLUG}.md"
+FROM=$(echo "<sender>" | tr ' ' '-' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
+FILE="$INBOX/${TS}_${SLUG}_from_${FROM}.md"
 ```
 
 **Ask the user**: "What do you want to note?" (unless content is provided after topic)
@@ -158,10 +161,10 @@ Any Oracle, any skill, any agent. The only rule: **timestamp before topic** in f
 
 | Writer | How | Example |
 |--------|-----|---------|
-| `/inbox write` | This skill | `2026-03-23_2112_idea.md` |
-| `/forward` | Handoff | `ψ/inbox/handoff/2026-03-23_21-12_session-forward.md` |
+| `/inbox write` | This skill | `20260323_2112_idea_from_neo.md` |
+| `/forward` | Handoff | `ψ/inbox/handoff/20260323_2112_session-forward.md` |
+| Another Oracle | `/talk-to` + write | `20260323_2112_status-update_from_odin.md` |
 | Agent directly | `oracle_handoff()` MCP | Same format |
-| Another Oracle | `/talk-to` + write | Cross-agent note |
 
 ---
 

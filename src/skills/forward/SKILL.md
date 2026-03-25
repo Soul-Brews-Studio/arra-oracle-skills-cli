@@ -78,6 +78,96 @@ Do NOT `git add` vault files — they are shared state, not committed to repos.
 - [Important file 2]
 ```
 
+## Then: Create Issues from Pending Items
+
+After writing the handoff file, extract actionable items and offer to create GitHub issues.
+
+### Step 1: Extract Items
+
+From the handoff you just wrote, collect all `- [ ]` items from **Pending** and **Next Session** sections.
+
+### Step 2: Filter Actionable Items
+
+Skip items that are NOT actionable:
+- Items containing "monitor", "watch", "track", "deferred", "maybe", "consider"
+- Items that are vague (less than 4 words after the checkbox)
+
+### Step 3: Check for Duplicates
+
+```bash
+# For each item, check if an issue already exists with a similar title
+gh issue list --state open --search "ITEM_TITLE" --json title --jq '.[].title' 2>/dev/null
+```
+
+Skip items that already have a matching open issue (case-insensitive title match).
+
+### Step 4: Show and Confirm
+
+Display the list of new issues to create:
+
+```
+📋 Create GitHub issues from pending items?
+
+  1. Fix awaken git push auth
+  2. /rrr --deep time-based
+
+Create these 2 issues? [y/N]
+```
+
+**NEVER auto-create issues without user approval.**
+
+If user declines, skip issue creation and continue to plan mode.
+
+### Step 5: Create Issues
+
+If user approves:
+
+```bash
+# Detect repo for issue creation
+REMOTE=$(git remote get-url origin 2>/dev/null)
+# Extract owner/repo from remote URL
+REPO=$(echo "$REMOTE" | sed -E 's|.*[:/]([^/]+/[^/]+?)(\.git)?$|\1|')
+
+# For each actionable item:
+gh issue create --repo "$REPO" --title "ITEM_TITLE" --body "From /forward handoff on YYYY-MM-DD"
+```
+
+Show results:
+```
+Created #115: Fix awaken git push auth
+Created #116: /rrr --deep time-based
+```
+
+### Step 6: Write to Outbox
+
+Regardless of whether issues were created, write items to the outbox:
+
+```bash
+PSI=$(readlink -f ψ 2>/dev/null || echo "ψ")
+OUTBOX_DIR="$PSI/outbox"
+mkdir -p "$OUTBOX_DIR"
+```
+
+Write to: `$PSI/outbox/YYYY-MM-DD_pending.md`
+
+```markdown
+# Pending Items — YYYY-MM-DD
+
+## From: [repo-name] /forward
+
+- [ ] Item 1 (issue #115)
+- [ ] Item 2 (issue #116)
+- [ ] Item 3 (no issue — skipped: vague)
+```
+
+### Silent Failures
+
+- If `gh` is not available: write to outbox only, skip issue creation silently
+- If repo has no GitHub remote: skip issue creation silently, write to outbox only
+- If `gh auth status` fails: skip issue creation silently, write to outbox only
+
+---
+
 ## Then: MUST Show Plan Approval Box
 
 **CRITICAL — DO NOT SKIP**: The whole point of /forward is the plan approval UI.

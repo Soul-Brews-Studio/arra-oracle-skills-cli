@@ -1,4 +1,4 @@
-# oracle-skills
+# arra-oracle-skills
 
 23 skills for AI coding agents. Compatible with 43+ agents via [Vercel Skills CLI](https://github.com/vercel-labs/skills).
 
@@ -6,14 +6,14 @@
 
 ```bash
 # Full CLI (profiles, picker, xray, awaken)
-bunx --bun oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli install -g -y
+bunx --bun oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills install -g -y
 
 # Or via Vercel Skills CLI (any single skill, 43+ agents)
-npx skills add Soul-Brews-Studio/oracle-skills-cli
-npx skills add Soul-Brews-Studio/oracle-skills-cli --skill recap -y
+npx skills add Soul-Brews-Studio/arra-oracle-skills
+npx skills add Soul-Brews-Studio/arra-oracle-skills --skill recap -y
 ```
 
-Audited on [skills.sh](https://skills.sh/Soul-Brews-Studio/oracle-skills-cli). Discoverable via `npx skills find oracle`.
+Audited on [skills.sh](https://skills.sh/Soul-Brews-Studio/arra-oracle-skills). Discoverable via `npx skills find arra-oracle-skills`.
 
 ## Profiles
 

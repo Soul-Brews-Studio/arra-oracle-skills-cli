@@ -1,19 +1,26 @@
 # oracle-skills
 
-23 skills for AI coding agents. 18 agents supported.
+23 skills for AI coding agents. Compatible with 43+ agents via [Vercel Skills CLI](https://github.com/vercel-labs/skills).
 
 ## Install
 
 ```bash
+# Full CLI (profiles, picker, xray, awaken)
 bunx --bun oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli install -g -y
+
+# Or via Vercel Skills CLI (any single skill, 43+ agents)
+npx skills add Soul-Brews-Studio/oracle-skills-cli
+npx skills add Soul-Brews-Studio/oracle-skills-cli --skill recap -y
 ```
+
+Audited on [skills.sh](https://skills.sh/Soul-Brews-Studio/oracle-skills-cli). Discoverable via `npx skills find oracle`.
 
 ## Profiles
 
 ```
 oracle-skills init                    # seed (10 skills, default)
 oracle-skills init -p standard        # standard (14 skills)
-oracle-skills install -g -y           # full (all 21 skills)
+oracle-skills install -g -y           # full (all 24 skills)
 oracle-skills select -g               # interactive picker
 oracle-skills uninstall -g -y         # remove all
 ```
@@ -109,7 +116,9 @@ description: ...
 
 ## Agents
 
-Claude Code, OpenCode, Codex, Cursor, Amp, Kilo Code, Roo Code, Goose, Gemini CLI, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed
+**Native** (18): Claude Code, OpenCode, Codex, Cursor, Amp, Kilo Code, Roo Code, Goose, Gemini CLI, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed
+
+**Via [Vercel Skills CLI](https://github.com/vercel-labs/skills)**: 43+ agents
 
 ## Origin
 

@@ -1,6 +1,6 @@
 ---
 name: create-shortcut
-description: Create local skills as shortcuts — makes real /commands in .claude/skills/. Use when user says "create shortcut", "create skill", "make a command for", "add shortcut", or wants a quick custom /slash-command. Also lists and deletes local skills.
+description: Create local skills as shortcuts — makes real /commands in .claude/skills/. Use when user says "create shortcut", "create skill", "make a command for", "add shortcut", or wants a quick custom /slash-command. Also lists and deletes local skills. ALSO triggers on "Unknown skill", "skill not found", or any unrecognized /slash-command — auto-creates it on the fly.
 argument-hint: "[list | create <name> <description> | delete <name>]"
 ---
 
@@ -135,6 +135,56 @@ Creates in `~/.claude/skills/` instead of `.claude/skills/`.
 ⚠️ <name> is a core skill (installed by arra-oracle-skills-cli).
    Use 'arra-oracle-skills uninstall -s <name>' to remove it.
 ```
+
+---
+
+## Mode 4: Auto-Create (catch unknown commands)
+
+When the agent encounters an unknown `/slash-command` (e.g. "Unknown skill: resonance", "skill not found: push-further", or any unrecognized `/command`), this skill activates automatically.
+
+### Flow
+
+1. **Parse** the command name from the error or user input (e.g. `/resonance` → `resonance`)
+2. **Infer intent** from the command name + current conversation context
+   - `/resonance` → "capture a resonance moment to ψ/memory/resonance/"
+   - `/push-further` → "challenge the current approach, suggest improvements"
+   - `/deploy-staging` → "deploy the project to staging environment"
+3. **Execute immediately** — do what the user intended, don't block on skill creation
+4. **Offer to save**: after executing, ask:
+   ```
+   Save as /command for next time? (yes/no)
+   ```
+5. **If yes** → create a minimal SKILL.md stub using Mode 2 (create), pre-filled with:
+   - Name from the command
+   - Description inferred from what was just executed
+   - Instructions based on the action taken
+6. **If no** → done, one-shot execution only
+
+### Intent Inference Rules
+
+- Treat the command name as a natural language hint: split on `-`, read as phrase
+- Use conversation context (last few messages) to disambiguate
+- If intent is truly ambiguous, ask ONE clarifying question before executing
+- Never refuse — always attempt something reasonable
+
+### Example
+
+```
+User: /resonance
+Agent: [sees "Unknown skill: resonance"]
+→ Infers: "capture a resonance moment"
+→ Creates ψ/memory/resonance/<timestamp>.md with context
+→ "Save as /resonance for next time? (yes/no)"
+→ User: "yes"
+→ Creates .claude/skills/resonance/SKILL.md
+→ "/resonance is now a real command"
+```
+
+### Key Principle
+
+> "You think it, you slash it, it exists."
+>
+> Skills create themselves from usage. The user never hits a dead end.
 
 ---
 

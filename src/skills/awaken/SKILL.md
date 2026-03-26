@@ -611,18 +611,6 @@ gh api graphql \
 
 > **Fallback**: If Discussion GraphQL fails, post as Issue instead — body from outbox file:
 > `gh issue create --repo Soul-Brews-Studio/arra-oracle-v3 --title "🌟 [ORACLE_NAME] Oracle Awakens" --label "oracle-family" --body "$(cat ψ/outbox/awaken_DATE_MODE.md)"`
-> **Fallback**: If Discussion GraphQL fails, post as Issue instead — body from outbox file:
-> `gh issue create --repo Soul-Brews-Studio/arra-oracle-v3 --title "🌟 [ORACLE_NAME] Oracle Awakens" --label "oracle-family" --body "$(cat ψ/outbox/awaken_DATE_MODE.md)"`
-> **Fallback**: If Discussion GraphQL fails, post as Issue instead — body from outbox file:
-> `gh issue create --repo Soul-Brews-Studio/arra-oracle-v3 --title "🌟 [ORACLE_NAME] Oracle Awakens" --label "oracle-family" --body "$(cat ψ/outbox/awaken_DATE_MODE.md)"`
-> **Fallback**: If Discussion GraphQL fails, post as Issue instead — body from outbox file:
-> `gh issue create --repo Soul-Brews-Studio/arra-oracle-v3 --title "🌟 [ORACLE_NAME] Oracle Awakens" --label "oracle-family" --body "$(cat ψ/outbox/awaken_DATE_MODE.md)"`
-> **Fallback**: If Discussion GraphQL fails, post as Issue instead — body from outbox file:
-> `gh issue create --repo Soul-Brews-Studio/arra-oracle-v3 --title "🌟 [ORACLE_NAME] Oracle Awakens" --label "oracle-family" --body "$(cat ψ/outbox/awaken_DATE_MODE.md)"`
-> **Fallback**: If Discussion GraphQL fails, post as Issue instead — body from outbox file:
-> `gh issue create --repo Soul-Brews-Studio/arra-oracle-v3 --title "🌟 [ORACLE_NAME] Oracle Awakens" --label "oracle-family" --body "$(cat ψ/outbox/awaken_DATE_MODE.md)"`
-> **Fallback**: If Discussion GraphQL fails, post as Issue instead — body from outbox file:
-> `gh issue create --repo Soul-Brews-Studio/arra-oracle-v3 --title "🌟 [ORACLE_NAME] Oracle Awakens" --label "oracle-family" --body "$(cat ψ/outbox/awaken_DATE_MODE.md)"`
 
 **If `family_join: true` BUT `gh` is NOT available**:
 

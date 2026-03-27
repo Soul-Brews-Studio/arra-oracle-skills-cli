@@ -59,25 +59,25 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 |---|-------|------|-------------|
 | 1 | **about-oracle** | skill + subagent | What is Oracle |
 | 2 | **learn** | skill + subagent | Explore a codebase |
+| 3 | **rrr** | skill + subagent | Create session retrospective with AI diary |
 | - |  |  |  |
-| 3 | **oracle-family-scan** | skill + code | Oracle Family Registry |
-| 4 | **project** | skill + code | Clone and track external repos |
-| 5 | **recap** | skill + code | Session orientation and awareness |
-| 6 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
+| 4 | **oracle-family-scan** | skill + code | Oracle Family Registry |
+| 5 | **project** | skill + code | Clone and track external repos |
+| 6 | **recap** | skill + code | Session orientation and awareness |
+| 7 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
 | - |  |  |  |
-| 7 | **auto-retrospective** | skill | Configure auto-rrr |
-| 8 | **awaken** | skill | Guided Oracle birth and awakening ritual |
-| 9 | **contacts** | skill | Manage Oracle contacts |
-| 10 | **create-shortcut** | skill | Create local skills as shortcuts |
-| 11 | **dig** | skill | Mine Claude Code sessions |
-| 12 | **forward** | skill | Create handoff + enter plan mode for next |
-| 13 | **go** | skill | 'Switch skill profiles and features |
-| 14 | **inbox** | skill | Read and write to Oracle inbox |
-| 15 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 16 | **philosophy** | skill | Display Oracle philosophy |
-| 17 | **resonance** | skill | Capture a resonance moment |
-| 18 | **retrospective** | skill | Quick session retrospective |
-| 19 | **rrr** | skill | Quick session retrospective (alias for |
+| 8 | **auto-retrospective** | skill | Configure auto-rrr |
+| 9 | **awaken** | skill | Guided Oracle birth and awakening ritual |
+| 10 | **contacts** | skill | Manage Oracle contacts |
+| 11 | **create-shortcut** | skill | Create local skills as shortcuts |
+| 12 | **dig** | skill | Mine Claude Code sessions |
+| 13 | **forward** | skill | Create handoff + enter plan mode for next |
+| 14 | **go** | skill | 'Switch skill profiles and features |
+| 15 | **inbox** | skill | Read and write to Oracle inbox |
+| 16 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 17 | **philosophy** | skill | Display Oracle philosophy |
+| 18 | **resonance** | skill | Capture a resonance moment |
+| 19 | **retrospective** | skill | Quick session retrospective |
 | 20 | **standup** | skill | Daily standup check |
 | 21 | **talk-to** | skill | Talk to another Oracle agent via threads |
 | 22 | **trace** | skill | v3.3.1 G-SKLL | Find projects, code |

@@ -1,6 +1,6 @@
 # arra-arra-oracle-skills
 
-26 skills for AI coding agents. Compatible with 43+ agents via [Vercel Skills CLI](https://github.com/vercel-labs/skills).
+25 skills for AI coding agents. Compatible with 43+ agents via [Vercel Skills CLI](https://github.com/vercel-labs/skills).
 
 ## Install
 
@@ -34,7 +34,7 @@ arra-oracle-skills uninstall -g -y         # remove all
 | Profile | Count | Skills |
 |---------|-------|--------|
 | **standard** | 17 | `forward`, `retrospective`, `rrr`, `recap`, `standup`, `trace`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update`, `awaken`, `inbox`, `xray`, `create-shortcut`, `contacts` |
-| **full** | 26 | all |
+| **full** | 25 | all |
 
 Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 
@@ -75,13 +75,12 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 | 17 | **philosophy** | skill | Display Oracle philosophy |
 | 18 | **resonance** | skill | Capture a resonance moment |
 | 19 | **retrospective** | skill | Quick session retrospective |
-| 20 | **skill-review** | skill | "Score skills using the Oracle Skill Matrix |
-| 21 | **standup** | skill | Daily standup check |
-| 22 | **talk-to** | skill | Talk to another Oracle agent via threads |
-| 23 | **trace** | skill | v3.3.1 G-SKLL | Find projects, code |
-| 24 | **where-we-are** | skill | Session awareness |
-| 25 | **who-are-you** | skill | Know ourselves |
-| 26 | **xray** | skill | X-ray deep scan |
+| 20 | **standup** | skill | Daily standup check |
+| 21 | **talk-to** | skill | Talk to another Oracle agent via threads |
+| 22 | **trace** | skill | v3.3.1 G-SKLL | Find projects, code |
+| 23 | **where-we-are** | skill | Session awareness |
+| 24 | **who-are-you** | skill | Know ourselves |
+| 25 | **xray** | skill | X-ray deep scan |
 
 <!-- skills:end -->
 

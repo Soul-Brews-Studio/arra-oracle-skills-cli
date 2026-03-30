@@ -5,9 +5,13 @@
 ## Install
 
 ```bash
-npx arra-oracle-skills install -g -y                # standard (16 skills, default)
+# Claude Code (skills only, no command stubs)
+npx arra-oracle-skills install -g -y                # standard (16 skills)
 npx arra-oracle-skills install -g -y -p full        # all 24 skills
 npx arra-oracle-skills install -g -y -p seed        # minimal 11 skills
+
+# Codex, OpenCode, Gemini CLI (skills + commands)
+npx arra-oracle-skills install -g -y --with-commands
 ```
 
 ## Profiles

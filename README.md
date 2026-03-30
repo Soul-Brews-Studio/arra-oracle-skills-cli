@@ -72,7 +72,7 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 | 18 | **resonance** | skill | Capture a resonance moment |
 | 19 | **standup** | skill | Daily standup check |
 | 20 | **talk-to** | skill | Talk to another Oracle agent via threads |
-| 21 | **trace** | skill | v3.3.1 G-SKLL | Find projects, code |
+| 21 | **trace** | skill | Find projects, code |
 | 22 | **where-we-are** | skill | Session awareness |
 | 23 | **who-are-you** | skill | Know ourselves |
 | 24 | **xray** | skill | X-ray deep scan |

@@ -1,11 +1,11 @@
-# arra-arra-oracle-skills
+# arra-oracle-skills-cli
 
 24 skills for AI coding agents. Supports 18 agents natively.
 
 ## Install
 
 ```bash
-bunx --bun arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills install -g -y
+bunx --bun arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -g -y
 ```
 
 ## Profiles

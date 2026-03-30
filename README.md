@@ -76,8 +76,14 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 ## CLI Commands
 
 ```
-arra-oracle-skills install [options]       # install skills to agents
-arra-oracle-skills init [options]          # first-time setup (seed profile)
+arra-oracle-skills install [options]       # install skills (default: standard profile, skills only)
+  -g, --global                             # install to ~/.claude/skills/
+  -y, --yes                                # skip confirmation
+  -p, --profile <name>                     # seed | standard (default) | full
+  -f, --feature <names...>                 # soul, network, workspace
+  -a, --agent <agents...>                  # claude-code, opencode, codex, ...
+  -s, --skill <skills...>                  # install specific skills
+  --with-commands                          # also install command stubs
 arra-oracle-skills uninstall [options]     # remove installed skills
 arra-oracle-skills select [options]        # interactive skill picker
 arra-oracle-skills list [options]          # show installed skills

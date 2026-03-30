@@ -16,7 +16,7 @@ export function registerInstall(program: Command, version: string) {
     .option('-f, --feature <features...>', 'Add feature modules (soul, network, workspace, creator)')
     .option('-l, --list', 'List available skills without installing')
     .option('-y, --yes', 'Skip confirmation prompts')
-    .option('--commands', 'Also install command stubs to ~/.claude/commands/')
+    .option('--with-commands', 'Also install command stubs to ~/.claude/commands/')
     .option('--shell', 'Force Bun.$ shell commands (use on Windows to test shell compatibility)')
     .option('--no-shell', 'Force Node.js fs operations (use on Unix if Bun.$ causes issues)')
     .action(async (options) => {
@@ -108,7 +108,7 @@ export function registerInstall(program: Command, version: string) {
           profile: options.profile,
           features: options.feature,
           yes: options.yes,
-          commands: options.commands,
+          commands: options.withCommands,
           shellMode,
         });
 

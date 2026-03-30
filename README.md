@@ -5,18 +5,12 @@
 ## Install
 
 ```bash
-bunx --bun arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -g -y
+npx arra-oracle-skills install -g -y
 ```
+
+Options: `-p seed|standard|full` · `-f soul,network,workspace` · `--agent claude-code`
 
 ## Profiles
-
-```
-arra-oracle-skills init                    # seed (10 skills, default)
-arra-oracle-skills init -p standard        # standard (14 skills)
-arra-oracle-skills install -g -y           # full (all 24 skills)
-arra-oracle-skills select -g               # interactive picker
-arra-oracle-skills uninstall -g -y         # remove all
-```
 
 ## Switch
 

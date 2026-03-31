@@ -1,48 +1,24 @@
 # arra-oracle-skills-cli
 
-24 skills for AI coding agents. Supports 18 agents natively.
+24 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
 ```bash
-npx arra-oracle-skills install -g -y                              # Claude Code (default)
-npx arra-oracle-skills install -g -y --agent codex                # Codex
-npx arra-oracle-skills install -g -y --agent opencode             # OpenCode
-npx arra-oracle-skills install -g -y --agent gemini-cli           # Gemini CLI
-npx arra-oracle-skills install -g -y --agent cursor               # Cursor
-npx arra-oracle-skills install -g -y --with-commands              # + command stubs
-npx arra-oracle-skills install -g -y -p full                      # all 24 skills
-npx arra-oracle-skills install -g -y -p seed                      # minimal 11 skills
-npx arra-oracle-skills agents                                     # list all 18 agents
+npx arra-oracle-skills install -g -y
 ```
 
-## Profiles
+Skills only. Standard profile (16 skills). Claude Code auto-detected.
 
-## Switch
+| Flag | What |
+|------|------|
+| `-p seed` | Minimal (11 skills) |
+| `-p full` | Everything (24 skills) |
+| `--agent codex` | Target specific agent |
+| `--with-commands` | Also install command stubs |
+| `--agent opencode --with-commands` | OpenCode with commands |
 
-```
-/go seed             /go standard          /go full
-/go + soul           /go + network         /go + workspace
-```
-
-<!-- profiles:start -->
-
-| Profile | Count | Skills |
-|---------|-------|--------|
-| **standard** | 16 | `forward`, `rrr`, `recap`, `standup`, `trace`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update`, `awaken`, `inbox`, `xray`, `create-shortcut`, `contacts` |
-| **full** | 24 | all |
-
-Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
-
-**Features** (stack on any profile with `/go + feature`):
-
-| Feature | Skills |
-|---------|--------|
-| **+soul** | `awaken`, `philosophy`, `who-are-you`, `about-oracle` |
-| **+network** | `talk-to`, `oracle-family-scan`, `oracle-soul-sync-update` |
-| **+workspace** | `schedule`, `project` |
-
-<!-- profiles:end -->
+18 agents: Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Amp, Kilo Code, Roo Code, Goose, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed
 
 ## Skills
 
@@ -79,44 +55,38 @@ Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
 
 <!-- skills:end -->
 
-## CLI Commands
+## Profiles
+
+<!-- profiles:start -->
+
+| Profile | Count | Skills |
+|---------|-------|--------|
+| **standard** | 16 | `forward`, `rrr`, `recap`, `standup`, `trace`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update`, `awaken`, `inbox`, `xray`, `create-shortcut`, `contacts` |
+| **full** | 24 | all |
+
+Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
+
+**Features** (stack on any profile with `/go + feature`):
+
+| Feature | Skills |
+|---------|--------|
+| **+soul** | `awaken`, `philosophy`, `who-are-you`, `about-oracle` |
+| **+network** | `talk-to`, `oracle-family-scan`, `oracle-soul-sync-update` |
+| **+workspace** | `schedule`, `project` |
+
+<!-- profiles:end -->
+
+## CLI
 
 ```
-arra-oracle-skills install [options]       # install skills (default: standard profile, skills only)
-  -g, --global                             # install to ~/.claude/skills/
-  -y, --yes                                # skip confirmation
-  -p, --profile <name>                     # seed | standard (default) | full
-  -f, --feature <names...>                 # soul, network, workspace
-  -a, --agent <agents...>                  # claude-code, opencode, codex, ...
-  -s, --skill <skills...>                  # install specific skills
-  --with-commands                          # also install command stubs
-arra-oracle-skills uninstall [options]     # remove installed skills
-arra-oracle-skills select [options]        # interactive skill picker
-arra-oracle-skills list [options]          # show installed skills
-arra-oracle-skills profiles [name]         # list skill profiles
-arra-oracle-skills agents                  # list supported agents
-arra-oracle-skills about                   # version, prereqs, status
-arra-oracle-skills awaken                  # TUI awakening mode selector
-arra-oracle-skills inspect [skill]         # inspect a skill (profiles, agents, hooks)
-arra-oracle-skills xray memory [project]   # x-ray Claude Code auto-memory
-arra-oracle-skills shortcut [action]       # create/list/delete command shortcuts
+install [options]       # install skills (default: standard, skills only)
+uninstall [options]     # remove installed skills
+select [options]        # interactive skill picker
+list [options]          # show installed skills
+profiles [name]         # list profiles
+agents                  # list 18 supported agents
+about                   # version + status
 ```
-
-## Hidden Skills
-
-Skills with `hidden: true` in frontmatter are installed but skip command stub generation — invisible in autocomplete, still callable by agents.
-
-```yaml
----
-name: auto-retrospective
-hidden: true
-description: ...
----
-```
-
-## Agents
-
-Claude Code, OpenCode, Codex, Cursor, Amp, Kilo Code, Roo Code, Goose, Gemini CLI, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed
 
 ## Origin
 

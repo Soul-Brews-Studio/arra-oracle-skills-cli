@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
+      - run: bun run compile
       - run: bun test
       - uses: JS-DevTools/npm-publish@v3
         with:

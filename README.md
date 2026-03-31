@@ -6,18 +6,18 @@
 
 ```bash
 # Claude Code (skills only)
-npx arra-oracle-skills@3.5.1 install -g -y -p standard --agent claude-code
-npx arra-oracle-skills@3.5.1 install -g -y -p full --agent claude-code
-npx arra-oracle-skills@3.5.1 install -g -y -p seed --agent claude-code
+npx arra-oracle-skills@3.5.2 install -g -y -p standard --agent claude-code
+npx arra-oracle-skills@3.5.2 install -g -y -p full --agent claude-code
+npx arra-oracle-skills@3.5.2 install -g -y -p seed --agent claude-code
 
 # Other agents (skills + commands)
-npx arra-oracle-skills@3.5.1 install -g -y --agent codex --with-commands
-npx arra-oracle-skills@3.5.1 install -g -y --agent opencode --with-commands
-npx arra-oracle-skills@3.5.1 install -g -y --agent cursor
-npx arra-oracle-skills@3.5.1 install -g -y --agent gemini-cli --with-commands
+npx arra-oracle-skills@3.5.2 install -g -y --agent codex --with-commands
+npx arra-oracle-skills@3.5.2 install -g -y --agent opencode --with-commands
+npx arra-oracle-skills@3.5.2 install -g -y --agent cursor
+npx arra-oracle-skills@3.5.2 install -g -y --agent gemini-cli --with-commands
 
 # Multiple agents
-npx arra-oracle-skills@3.5.1 install -g -y -p full --agent claude-code codex opencode
+npx arra-oracle-skills@3.5.2 install -g -y -p full --agent claude-code codex opencode
 ```
 
 18 agents: Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Amp, Kilo Code, Roo Code, Goose, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed

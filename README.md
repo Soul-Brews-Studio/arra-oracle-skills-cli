@@ -5,18 +5,20 @@
 ## Install
 
 ```bash
-npx arra-oracle-skills install -g -y
+# Claude Code (skills only)
+npx arra-oracle-skills install -g -y -p standard --agent claude-code
+npx arra-oracle-skills install -g -y -p full --agent claude-code
+npx arra-oracle-skills install -g -y -p seed --agent claude-code
+
+# Other agents (skills + commands)
+npx arra-oracle-skills install -g -y --agent codex --with-commands
+npx arra-oracle-skills install -g -y --agent opencode --with-commands
+npx arra-oracle-skills install -g -y --agent cursor
+npx arra-oracle-skills install -g -y --agent gemini-cli --with-commands
+
+# Multiple agents
+npx arra-oracle-skills install -g -y -p full --agent claude-code codex opencode
 ```
-
-Skills only. Standard profile (16 skills). Claude Code auto-detected.
-
-| Flag | What |
-|------|------|
-| `-p seed` | Minimal (11 skills) |
-| `-p full` | Everything (24 skills) |
-| `--agent codex` | Target specific agent |
-| `--with-commands` | Also install command stubs |
-| `--agent opencode --with-commands` | OpenCode with commands |
 
 18 agents: Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Amp, Kilo Code, Roo Code, Goose, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed
 

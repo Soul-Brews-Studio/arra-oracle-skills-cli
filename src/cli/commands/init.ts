@@ -7,8 +7,8 @@ import { profiles } from '../../profiles.js';
 export function registerInit(program: Command, version: string) {
   program
     .command('init')
-    .description('First-time setup: install seed profile globally')
-    .option('-p, --profile <name>', 'Profile to install (default: seed)', 'seed')
+    .description('First-time setup: install standard profile globally')
+    .option('-p, --profile <name>', 'Profile to install (default: standard)', 'standard')
     .option('-y, --yes', 'Skip confirmation prompts')
     .action(async (options) => {
       p.intro(`🔮 Oracle Skills Init v${version}`);

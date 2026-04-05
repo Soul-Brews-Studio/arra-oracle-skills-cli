@@ -2,7 +2,6 @@ import type { Command } from 'commander';
 import * as p from '@clack/prompts';
 import { agents, detectInstalledAgents } from '../agents.js';
 import { uninstallSkills } from '../installer.js';
-import { features as featuresDef } from '../../profiles.js';
 import type { ShellMode } from '../fs-utils.js';
 
 export function registerUninstall(program: Command, version: string) {
@@ -12,7 +11,6 @@ export function registerUninstall(program: Command, version: string) {
     .option('-g, --global', 'Uninstall from user directory')
     .option('-a, --agent <agents...>', 'Target specific agents')
     .option('-s, --skill <skills...>', 'Remove specific skills only')
-    .option('-f, --feature <features...>', 'Remove feature modules (soul, network, workspace, creator)')
     .option('-y, --yes', 'Skip confirmation prompts')
     .option('--shell', 'Force Bun.$ shell commands')
     .option('--no-shell', 'Force Node.js fs operations')
@@ -35,21 +33,6 @@ export function registerUninstall(program: Command, version: string) {
         if (targetAgents.length === 0) {
           p.log.error('No agents detected. Use --agent to specify.');
           return;
-        }
-
-        // Resolve features to skill names
-        if (options.feature) {
-          const featureSkills: string[] = [];
-          for (const feat of options.feature) {
-            if (featuresDef[feat]) {
-              featureSkills.push(...featuresDef[feat]);
-            } else {
-              p.log.error(`Unknown feature: ${feat}`);
-              p.log.info(`Available features: ${Object.keys(featuresDef).join(', ')}`);
-              return;
-            }
-          }
-          options.skill = [...new Set([...(options.skill || []), ...featureSkills])];
         }
 
         if (!options.yes) {

@@ -44,7 +44,6 @@ export interface InstallOptions {
   global?: boolean;
   skills?: string[];
   profile?: string;
-  features?: string[];
   yes?: boolean;
   agents?: string[];
   commands?: boolean; // Also install command stubs (for agents with commandsOptIn)

@@ -1,5 +1,38 @@
 # Changelog
 
+## v3.6.0 (2026-04-05)
+
+### Simplify profiles (#196)
+
+**Profiles**: 3 tiers, no features.
+
+| Profile | Count | Description |
+|---------|-------|-------------|
+| **standard** | 16 | Daily driver — essential Oracle skills (default) |
+| **full** | 24 | Everything |
+| **lab** | 24+ | Full + experimental / bleeding edge |
+
+**Removed**:
+- Features system (`-f/--feature`, `+soul`, `+network`, `+workspace`, `+creator`)
+- `seed` profile (merged into `standard`)
+- `resolveProfileWithFeatures()` function
+
+**Changed**:
+- `dig` promoted to standard profile
+- `create-shortcut` moved to lab profile (experimental)
+- Default profile: `standard` (was `standard` with 16 skills, now with `dig`)
+- `/go` skill simplified — profiles only, no feature stacking
+- `update-readme-table.ts` no longer generates feature tables
+
+**Why**: Zero users across all sessions and community. 3 profiles × 3 features × 18 agents = 162 combinations, all unused. Simplify to 3 clear tiers.
+
+## v3.5.2 (2026-04-05)
+
+- Version stamp in README auto-updated by lefthook
+- CI auto-publishes on GitHub release (npm)
+- `src/commands/` gitignored (generated artifacts)
+- 24 skills, 108 tests
+
 ## v3.0.4 (2026-03-13)
 
 - Add `oracle-soul-sync-update` to all profiles (minimal/standard/full)

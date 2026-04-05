@@ -5,19 +5,26 @@
 ## Install
 
 ```bash
-# Claude Code (skills only)
-npx arra-oracle-skills@3.5.2 install -g -y -p standard --agent claude-code
-npx arra-oracle-skills@3.5.2 install -g -y -p full --agent claude-code
-npx arra-oracle-skills@3.5.2 install -g -y -p seed --agent claude-code
+# Claude Code — standard profile (default)
+npx arra-oracle-skills@3.6.0 install -g -y --agent claude-code
+
+# Full profile (all skills)
+npx arra-oracle-skills@3.6.0 install -g -y -p full --agent claude-code
+
+# Lab profile (full + experimental)
+npx arra-oracle-skills@3.6.0 install -g -y -p lab --agent claude-code
+
+# Specific skills only
+npx arra-oracle-skills@3.6.0 install -g -y -s recap rrr trace --agent claude-code
 
 # Other agents (skills + commands)
-npx arra-oracle-skills@3.5.2 install -g -y --agent codex --with-commands
-npx arra-oracle-skills@3.5.2 install -g -y --agent opencode --with-commands
-npx arra-oracle-skills@3.5.2 install -g -y --agent cursor
-npx arra-oracle-skills@3.5.2 install -g -y --agent gemini-cli --with-commands
+npx arra-oracle-skills@3.6.0 install -g -y --agent codex --with-commands
+npx arra-oracle-skills@3.6.0 install -g -y --agent opencode --with-commands
+npx arra-oracle-skills@3.6.0 install -g -y --agent cursor
+npx arra-oracle-skills@3.6.0 install -g -y --agent gemini-cli --with-commands
 
 # Multiple agents
-npx arra-oracle-skills@3.5.2 install -g -y -p full --agent claude-code codex opencode
+npx arra-oracle-skills@3.6.0 install -g -y --agent claude-code codex opencode
 ```
 
 18 agents: Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Amp, Kilo Code, Roo Code, Goose, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed
@@ -43,7 +50,7 @@ npx arra-oracle-skills@3.5.2 install -g -y -p full --agent claude-code codex ope
 | 11 | **create-shortcut** | skill | Create local skills as shortcuts |
 | 12 | **dig** | skill | Mine Claude Code sessions |
 | 13 | **forward** | skill | Create handoff + enter plan mode for next |
-| 14 | **go** | skill | 'Switch skill profiles and features |
+| 14 | **go** | skill | 'Switch skill profiles |
 | 15 | **inbox** | skill | Read and write to Oracle inbox |
 | 16 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
 | 17 | **philosophy** | skill | Display Oracle philosophy |
@@ -63,25 +70,18 @@ npx arra-oracle-skills@3.5.2 install -g -y -p full --agent claude-code codex ope
 
 | Profile | Count | Skills |
 |---------|-------|--------|
-| **standard** | 16 | `forward`, `rrr`, `recap`, `standup`, `trace`, `learn`, `talk-to`, `oracle-family-scan`, `go`, `about-oracle`, `oracle-soul-sync-update`, `awaken`, `inbox`, `xray`, `create-shortcut`, `contacts` |
+| **standard** | 16 | `about-oracle`, `awaken`, `contacts`, `dig`, `forward`, `go`, `inbox`, `learn`, `oracle-family-scan`, `oracle-soul-sync-update`, `recap`, `rrr`, `standup`, `talk-to`, `trace`, `xray` |
 | **full** | 24 | all |
+| **lab** | 1 | `create-shortcut` |
 
-Switch anytime: `/go minimal`, `/go standard`, `/go full`, `/go + soul`
-
-**Features** (stack on any profile with `/go + feature`):
-
-| Feature | Skills |
-|---------|--------|
-| **+soul** | `awaken`, `philosophy`, `who-are-you`, `about-oracle` |
-| **+network** | `talk-to`, `oracle-family-scan`, `oracle-soul-sync-update` |
-| **+workspace** | `schedule`, `project` |
+Switch anytime: `/go standard`, `/go full`, `/go lab`
 
 <!-- profiles:end -->
 
 ## CLI
 
 ```
-install [options]       # install skills (default: standard, skills only)
+install [options]       # install skills (default: standard)
 uninstall [options]     # remove installed skills
 select [options]        # interactive skill picker
 list [options]          # show installed skills

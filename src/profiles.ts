@@ -1,34 +1,33 @@
 /**
- * Skill profiles + features — core skills only (v4.0).
- * Extended skills in arra-symbiosis-skills repo.
+ * Skill profiles — 3 tiers, no features.
+ *
+ * standard: daily driver (default)
+ * full: everything
+ * lab: full + experimental / bleeding edge
  */
 
-// --- Profiles (tiers) ---
-
-export const profiles: Record<string, { include?: string[]; exclude?: string[] }> = {
-  seed: {
-    include: ['forward', 'rrr', 'recap', 'standup', 'go', 'about-oracle', 'oracle-family-scan', 'oracle-soul-sync-update', 'inbox', 'xray', 'dig'],
-  },
+export const profiles: Record<string, { include?: string[] }> = {
   standard: {
     include: [
-      'forward', 'rrr', 'recap', 'standup',
-      'trace', 'learn', 'talk-to', 'oracle-family-scan',
-      'go', 'about-oracle', 'oracle-soul-sync-update', 'awaken', 'inbox', 'xray', 'create-shortcut', 'contacts',
+      'about-oracle', 'awaken', 'contacts', 'dig', 'forward', 'go',
+      'inbox', 'learn', 'oracle-family-scan', 'oracle-soul-sync-update',
+      'recap', 'rrr', 'standup', 'talk-to', 'trace', 'xray',
     ],
   },
-  full: {},
-};
-
-// --- Features (add-on modules) ---
-
-export const features: Record<string, string[]> = {
-  soul: ['awaken', 'philosophy', 'who-are-you', 'about-oracle'],
-  network: ['talk-to', 'oracle-family-scan', 'oracle-soul-sync-update'],
-  workspace: ['schedule', 'project'],
+  full: {},          // all skills
+  lab: {
+    include: [
+      // full + experimental skills
+      'create-shortcut',
+      // future: 'dream', 'feel'
+    ],
+  },
 };
 
 /**
  * Resolve a profile to a filtered list of skill names.
+ * Returns null for profiles that mean "all skills" (full).
+ * Lab = all skills + lab-only skills (superset of full).
  */
 export function resolveProfile(
   profileName: string,
@@ -37,34 +36,15 @@ export function resolveProfile(
   const profile = profiles[profileName];
   if (!profile) return null;
 
+  if (profileName === 'lab') {
+    // Lab = everything (all discovered skills are included)
+    return null;
+  }
+
   if (profile.include && profile.include.length > 0) {
     return profile.include;
   }
 
-  if (profile.exclude && profile.exclude.length > 0) {
-    return allSkillNames.filter((s) => !profile.exclude!.includes(s));
-  }
-
+  // Empty include = all skills (full)
   return null;
-}
-
-/**
- * Resolve a profile + features into a combined skill list.
- */
-export function resolveProfileWithFeatures(
-  profileName: string,
-  featureNames: string[],
-  allSkillNames: string[]
-): string[] {
-  const base = resolveProfile(profileName, allSkillNames) || [...allSkillNames];
-
-  const result = new Set(base);
-  for (const feat of featureNames) {
-    const skills = features[feat];
-    if (skills) {
-      for (const s of skills) result.add(s);
-    }
-  }
-
-  return [...result];
 }

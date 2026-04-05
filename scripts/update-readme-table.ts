@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { execSync } from 'child_process';
-import { profiles, features, resolveProfile } from '../src/profiles.js';
+import { profiles } from '../src/profiles.js';
 
 const README_PATH = join(process.cwd(), 'README.md');
 
@@ -12,7 +12,6 @@ function generateProfileTable(totalSkills: number): string {
   ];
 
   for (const [name, profile] of Object.entries(profiles)) {
-    if (name === 'seed') continue; // alias for minimal, skip
     const skills = profile.include;
     if (skills && skills.length > 0) {
       lines.push(`| **${name}** | ${skills.length} | ${skills.map(s => `\`${s}\``).join(', ')} |`);
@@ -24,26 +23,9 @@ function generateProfileTable(totalSkills: number): string {
   return lines.join('\n');
 }
 
-function generateFeatureTable(): string {
-  const lines: string[] = [
-    '| Feature | Skills |',
-    '|---------|--------|',
-  ];
-
-  for (const [name, skills] of Object.entries(features)) {
-    lines.push(`| **+${name}** | ${skills.map(s => `\`${s}\``).join(', ')} |`);
-  }
-
-  return lines.join('\n');
-}
-
 async function updateReadmeTable() {
   // Generate new skills table
   const table = execSync('bun run scripts/generate-table.ts', { encoding: 'utf-8' }).trim();
-
-  // Generate timestamp (UTC)
-  const now = new Date();
-  const timestamp = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
 
   // Read current README
   let readme = await readFile(README_PATH, 'utf-8');
@@ -66,7 +48,6 @@ async function updateReadmeTable() {
   const skillCount = (table.match(/^\| \d+/gm) || []).length;
 
   // --- Update profiles section ---
-  // Look for <!-- profiles:start --> and <!-- profiles:end --> markers
   const profileStart = readme.indexOf('<!-- profiles:start -->');
   const profileEnd = readme.indexOf('<!-- profiles:end -->');
 
@@ -75,9 +56,8 @@ async function updateReadmeTable() {
     const profileAfter = readme.substring(profileEnd);
 
     const profileTable = generateProfileTable(skillCount);
-    const featureTable = generateFeatureTable();
 
-    readme = `${profileBefore}\n\n${profileTable}\n\nSwitch anytime: \`/go minimal\`, \`/go standard\`, \`/go full\`, \`/go + soul\`\n\n**Features** (stack on any profile with \`/go + feature\`):\n\n${featureTable}\n\n${profileAfter}`;
+    readme = `${profileBefore}\n\n${profileTable}\n\nSwitch anytime: \`/go standard\`, \`/go full\`, \`/go lab\`\n\n${profileAfter}`;
   }
 
   // --- Update header skill count ---

@@ -2,7 +2,7 @@ import type { Command } from 'commander';
 import * as p from '@clack/prompts';
 import { agents, getDefaultAgents, getAgentNames } from '../agents.js';
 import { listSkills, installSkills } from '../installer.js';
-import { profiles, features as featuresDef } from '../../profiles.js';
+import { profiles } from '../../profiles.js';
 import type { ShellMode } from '../fs-utils.js';
 
 export function registerInstall(program: Command, version: string) {
@@ -12,8 +12,7 @@ export function registerInstall(program: Command, version: string) {
     .option('-g, --global', 'Install to user directory instead of project')
     .option('-a, --agent <agents...>', 'Target specific agents (e.g., claude-code, opencode)')
     .option('-s, --skill <skills...>', 'Install specific skills by name')
-    .option('-p, --profile <name>', 'Install a skill profile (seed, standard, full)', 'standard')
-    .option('-f, --feature <features...>', 'Add feature modules (soul, network, workspace, creator)')
+    .option('-p, --profile <name>', 'Install a skill profile (standard, full, lab)', 'standard')
     .option('-l, --list', 'List available skills without installing')
     .option('-y, --yes', 'Skip confirmation prompts')
     .option('--with-commands', 'Also install command stubs to ~/.claude/commands/')
@@ -93,20 +92,10 @@ export function registerInstall(program: Command, version: string) {
           return;
         }
 
-        if (options.feature) {
-          const invalidFeatures = options.feature.filter((f: string) => !featuresDef[f]);
-          if (invalidFeatures.length > 0) {
-            p.log.error(`Unknown features: ${invalidFeatures.join(', ')}`);
-            p.log.info(`Available features: ${Object.keys(featuresDef).join(', ')}`);
-            return;
-          }
-        }
-
         await installSkills(targetAgents, {
           global: options.global,
           skills: options.skill,
           profile: options.profile,
-          features: options.feature,
           yes: options.yes,
           commands: options.withCommands,
           shellMode,
@@ -122,7 +111,6 @@ export function registerInstall(program: Command, version: string) {
     arra-oracle-skills agents             # list supported agents
     arra-oracle-skills about              # prereqs + system status
     arra-oracle-skills list -g            # show installed skills
-    arra-oracle-skills profiles           # list profiles
     arra-oracle-skills select -g          # interactive skill picker
     arra-oracle-skills install -g -y      # reinstall all skills
     arra-oracle-skills uninstall -g -y    # remove all skills

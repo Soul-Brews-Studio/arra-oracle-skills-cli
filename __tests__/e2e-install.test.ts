@@ -13,7 +13,6 @@ const SKILLS_DIR = join(TEST_DIR, "skills");
 const COMMANDS_DIR = join(TEST_DIR, "commands");
 const TEST_AGENT = "test-e2e" as any;
 
-// Inject a test agent that points to our temp dirs
 const testAgentConfig: AgentConfig = {
   name: "test-e2e",
   displayName: "Test E2E",
@@ -32,18 +31,13 @@ beforeAll(async () => {
 
 afterAll(async () => {
   delete (agents as any)[TEST_AGENT];
-  if (existsSync(TEST_DIR)) {
-    await rm(TEST_DIR, { recursive: true });
-  }
+  if (existsSync(TEST_DIR)) await rm(TEST_DIR, { recursive: true });
 });
 
 async function listSkillDirs(dir: string): Promise<string[]> {
   if (!existsSync(dir)) return [];
   const entries = await readdir(dir, { withFileTypes: true });
-  return entries
-    .filter((d) => d.isDirectory() && !d.name.startsWith("."))
-    .map((d) => d.name)
-    .sort();
+  return entries.filter((d) => d.isDirectory() && !d.name.startsWith(".")).map((d) => d.name).sort();
 }
 
 async function listCommandFiles(dir: string): Promise<string[]> {
@@ -64,7 +58,6 @@ describe("e2e: install with standard profile", () => {
     const skills = await listSkillDirs(SKILLS_DIR);
     const standardSkills = profiles.standard.include!;
 
-    // Every standard skill should be installed
     for (const name of standardSkills) {
       expect(skills).toContain(name);
     }
@@ -134,11 +127,9 @@ describe("e2e: uninstall after standard", () => {
     expect(result.removed).toBe(profiles.standard.include!.length);
     expect(result.agents).toBe(1);
 
-    // No skill dirs remaining
     const skills = await listSkillDirs(SKILLS_DIR);
     expect(skills.length).toBe(0);
 
-    // No command files remaining
     const commands = await listCommandFiles(COMMANDS_DIR);
     expect(commands.length).toBe(0);
   });
@@ -150,6 +141,7 @@ describe("e2e: install full profile", () => {
 
     await installSkills([TEST_AGENT], {
       global: true,
+      profile: "full",
       yes: true,
       commands: true,
     });
@@ -202,73 +194,63 @@ describe("e2e: uninstall full", () => {
 
 describe("e2e: uninstall preserves external skills", () => {
   it("skips skills without installer marker", async () => {
-    // Install oracle skills normally
     await installSkills([TEST_AGENT], {
       global: true,
-      profile: "seed",
+      profile: "standard",
       yes: true,
     });
 
-    // Create an external skill (no installer marker)
     const externalDir = join(SKILLS_DIR, "external-skill");
     await mkdir(externalDir, { recursive: true });
-    await writeFile(
-      join(externalDir, "SKILL.md"),
-      "# External Skill\n\nInstalled by another tool."
-    );
+    await writeFile(join(externalDir, "SKILL.md"), "# External Skill\n\nInstalled by another tool.");
 
-    // Uninstall (without -s flag = remove all)
     const result = await uninstallSkills([TEST_AGENT], {
       global: true,
       yes: true,
     });
 
-    // External skill should survive
     expect(existsSync(externalDir)).toBe(true);
-    expect(existsSync(join(externalDir, "SKILL.md"))).toBe(true);
-
-    // Oracle skills should be removed
     const remaining = await listSkillDirs(SKILLS_DIR);
     expect(remaining).toEqual(["external-skill"]);
 
-    // Cleanup
     await rm(externalDir, { recursive: true });
   });
 
   it("removes explicitly named external skills with -s flag", async () => {
-    // Install oracle skills
     await installSkills([TEST_AGENT], {
       global: true,
-      profile: "seed",
+      profile: "standard",
       yes: true,
     });
 
-    // Create an external skill
     const externalDir = join(SKILLS_DIR, "my-custom-skill");
     await mkdir(externalDir, { recursive: true });
-    await writeFile(
-      join(externalDir, "SKILL.md"),
-      "# Custom\n\nNo marker."
-    );
+    await writeFile(join(externalDir, "SKILL.md"), "# Custom\n\nNo marker.");
 
-    // Uninstall with explicit -s flag (should remove even without marker)
     await uninstallSkills([TEST_AGENT], {
       global: true,
       skills: ["my-custom-skill"],
       yes: true,
     });
 
-    // Explicitly named skill should be removed
     expect(existsSync(externalDir)).toBe(false);
-
-    // Cleanup remaining oracle skills
     await uninstallSkills([TEST_AGENT], { global: true, yes: true });
   });
 });
 
-describe("e2e: profile switch (standard → seed)", () => {
-  it("installs standard then switches to seed, removes extras", async () => {
-    // Install standard first
+describe("e2e: profile switch (full → standard)", () => {
+  it("installs full then switches to standard, removes extras", async () => {
+    await installSkills([TEST_AGENT], {
+      global: true,
+      profile: "full",
+      yes: true,
+      commands: true,
+    });
+
+    const allSkills = await discoverSkills();
+    let skills = await listSkillDirs(SKILLS_DIR);
+    expect(skills.length).toBe(allSkills.length);
+
     await installSkills([TEST_AGENT], {
       global: true,
       profile: "standard",
@@ -276,28 +258,16 @@ describe("e2e: profile switch (standard → seed)", () => {
       commands: true,
     });
 
-    let skills = await listSkillDirs(SKILLS_DIR);
-    expect(skills.length).toBe(profiles.standard.include!.length);
-
-    // Switch to seed
-    await installSkills([TEST_AGENT], {
-      global: true,
-      profile: "seed",
-      yes: true,
-      commands: true,
-    });
-
     skills = await listSkillDirs(SKILLS_DIR);
-    const seedSkills = profiles.seed.include!;
+    const standardSkills = profiles.standard.include!;
 
-    expect(skills.length).toBe(seedSkills.length);
-    for (const name of seedSkills) {
+    expect(skills.length).toBe(standardSkills.length);
+    for (const name of standardSkills) {
       expect(skills).toContain(name);
     }
 
-    // Standard-only skills should be gone
-    const standardOnly = profiles.standard.include!.filter(
-      (s) => !seedSkills.includes(s)
+    const standardOnly = allSkills.map(s => s.name).filter(
+      (s) => !standardSkills.includes(s)
     );
     for (const name of standardOnly) {
       expect(skills).not.toContain(name);
@@ -305,7 +275,6 @@ describe("e2e: profile switch (standard → seed)", () => {
   });
 
   afterAll(async () => {
-    // Cleanup
     await uninstallSkills([TEST_AGENT], { global: true, yes: true });
   });
 });

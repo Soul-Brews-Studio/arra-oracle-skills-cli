@@ -2,7 +2,7 @@ import type { Command } from 'commander';
 import * as p from '@clack/prompts';
 import { agents, detectInstalledAgents } from '../agents.js';
 import { discoverSkills } from '../installer.js';
-import { profiles, features } from '../../profiles.js';
+import { profiles } from '../../profiles.js';
 
 /** Decode Claude Code project dir name, stripping $HOME prefix */
 function decodeProjName(encoded: string, home: string): string {
@@ -63,12 +63,6 @@ async function inspectSkill(skillName?: string) {
     else if (profile.include.includes(skill.name)) inProfiles.push(name);
   }
   console.log(`  📦 Profiles: ${inProfiles.join(', ') || 'none'}`);
-
-  const inFeatures: string[] = [];
-  for (const [name, skills] of Object.entries(features)) {
-    if (skills.includes(skill.name)) inFeatures.push(name);
-  }
-  if (inFeatures.length > 0) console.log(`  🧩 Features: ${inFeatures.join(', ')}`);
 
   console.log(`\n  Agents:\n`);
   const detected = detectInstalledAgents();

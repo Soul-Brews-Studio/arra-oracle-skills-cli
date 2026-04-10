@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.7.1 (2026-04-10)
+
+### `/go cleanup` + `/project incubate` redirect
+
+- `/go cleanup` — safe fresh install with full crosscheck table, usage mining via /dig, conflict detection + backup
+- `/go` profile counts updated: standard=14, full=21, lab=28
+- `/project incubate` now redirects to standalone `/incubate` (backward compat)
+
+---
+
 ## v3.7.0 (2026-04-10)
 
 ### Standalone /incubate + profile reorg

@@ -38,7 +38,8 @@ date "+🕐 %H:%M %Z (%A %d %B %Y)"
 
 **CLI Tool**: [Claude Code / OpenCode / Cursor / etc.]
 **Shell**: [bash/zsh] ([version])
-**Terminal**: [iTerm2 / Terminal.app / etc.]
+**Terminal**: [outer terminal] → [multiplexer] ([session:window])
+**Host**: [hostname] ([SSH from X.X.X.X] | [local, no SSH])
 **OS**: [macOS / Linux / Windows]
 
 ## Location
@@ -71,9 +72,6 @@ $SHELL --version 2>/dev/null | head -1
 # OS info
 uname -s -r
 
-# Terminal (macOS)
-echo $TERM_PROGRAM
-
 # Check for Oracle identity in CLAUDE.md or project config
 if [[ -f "CLAUDE.md" ]]; then
   grep -E "^(I am|Identity|Oracle):" CLAUDE.md | head -1
@@ -84,6 +82,63 @@ basename "$(pwd -P)"
 echo "LOGICAL=$(pwd)"
 echo "PHYSICAL=$(pwd -P)"
 ```
+
+### Detect Terminal Chain
+
+Detect the **full terminal viewing chain** instead of just `$TERM_PROGRAM`:
+
+```bash
+# Step 1: Detect outer terminal emulator (leaks through tmux via env vars)
+if [ -n "$WEZTERM_EXECUTABLE" ]; then OUTER_TERM="WezTerm"
+elif [ -n "$CMUX_SOCKET_PATH" ]; then OUTER_TERM="cmux (Ghostty)"
+elif [ -n "$GHOSTTY_RESOURCES_DIR" ]; then OUTER_TERM="Ghostty"
+elif [ -n "$ITERM_SESSION_ID" ]; then OUTER_TERM="iTerm2"
+elif [ "$TERM_PROGRAM" = "tmux" ]; then OUTER_TERM="tmux (outer terminal unknown)"
+else OUTER_TERM="${TERM_PROGRAM:-unknown}"
+fi
+echo "OUTER_TERM=$OUTER_TERM"
+
+# Step 2: Detect SSH chain
+if [ -n "$SSH_CONNECTION" ]; then
+  SSH_FROM=$(echo $SSH_CONNECTION | awk '{print $1}')
+  echo "SSH: from $SSH_FROM → $(hostname)"
+else
+  echo "SSH: none (local)"
+fi
+
+# Step 3: Detect tmux session context
+if [ -n "$TMUX" ]; then
+  tmux display-message -p 'TMUX_SESSION=#{session_name}:#{window_name}'
+fi
+
+# Step 4: Full workspace view (WezTerm only)
+if [ -n "$WEZTERM_EXECUTABLE" ]; then
+  # Env socket may be stale if WezTerm restarted — find current
+  WEZTERM_PID=$(pgrep -x wezterm-gui 2>/dev/null | head -1)
+  if [ -n "$WEZTERM_PID" ]; then
+    CURRENT_SOCK="$HOME/.local/share/wezterm/gui-sock-$WEZTERM_PID"
+    if [ -S "$CURRENT_SOCK" ]; then
+      WEZTERM_UNIX_SOCKET=$CURRENT_SOCK wezterm cli list 2>/dev/null | head -20
+    fi
+  fi
+fi
+```
+
+**Compose the chain** in output:
+
+```markdown
+**Terminal**: WezTerm → tmux (session-name:window-name)
+**Host**: hostname (SSH from 10.20.0.1) | or (local, no SSH)
+```
+
+If WezTerm workspace data is available, add:
+```markdown
+**Workspace**: N panes across M hosts
+  - host-a (local): X panes
+  - host-b (SSH): Y panes
+```
+
+**Fallback**: If no env vars detected, use `echo $TERM_PROGRAM` as before.
 
 ### Detect CLI Tool
 

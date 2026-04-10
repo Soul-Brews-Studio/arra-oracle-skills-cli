@@ -31,13 +31,13 @@ date "+🕐 %H:%M %Z (%A %d %B %Y)"
 
 **Default** (current repo only):
 ```bash
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|/|-|g')
+ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
 for wt in "$HOME/.claude/projects/${ENCODED_PWD}"-wt*; do [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"; done
 ```
 
-Encodes `pwd` the same way Claude does (replace `/` with `-`, prepend `-`) to match the `.claude/projects/` directory naming. Also picks up worktree dirs (`-wt`, `-wt-1`, etc.).
+Encodes `pwd` the same way Claude does (replace `/` and `.` with `-`, prepend `-`) to match the `.claude/projects/` directory naming (e.g. `github.com` → `github-com`). Also picks up worktree dirs (`-wt`, `-wt-1`, etc.).
 
 **With `--all`** (all repos):
 ```bash

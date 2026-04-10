@@ -9,13 +9,14 @@ argument-hint: "[--detail | --dig | --deep]"
 > "Reflect to grow, document to remember."
 
 ```
-/rrr              # Quick retro, main agent
-/rrr --detail     # Full template, main agent
-/rrr --dig        # Reconstruct past timeline from session .jsonl
-/rrr --deep       # 5 parallel agents (read DEEP.md)
+/rrr                      # Quick retro, main agent
+/rrr --detail             # Full template, main agent
+/rrr --dig                # Reconstruct past timeline from session .jsonl
+/rrr --deep               # 5 parallel subagents
+/rrr --deep --teammate    # 3 coordinated team agents (requires AGENT_TEAMS)
 ```
 
-**NEVER spawn subagents or use the Task tool. Only `--deep` may use subagents.**
+**NEVER spawn subagents or use the Task tool. Only `--deep` and `--deep --teammate` may use subagents.**
 **`/rrr`, `/rrr --detail`, and `/rrr --dig` = main agent only. Zero subagents. Zero Task calls.**
 
 ---
@@ -32,7 +33,7 @@ git log --oneline -10 && git diff --stat HEAD~5
 ### 1.5. Detect Session (optional)
 
 ```bash
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|/|-|g')
+ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_DIR="$HOME/.claude/projects/${ENCODED_PWD}"
 LATEST_JSONL=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -1)
 if [ -n "$LATEST_JSONL" ]; then
@@ -123,7 +124,7 @@ Then steps 3-5 same as default.
 Discover project dirs using full-path encoding (same as Claude's `.claude/projects/` naming), including worktree dirs:
 
 ```bash
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|/|-|g')
+ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
 for wt in "${PROJECT_BASE}"-wt*; do [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"; done
@@ -156,7 +157,13 @@ Write lesson learned, oracle sync.
 
 ## /rrr --deep
 
-Read `DEEP.md` in this skill directory. Only mode that uses subagents.
+Read `DEEP.md` in this skill directory. Only mode that uses subagents (5 parallel agents).
+
+---
+
+## /rrr --deep --teammate
+
+Read `TEAMMATE.md` in this skill directory. Coordinated team retro (3 agents + lead). Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
 
 ---
 

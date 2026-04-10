@@ -157,9 +157,60 @@ If user wants to skip: proceed silently. No further warnings.
 
 > "บอกเราเกี่ยวกับ Oracle ของคุณ — ตอบรวมทีเดียว"
 
-Ask ALL questions at once. User answers freetext in one message. AI parses.
+### Auto-Fill from Context (ก่อนถาม)
+
+Before showing questions, auto-detect what you can from the environment:
+
+```bash
+# Human name
+git config user.name 2>/dev/null
+gh api user --jq '.login' 2>/dev/null
+
+# Repo purpose
+if [ -f "package.json" ]; then
+  cat package.json | grep -E '"(name|description)"' | head -2
+fi
+if [ -f "README.md" ]; then
+  head -5 README.md
+fi
+
+# Language hints
+echo $LANG $LC_ALL
+if [ -f "CLAUDE.md" ]; then
+  grep -i "language" CLAUDE.md | head -1
+fi
+
+# Repo name → suggest Oracle name
+basename "$(pwd)" | sed 's/-oracle$//' | sed 's/-/ /g'
+```
+
+**If auto-fill found enough data** (at least oracle name + human name + purpose), show pre-filled:
+
+```
+🌟 ฉันรู้จักคุณบ้างแล้ว:
+
+  1. Oracle ชื่อ: [auto from repo name]
+  2. คุณชื่อ: [auto from git config]
+  3. ช่วยเรื่อง: [auto from package.json/README]
+  4. Theme hint: [suggested from repo domain]
+  5. ภาษา/experience/team: [auto from locale + context]
+
+  แก้ไขอะไรไหม? พิมพ์แก้แล้ว Enter หรือ Enter เพื่อยืนยัน
+```
+
+**If not enough context**, offer a trace hint before asking:
+
+```
+💡 อยากให้ Oracle เข้าใจ project มากขึ้นก่อน?
+   พิมพ์ /trace --deep หรือ /learn เพื่อสำรวจ codebase ก่อน แล้วกลับมา /awaken อีกครั้ง
+   หรือ Enter เพื่อตอบเอง
+```
+
+Then fall through to the manual questions below.
 
 ### Show All Questions (1 prompt)
+
+Ask ALL questions at once. User answers freetext in one message. AI parses.
 
 ```
 🌟 บอกเกี่ยวกับ Oracle ของคุณ:

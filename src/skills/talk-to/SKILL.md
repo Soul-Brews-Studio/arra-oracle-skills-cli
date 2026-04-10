@@ -16,11 +16,40 @@ Send messages to agents via Oracle threads. Each agent has a persistent channel 
 /talk-to arthur loop ask about their work      # autonomous conversation
 /talk-to #42 "follow up on this"               # post to thread by ID
 /talk-to --list                                # show channels
+/talk-to arthur --maw "quick ping"             # force maw transport (real-time tmux)
+/talk-to arthur --thread "async question"      # force MCP thread transport
 ```
 
 ## Mode 0: No arguments
 
 If ARGUMENTS is empty, show usage help then run --list.
+
+## Transport Selection
+
+| Flag | Transport | Best For |
+|------|-----------|----------|
+| (none) | **auto** — detect best | Default |
+| `--maw` | `maw hey` (tmux sendkeys) | Real-time, local fleet, low latency |
+| `--thread` | MCP `oracle_thread` | Async, persistent, cross-machine |
+
+**Auto-detect logic** (when no flag):
+1. Check `ψ/contacts.json` for target agent's transport info
+2. Is target a local tmux session? (`maw ls` or contacts has `maw` field) → use `maw hey`
+3. Otherwise → use MCP thread (async, persistent)
+
+```bash
+# Auto-detect: check if target is a local tmux session
+maw ls 2>/dev/null | grep -q "{agent}" && echo "USE_MAW" || echo "USE_THREAD"
+```
+
+When using `--maw`:
+1. Compose message from intent
+2. `maw hey {agent}-oracle '{message}'`
+3. Optionally `maw peek {agent}-oracle` to check response
+4. Confirm: `Sent via maw to {agent}`
+
+When using `--thread` (or auto-detected thread):
+Fall through to Mode 3 (one-shot) below.
 
 ## Routing
 

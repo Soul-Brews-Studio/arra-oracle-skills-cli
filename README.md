@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-26 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+27 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -60,9 +60,10 @@ npx arra-oracle-skills@3.6.1 install -g -y --agent claude-code codex opencode
 | 21 | **standup** | skill | Daily standup check |
 | 22 | **talk-to** | skill | Talk to another Oracle agent via threads |
 | 23 | **trace** | skill | Find projects, code |
-| 24 | **where-we-are** | skill | Session awareness |
-| 25 | **who-are-you** | skill | Know ourselves |
-| 26 | **xray** | skill | X-ray deep scan |
+| 24 | **vault** | skill | Connect external knowledge bases (Obsidian |
+| 25 | **where-we-are** | skill | Session awareness |
+| 26 | **who-are-you** | skill | Know ourselves |
+| 27 | **xray** | skill | X-ray deep scan |
 
 <!-- skills:end -->
 
@@ -73,8 +74,8 @@ npx arra-oracle-skills@3.6.1 install -g -y --agent claude-code codex opencode
 | Profile | Count | Skills |
 |---------|-------|--------|
 | **standard** | 16 | `about-oracle`, `awaken`, `contacts`, `dig`, `forward`, `go`, `inbox`, `learn`, `oracle-family-scan`, `oracle-soul-sync-update`, `recap`, `rrr`, `standup`, `talk-to`, `trace`, `xray` |
-| **full** | 26 | all |
-| **lab** | 26 | all |
+| **full** | 27 | all |
+| **lab** | 27 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

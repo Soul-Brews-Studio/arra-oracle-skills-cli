@@ -40,6 +40,7 @@ if [ -f "$CONTACTS" ]; then
   MAW=$(jq -r ".contacts.\"$AGENT\".maw // empty" "$CONTACTS")
   INBOX=$(jq -r ".contacts.\"$AGENT\".inbox // empty" "$CONTACTS")
   THREAD=$(jq -r ".contacts.\"$AGENT\".thread // empty" "$CONTACTS")
+  REPO=$(jq -r ".contacts.\"$AGENT\".repo // empty" "$CONTACTS")
   NOTES=$(jq -r ".contacts.\"$AGENT\".notes // empty" "$CONTACTS")
   FOUND_IN_CONTACTS=true
 else

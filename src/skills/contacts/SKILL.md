@@ -25,12 +25,14 @@ If `ψ/` doesn't exist, use `.oracle/contacts.json` as fallback.
       "maw": "peter-oracle",
       "thread": "channel:peter",
       "inbox": "/home/peter/Code/peter-oracle/ψ/inbox",
+      "repo": "laris-co/peter-oracle",
       "notes": "Frontend dev, available weekdays"
     },
     "pulse": {
       "maw": "pulse-oracle",
       "thread": "channel:pulse",
       "inbox": null,
+      "repo": "laris-co/pulse-oracle",
       "notes": "PM bot"
     }
   },
@@ -58,12 +60,12 @@ Read `ψ/contacts.json`. Display:
 ```
 📇 Contacts (4)
 
-  #  Name           maw              thread            inbox
-  ── ────────────── ──────────────── ────────────────── ──────
-  1  peter          peter-oracle     channel:peter      ✓
-  2  pulse          pulse-oracle     channel:pulse      ✗
-  3  hermes         hermes-oracle    channel:hermes     ✓
-  4  neo            neo-oracle       channel:neo        ✓
+  #  Name           maw              repo                    inbox
+  ── ────────────── ──────────────── ─────────────────────── ──────
+  1  peter          peter-oracle     laris-co/peter-oracle    ✓
+  2  pulse          pulse-oracle     laris-co/pulse-oracle    ✗
+  3  hermes         hermes-oracle    laris-co/hermes-oracle   ✓
+  4  neo            neo-oracle       laris-co/neo-oracle      ✓
 ```
 
 If no contacts file exists:
@@ -95,7 +97,10 @@ Ask each transport one by one. User can skip any with Enter.
      → /home/peter/Code/peter-oracle/ψ/inbox
      (Enter to skip — not all agents have accessible inbox)
 
-  4. Notes? (optional)
+  4. Repo? (org/repo on GitHub)
+     → laris-co/peter-oracle  [default: guess from maw name]
+
+  5. Notes? (optional)
      → Frontend dev, Thai timezone
 ```
 
@@ -167,6 +172,7 @@ If yes, remove from JSON, save, optionally commit.
   maw:     peter-oracle
   thread:  channel:peter
   inbox:   /home/peter/Code/peter-oracle/ψ/inbox
+  repo:    laris-co/peter-oracle
   notes:   Frontend dev, Thai timezone
 ```
 

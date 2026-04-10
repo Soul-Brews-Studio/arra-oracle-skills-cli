@@ -1,7 +1,7 @@
 ---
 name: trace
-description: Find projects, code, and knowledge across git history, repos, docs, and Oracle. Use when user asks "trace", "find project", "where is [project]", "search history", or needs to locate something across the codebase. Supports --oracle (fast), --smart (default), --deep (wave execution). Do NOT trigger for session mining or "past sessions" (use /dig), or codebase exploration "learn repo" (use /learn).
-argument-hint: "<query> [--oracle | --smart | --deep]"
+description: Find projects, code, and knowledge across git history, repos, docs, and Oracle. Use when user asks "trace", "find project", "where is [project]", "search history", or needs to locate something across the codebase. Supports --oracle (fast), --smart (default), --deep (wave execution), --deep --dig (combo). Do NOT trigger for session mining or "past sessions" (use /dig), or codebase exploration "learn repo" (use /learn).
+argument-hint: "<query> [--oracle | --smart | --deep] [--dig]"
 ---
 
 # /trace - Unified Discovery System
@@ -14,11 +14,12 @@ Find + Measure + Log + Distill
 /trace [query]                    # Current repo (default --smart)
 /trace [query] --oracle           # Oracle only (fastest)
 /trace [query] --deep             # Wave execution (thorough)
+/trace [query] --deep --dig       # Combo: trace deep + dig session mining (parallel)
 /trace [query] --repo [path]      # Search specific local repo
 /trace [query] --repo [url]       # Clone to ghq, then search
 ```
 
-> Session mining moved to `/dig`. Use `/dig`, `/dig --all`, `/dig --timeline`.
+> `/dig` alone mines sessions. `--dig` flag on `/trace` runs both together.
 
 ## Directory Structure
 
@@ -185,6 +186,62 @@ Return findings as text. Main agent compiles.
 ```
 
 **After both waves**, main agent compiles all results → Step 3.
+
+---
+
+## Mode 4: --deep --dig (Combo)
+
+**Trace deep + session mining in parallel.** Runs both `/trace --deep` and `/dig` simultaneously, then merges results into one output.
+
+### How it works
+
+Launch trace Wave 1 agents AND the dig session miner at the same time:
+
+**In parallel:**
+1. **Trace agents** (Wave 1: Agent A + Agent B) — same as --deep mode above
+2. **Dig agent** — mines session history for the query:
+
+```
+You are mining session history for: [query]
+
+Run the dig script to get all sessions:
+ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
+PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
+export PROJECT_DIRS="$PROJECT_BASE"
+for wt in "${PROJECT_BASE}"-wt*; do [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"; done
+
+python3 ~/.claude/skills/dig/scripts/dig.py 0
+
+Then search the session data for mentions of: [query]
+Look for:
+- Sessions where this topic was worked on
+- Timeline of when it was touched
+- Which repos it appeared in
+- How much time was spent
+
+Return findings as text. Max 500 words.
+```
+
+**After Wave 1 + Dig complete:**
+- Check trace results — if insufficient, run Wave 2 (same as --deep)
+- Merge all results: trace findings + session history
+
+### Combined Output
+
+The trace log includes an extra section:
+
+```markdown
+## Session History (from /dig)
+[Sessions where query appeared, timeline, time spent]
+```
+
+This goes between "Oracle Memory" and "Friction Analysis" in the trace log.
+
+### When to use
+
+- "When did we work on X and where is it now?" — both questions answered
+- Investigating a topic across code AND session history
+- Building a complete picture: what exists (trace) + what happened (dig)
 
 ---
 
@@ -360,11 +417,13 @@ Omar surfaces this. jeera-p decides what to do about it.
 | Skill | Purpose | Writes to |
 |-------|---------|-----------|
 | `/trace` | Find + measure | ψ/memory/traces/ (logs) |
-| `/dig` | Mine sessions | Screen only (read-only) |
+| `/trace --dig` | Find + measure + mine sessions | ψ/memory/traces/ (logs) |
+| `/dig` | Mine sessions (standalone) | Screen only (read-only) |
 | `/learn` | Study repos | ψ/learn/ (docs) |
 | `/project` | Develop repos | ψ/incubate/ or active/ |
 
 **Workflow**: `/trace` finds + measures → `/learn` studies → `/project` develops
+**Combo**: `/trace --deep --dig` = find + mine in one shot
 
 ---
 
@@ -375,6 +434,7 @@ Omar surfaces this. jeera-p decides what to do about it.
 | `--oracle` | Fast | Oracle only | — |
 | `--smart` | Medium | Oracle → maybe deep | Auto |
 | `--deep` | Thorough | Wave 1 + Wave 2 if needed | 2 |
+| `--deep --dig` | Thorough+ | Deep + session mining (parallel) | 2 + dig |
 
 | Output field | Description |
 |-------------|-------------|

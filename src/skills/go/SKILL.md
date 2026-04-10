@@ -48,128 +48,108 @@ Profiles: `standard`, `full`, `lab`
 
 Crosscheck installed skills, remove stale arra-managed ones, fetch latest, reinstall. External skills are never touched.
 
-**Step 1: Crosscheck** — list all installed skills, classify each:
+**Step 1: Crosscheck** — list all installed skills, classify by `installer:` field in SKILL.md:
 
 ```bash
 SKILLS_DIR="$HOME/.claude/skills"
-# Arra's known skill names (from the CLI)
-ARRA_SKILLS=$(arra-oracle-skills list --all --json 2>/dev/null | jq -r '.[].name' || echo "")
+LATEST=$(curl -s https://api.github.com/repos/Soul-Brews-Studio/arra-oracle-skills-cli/tags | grep -m1 '"name"' | cut -d'"' -f4)
 
-echo "📋 Crosscheck:"
+echo "📋 Crosscheck (latest: $LATEST):"
+ARRA_COUNT=0; EXT_COUNT=0; STALE_COUNT=0; CONFLICT_COUNT=0
 for dir in "$SKILLS_DIR"/*/; do
   [ -d "$dir" ] || continue
   name=$(basename "$dir")
-  version=$(grep -o 'v[0-9.]*' "$dir/SKILL.md" 2>/dev/null | head -1)
-  installer=$(grep -o 'installer: .*' "$dir/SKILL.md" 2>/dev/null | head -1)
+  version=$(grep -o 'v[0-9][0-9.]*' "$dir/SKILL.md" 2>/dev/null | head -1)
+  installer=$(grep 'installer:' "$dir/SKILL.md" 2>/dev/null | head -1)
 
-  if echo "$ARRA_SKILLS" | grep -qx "$name"; then
-    if [ -n "$installer" ]; then
+  if echo "$installer" | grep -q "arra-oracle"; then
+    # Arra-managed skill — check version
+    if [ "$version" = "$LATEST" ]; then
       echo "  ✓ arra: $name ($version)"
+      ARRA_COUNT=$((ARRA_COUNT + 1))
     else
-      echo "  ⚠️ conflict: $name ($version) — same name as arra skill but installed separately"
+      echo "  ⚠️ stale: $name ($version → $LATEST)"
+      STALE_COUNT=$((STALE_COUNT + 1))
     fi
   else
-    echo "  ○ external: $name (not in arra — will keep)"
+    echo "  ○ external: $name — will keep"
+    EXT_COUNT=$((EXT_COUNT + 1))
   fi
 done
+echo ""
+echo "  Summary: $ARRA_COUNT ok, $STALE_COUNT stale, $EXT_COUNT external"
 ```
 
-**Step 2: Show full table** — display ALL 29 arra skills with status:
-
-```
-📋 Skills Overview (29 arra + N external):
-
-  #  Skill                    Profile    Installed  Version   Status
-  ── ──────────────────────── ────────── ────────── ───────── ──────
-  1  about-oracle             standard   ✓          v3.7.0    ✓ ok
-  2  auto-retrospective       full       ✓          v3.7.0    ✓ ok
-  3  awaken                   standard   ✓          v3.7.0    ✓ ok
-  4  contacts                 lab        ✓          v3.7.0    ✓ ok
-  5  create-shortcut          lab        ✗          —         —
-  6  dig                      standard   ✓          v3.7.0    ✓ ok
-  7  dream                    lab        ✗          —         —
-  8  feel                     lab        ✗          —         —
-  9  forward                  standard   ✓          v3.7.0    ✓ ok
-  10 go                       standard   ✓          v3.7.0    ✓ ok
-  11 inbox                    lab        ✓          v3.7.0    ✓ ok
-  12 incubate                 full       ✓          v3.7.0    ✓ ok
-  13 learn                    standard   ✓          v3.7.0    ✓ ok
-  14 oracle-family-scan       standard   ✓          v3.7.0    ✓ ok
-  15 oracle-soul-sync-update  standard   ✓          v3.7.0    ✓ ok
-  16 philosophy               full       ✗          —         —
-  17 project                  full       ✗          —         —
-  18 recap                    standard   ✓          v3.7.0    ✓ ok
-  19 resonance                full       ✗          —         —
-  20 rrr                      standard   ✓          v3.7.0    ✓ ok
-  21 schedule                 lab        ✗          —         —
-  22 standup                  standard   ✓          v3.7.0    ✓ ok
-  23 talk-to                  standard   ✓          v3.7.0    ✓ ok
-  24 team-agents              lab        ✗          —         —
-  25 trace                    standard   ✓          v3.7.0    ✓ ok
-  26 vault                    lab        ✗          —         —
-  27 where-we-are             full       ✗          —         —
-  28 who-are-you              full       ✓          v1.0.22   ⚠️ conflict
-  29 xray                     standard   ✓          v3.7.0    ✓ ok
-
-  External (will keep):
-  ○ drink, mawjs, mawjs-local, ultrathink
-```
-
-Status legend:
-- `✓ ok` — arra-managed, correct version
-- `⚠️ conflict` — same name as arra skill but installed separately or wrong version
-- `⚠️ stale` — arra-managed but outdated version
-
-**Step 2.5: Ask about usage data** — before confirming, offer insight:
-
-```
-📊 Want to see which skills you use most? (mines session history via /dig)
-   This helps choose the right profile after cleanup.
-   [Y/n]
-```
-
-If yes, mine all session JSONL files for skill invocations:
+**Step 2: Combined table** — crosscheck + usage in ONE table. Mine session JSONL files, then display everything together:
 
 ```bash
-# Scan all sessions for skill triggers
-echo "📊 Skill Usage (mining sessions...):"
+# Mine usage data from all sessions
 TOTAL=0
 for jsonl in ~/.claude/projects/*/*.jsonl; do
   [ -f "$jsonl" ] || continue
   TOTAL=$((TOTAL + 1))
 done
-echo "  Scanned: $TOTAL sessions"
-echo ""
-
-# Count skill invocations (look for /skill-name patterns in user messages)
-# Display as table sorted by usage count (descending)
-for skill in about-oracle auto-retrospective awaken contacts create-shortcut \
-  dig dream feel forward go inbox incubate learn oracle-family-scan \
-  oracle-soul-sync-update philosophy project recap resonance rrr \
-  schedule standup talk-to trace vault where-we-are who-are-you xray; do
-
-  count=$(grep -l "\"/$skill\"\\|\"/$skill " ~/.claude/projects/*/*.jsonl 2>/dev/null | wc -l)
-  echo "$count $skill"
-done | sort -rn | awk '{printf "  %-3s %-28s %s sessions\n", NR".", $2, $1}'
 ```
 
-Output:
-```
-📊 Skill Usage (74 sessions):
+Build the combined table. For each of the 29 arra skills, show: profile tier, installed status, version, status, and usage count from session mining.
 
-  #   Skill                        Sessions
-  ──  ────────────────────────────  ────────
-  1.  rrr                          42 sessions
-  2.  trace                        38 sessions
-  3.  recap                        35 sessions
-  4.  learn                        28 sessions
-  5.  dig                          22 sessions
-  ...
-  27. schedule                     0 sessions
-  28. create-shortcut              0 sessions
+```
+📋 Skills Overview (29 arra + N external) — $TOTAL sessions mined:
+
+  #  Skill                    Profile    Installed  Version   Status       Usage
+  ── ──────────────────────── ────────── ────────── ───────── ──────────── ─────
+  1  about-oracle             standard   ✓          v3.7.2    ✓ ok         2
+  2  auto-retrospective       full       ✓          v3.7.2    ✓ ok         2
+  3  awaken                   standard   ✓          v3.7.2    ✓ ok         7
+  4  contacts                 lab        ✓          v3.7.2    ✓ ok         5
+  5  create-shortcut          lab        ✗          —         —            3
+  6  dig                      standard   ✓          v3.7.2    ✓ ok         6
+  7  dream                    lab        ✗          —         —            5
+  8  feel                     lab        ✗          —         —            4
+  9  forward                  standard   ✓          v3.7.2    ✓ ok         4
+  10 go                       standard   ✓          v3.7.2    ✓ ok         3
+  11 inbox                    lab        ✓          v3.7.2    ✓ ok         4
+  12 incubate                 full       ✓          v3.7.2    ✓ ok         6
+  13 learn                    standard   ✓          v3.7.2    ✓ ok         7
+  14 oracle-family-scan       standard   ✓          v3.7.2    ✓ ok         4
+  15 oracle-soul-sync-update  standard   ✓          v3.7.2    ✓ ok         3
+  16 philosophy               full       ✗          —         —            4
+  17 project                  full       ✗          —         —            6
+  18 recap                    standard   ✓          v3.7.2    ✓ ok         7
+  19 resonance                full       ✗          —         —            6
+  20 rrr                      standard   ✓          v3.7.2    ✓ ok         7
+  21 schedule                 lab        ✗          —         —            3
+  22 standup                  standard   ✓          v3.7.2    ✓ ok         3
+  23 talk-to                  standard   ✓          v3.7.2    ✓ ok         6
+  24 team-agents              lab        ✗          —         —            1
+  25 trace                    standard   ✓          v3.7.2    ✓ ok         5
+  26 vault                    lab        ✗          —         —            5
+  27 where-we-are             full       ✗          —         —            4
+  28 who-are-you              full       ✓          v1.0.22   ⚠️ stale     6
+  29 xray                     standard   ✓          v3.7.2    ✓ ok         4
+
+  External (will keep):
+  ○ drink, mawjs, mawjs-local, ultrathink
 
   💡 Skills with 0 usage might not need to be in your profile.
 ```
+
+**How to get usage counts**: for each skill, count sessions containing `/$skill`:
+
+```bash
+for skill in about-oracle auto-retrospective awaken contacts create-shortcut \
+  dig dream feel forward go inbox incubate learn oracle-family-scan \
+  oracle-soul-sync-update philosophy project recap resonance rrr \
+  schedule standup talk-to team-agents trace vault where-we-are who-are-you xray; do
+  count=$(grep -rl "/$skill" ~/.claude/projects/*/*.jsonl 2>/dev/null | wc -l)
+  echo "$count $skill"
+done | sort -rn
+```
+
+Status legend:
+- `✓ ok` — arra-managed, current version
+- `⚠️ stale` — arra-managed but outdated (needs update)
+- `—` — not installed (available in higher profile)
 
 **Step 3: Confirm** — now with full context:
 

@@ -7,7 +7,7 @@
  */
 
 // Skills that are lab-only (experimental, not in standard or full)
-export const labOnly = ['contacts', 'create-shortcut', 'dream', 'feel', 'inbox', 'schedule', 'team-agents', 'vault'];
+export const labOnly = ['contacts', 'create-shortcut', 'dream', 'feel', 'i-believe', 'inbox', 'schedule', 'team-agents', 'vault'];
 
 export const profiles: Record<string, { include?: string[]; exclude?: string[] }> = {
   standard: {

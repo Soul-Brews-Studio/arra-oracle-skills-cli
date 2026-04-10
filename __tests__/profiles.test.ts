@@ -3,7 +3,7 @@ import { profiles, labOnly, resolveProfile } from "../src/profiles";
 
 const ALL_SKILLS = [
   "about-oracle", "auto-retrospective", "awaken", "contacts", "create-shortcut",
-  "dig", "dream", "feel", "forward", "go", "inbox", "incubate", "learn",
+  "dig", "dream", "feel", "forward", "go", "i-believe", "inbox", "incubate", "learn",
   "oracle-family-scan", "oracle-soul-sync-update", "philosophy", "project", "recap",
   "resonance", "rrr", "schedule", "standup", "talk-to", "team-agents", "trace",
   "vault", "where-we-are", "who-are-you", "xray",
@@ -36,11 +36,12 @@ describe("profiles", () => {
     expect(profiles.standard.include).not.toContain("feel");
   });
 
-  it("labOnly contains contacts, create-shortcut, dream, feel, inbox, schedule, team-agents, vault", () => {
+  it("labOnly contains contacts, create-shortcut, dream, feel, i-believe, inbox, schedule, team-agents, vault", () => {
     expect(labOnly).toContain("contacts");
     expect(labOnly).toContain("create-shortcut");
     expect(labOnly).toContain("dream");
     expect(labOnly).toContain("feel");
+    expect(labOnly).toContain("i-believe");
     expect(labOnly).toContain("inbox");
     expect(labOnly).toContain("schedule");
     expect(labOnly).toContain("team-agents");

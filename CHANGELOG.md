@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.7.5 (2026-04-10)
+
+### `/i-believe` — Pulse. Spark. Flame.
+
+- `/i-believe` — declaration of belief skill (lab). The third in the emotional triad: /feel (pulse), /resonance (spark), /i-believe (flame)
+- Receives belief, responds genuinely, logs to `ψ/memory/resonance/beliefs/`
+- Belief timeline via `--history`
+- 30 skills, lab=30
+
+---
+
 ## v3.7.4 (2026-04-10)
 
 ### Contacts `repo` field — know where every agent lives

@@ -28,7 +28,7 @@ trigger: /recap
 bun ~/.claude/skills/recap/recap-rich.ts
 ```
 
-Script reads retro summaries, handoff content, tracks, git state. Then LLM adds:
+Script reads retro summaries, handoff content, tracks, git state, and INDEX reconcile. Then LLM adds:
 - **What's next?** (2-3 options based on context)
 
 ### Step 2: Git context
@@ -71,6 +71,15 @@ Include in recap:
 ```
 
 Need more? `/dig 5` or `/dig --timeline`.
+
+### INDEX Reconcile (auto)
+
+The rich script auto-detects `ψ/inbox/tracks/INDEX.md`. If present, it:
+- Counts pending vs done items
+- Cross-checks latest handoff pending items against INDEX
+- Reports items from handoff not yet in INDEX (new pending to add)
+
+This surfaces reconcile gaps at session start so the LLM can suggest adding missing items.
 
 **Total**: 1 bash call + LLM analysis
 

@@ -97,6 +97,45 @@ if (existsSync(tracksDir)) {
   }
 }
 
+// INDEX reconcile — cross-check INDEX.md with latest handoff
+const indexFile = join(ROOT, "ψ/inbox/tracks/INDEX.md");
+if (existsSync(indexFile)) {
+  console.log("\n## INDEX RECONCILE");
+  const indexContent = await Bun.file(indexFile).text();
+  const indexLines = indexContent.split("\n");
+
+  // Count pending and done items
+  const pendingItems = indexLines.filter((l) => l.match(/^- \[ \]/));
+  const doneItems = indexLines.filter((l) => l.match(/^- \[x\]/));
+
+  // Read latest handoff pending items
+  const hDir = join(ROOT, "ψ/inbox/handoff");
+  let handoffPending: string[] = [];
+  if (existsSync(hDir)) {
+    const hFiles = readdirSync(hDir).filter((f) => f.endsWith(".md") && !f.includes("CLAUDE")).sort().reverse();
+    if (hFiles.length) {
+      const hContent = await Bun.file(join(hDir, hFiles[0])).text();
+      handoffPending = hContent.split("\n").filter((l) => l.match(/^- \[ \]/));
+    }
+  }
+
+  // Find handoff items not in INDEX (new pending)
+  const missing: string[] = [];
+  for (const hp of handoffPending) {
+    const hpText = hp.replace(/^- \[ \] /, "").replace(/\*\*/g, "").toLowerCase().slice(0, 40);
+    const found = indexLines.some((il) => il.toLowerCase().includes(hpText.slice(0, 20)));
+    if (!found) missing.push(hp.trim());
+  }
+
+  console.log(`Pending: ${pendingItems.length} | Done: ${doneItems.length}`);
+  if (missing.length) {
+    console.log(`\n**Not in INDEX** (${missing.length} from handoff):`);
+    for (const m of missing.slice(0, 5)) console.log(`  ${m}`);
+  } else if (handoffPending.length) {
+    console.log("Handoff items all in INDEX");
+  }
+}
+
 // Latest retro
 console.log("\n---\n\n## LAST SESSION");
 const retroDir = join(ROOT, `ψ/memory/retrospectives/${month}`);

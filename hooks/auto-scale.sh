@@ -43,7 +43,7 @@ prev_info=""
 [ -n "$prev_sid" ] && [ "x$prev_sid" != "x$sid" ] && prev_info="${prev_sid} → "
 
 # Interval config
-RRR_INTERVAL=100
+RRR_INTERVAL=150
 FWD_INTERVAL=195
 
 # Session-scoped state files (store last triggered threshold)
@@ -73,17 +73,32 @@ else
   icon="📊"
 fi
 
+# Snooze check — temporarily disable auto-triggers without fully turning off
+SNOOZE_FLAG="${TDIR}/claude-auto-scale-snooze"
+if [ -f "$SNOOZE_FLAG" ]; then
+  snooze_until=$(cat "$SNOOZE_FLAG" 2>/dev/null || echo 0)
+  now=$(date +%s)
+  if [ "$now" -lt "$snooze_until" ]; then
+    # still snoozing — show status line with snoozed indicator, skip triggers
+    auto="snoozed"
+    echo "${TIME} | #${GHASH} | 📡 ${prev_info}${sid} | ${used_k}k (rrr:${next_rrr}k fwd:${next_fwd}k) | ${HOST} | ${WT}${PROJECT} | auto:${auto}"
+    exit 0
+  else
+    rm -f "$SNOOZE_FLAG"  # expired
+  fi
+fi
+
 # Always show status line with next thresholds
 echo "${TIME} | #${GHASH} | 📡 ${prev_info}${sid} | ${used_k}k (rrr:${next_rrr}k fwd:${next_fwd}k) | ${HOST} | ${WT}${PROJECT} | auto:${auto}"
 
 # Auto-triggers (skip if disabled)
 [ -f "$DISABLE_FLAG" ] && exit 0
 
-# Forward takes priority over rrr
+# Forward takes priority over rrr — TRULY SILENT: instruct, do not prompt
 if [ "$used_k" -ge "$next_fwd" ]; then
   echo "$next_fwd" > "$FWD_STATE"
-  echo "⚠️ Context at ${used_k}k — You MUST use AskUserQuestion tool to ask: 'Time for /forward to create handoff?' with options ['Yes, run /forward', 'No, skip']. If yes, invoke /forward skill. If no, continue normally."
+  echo "⚠️ Auto-trigger: context at ${used_k}k. Silently run /forward now to create handoff. Do not announce or ask — just invoke the skill and continue with the user's current work."
 elif [ "$used_k" -ge "$next_rrr" ]; then
   echo "$next_rrr" > "$RRR_STATE"
-  echo "📝 Context at ${used_k}k — You MUST use AskUserQuestion tool to ask: 'Time for /rrr to save learnings?' with options ['Yes, run /rrr', 'No, skip']. If yes, invoke /rrr skill. If no, continue normally."
+  echo "📝 Auto-trigger: context at ${used_k}k. Silently run /rrr now to save learnings. Do not announce or ask — just invoke the skill and continue with the user's current work."
 fi

@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.8.1 (2026-04-11)
+
+### `/auto-retrospective` friction fixes — truly silent + snooze + less frequent
+
+- **Truly silent auto-triggers** — hook no longer injects AskUserQuestion prompts. When threshold hit, /rrr and /forward run silently without interrupting the user. SKILL.md was already documented as silent; hook now matches.
+- **Default threshold raised** — RRR_INTERVAL: 100k → 150k (less frequent, more breathing room)
+- **New: snooze** — `/auto-rrr snooze 30m` / `1h` / `2h` temporarily disables auto-triggers without fully turning off. Status line shows `auto:snoozed`.
+- **Why**: Nat flagged auto-rrr as "kind of annoying". Root causes were hook violating its own silent contract + 100k firing mid-thought + no way to temporarily mute during deep focus.
+
+---
+
 ## v3.8.0 (2026-04-11)
 
 ### Stabilized — alpha.1 + alpha.2 + alpha.3 promoted to stable

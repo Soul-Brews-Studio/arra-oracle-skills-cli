@@ -23,27 +23,47 @@ disable-model-invocation: true
 
 ---
 
+## CLI Detection
+
+Before running any command, detect the CLI path. It may not be in `$PATH` on all machines.
+
+```bash
+# Try in order: global binary, bun global, bunx fallback
+if command -v arra-oracle-skills &>/dev/null; then
+  ARRA="arra-oracle-skills"
+elif [ -x "$HOME/.bun/bin/arra-oracle-skills" ]; then
+  ARRA="$HOME/.bun/bin/arra-oracle-skills"
+else
+  # Not installed — use bunx (always works if bun exists)
+  ARRA="$HOME/.bun/bin/bunx --bun arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli"
+fi
+```
+
+Use `$ARRA` for all commands below.
+
+---
+
 ## Execution
 
-Parse the user's `/go` arguments and run the matching `arra-oracle-skills` CLI command.
+Parse the user's `/go` arguments and run the matching `$ARRA` command.
 
 ### `/go` (no args) — show current state
 
 ```bash
-arra-oracle-skills list -g
+$ARRA list -g
 ```
 
 ### `/go <profile>` — switch profile
 
 ```bash
-arra-oracle-skills install -g --profile <name> -y
+$ARRA install -g --profile <name> -y
 ```
 
 Profiles: `standard`, `full`, `lab`
 
-- `/go standard` → `arra-oracle-skills install -g --profile standard -y`
-- `/go full` → `arra-oracle-skills install -g --profile full -y`
-- `/go lab` → `arra-oracle-skills install -g --profile lab -y`
+- `/go standard` → `$ARRA install -g --profile standard -y`
+- `/go full` → `$ARRA install -g --profile full -y`
+- `/go lab` → `$ARRA install -g --profile lab -y`
 
 ### `/go cleanup` — fresh install (safe)
 
@@ -165,7 +185,7 @@ Proceed with cleanup?
 
 ```bash
 # Uninstall arra-managed via CLI
-arra-oracle-skills uninstall -g -y
+$ARRA uninstall -g -y
 
 # For each conflict skill: rename to .bak (Nothing is Deleted)
 for name in [conflicting skills]; do
@@ -195,18 +215,18 @@ LATEST=$(curl -s https://api.github.com/repos/Soul-Brews-Studio/arra-oracle-skil
 ### `/go enable <skill...>` — enable specific skills
 
 ```bash
-arra-oracle-skills install -g -s <skill...> -y
+$ARRA install -g -s <skill...> -y
 ```
 
-- `/go enable trace dig` → `arra-oracle-skills install -g -s trace dig -y`
+- `/go enable trace dig` → `$ARRA install -g -s trace dig -y`
 
 ### `/go disable <skill...>` — disable specific skills
 
 ```bash
-arra-oracle-skills uninstall -g -s <skill...> -y
+$ARRA uninstall -g -s <skill...> -y
 ```
 
-- `/go disable watch` → `arra-oracle-skills uninstall -g -s watch -y`
+- `/go disable watch` → `$ARRA uninstall -g -s watch -y`
 
 ---
 

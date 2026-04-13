@@ -2,7 +2,7 @@
 name: release
 description: 'Automated release flow — bump version, changelog, tag, push, GitHub release. Use when user says "release", "ship", "bump version", "tag", or "publish".'
 argument-hint: "<patch|minor|major> [--dry-run | --alpha | --no-push]"
-secret: true
+
 ---
 
 # /release — Automated Release Flow

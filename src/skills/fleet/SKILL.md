@@ -2,7 +2,7 @@
 name: fleet
 description: 'Deep fleet census — discover all oracles across all nodes, collect versions, skills, status. Use when user says "fleet", "census", "all oracles", "fleet status", or wants a complete picture of the oracle network.'
 argument-hint: "[--quick | --deep | --diff | --map]"
-secret: true
+
 ---
 
 # /fleet — Deep Fleet Census

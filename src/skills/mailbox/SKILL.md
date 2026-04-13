@@ -2,7 +2,7 @@
 name: mailbox
 description: 'Persistent agent mailbox — store findings, standing orders, and context for team agents across sessions. Use when user says "mailbox", "agent memory", "standing orders", "what did scout find", or wants to manage persistent agent knowledge.'
 argument-hint: "[read <agent> | write <agent> | orders <agent> | list | load <agent>]"
-secret: true
+
 ---
 
 # /mailbox — Persistent Agent Memory

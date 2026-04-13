@@ -2,7 +2,7 @@
 name: harden
 description: 'Audit Oracle configuration for safety, governance, and hardening. Use when user says "harden", "audit", "security check", "governance", or wants to verify oracle setup.'
 argument-hint: "[--full | --secrets | --rules | --fix]"
-secret: true
+
 ---
 
 # /harden — Oracle Governance Audit

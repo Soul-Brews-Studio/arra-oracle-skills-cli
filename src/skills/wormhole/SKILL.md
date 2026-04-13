@@ -2,7 +2,7 @@
 name: wormhole
 description: 'Federated query proxy — ask questions across oracle nodes without moving data. Use when user says "wormhole", "ask another node", "federated query", "cross-node", or wants to query remote oracles.'
 argument-hint: "<node>:<agent> <question> [--raw | --deep]"
-secret: true
+
 ---
 
 # /wormhole — Federated Query Proxy

@@ -3,10 +3,11 @@ import { profiles, labOnly, resolveProfile } from "../src/profiles";
 
 const ALL_SKILLS = [
   "about-oracle", "auto-retrospective", "awaken", "bampenpien", "contacts", "create-shortcut",
-  "dig", "dream", "feel", "forward", "go", "i-believed", "inbox", "incubate", "learn",
-  "machines", "oracle-family-scan", "oracle-soul-sync-update", "philosophy", "project", "recap",
-  "resonance", "rrr", "schedule", "standup", "talk-to", "team-agents", "trace",
-  "vault", "where-we-are", "who-are-you", "xray",
+  "dig", "dream", "feel", "fleet", "forward", "go", "harden", "i-believed", "inbox", "incubate",
+  "learn", "machines", "mailbox", "morpheus", "oracle-family-scan", "oracle-soul-sync-update",
+  "philosophy", "project", "recap", "release", "resonance", "rrr", "schedule", "standup",
+  "talk-to", "team-agents", "trace", "vault", "warp", "watch", "where-we-are", "who-are-you",
+  "wormhole", "xray",
 ];
 
 describe("profiles", () => {
@@ -36,17 +37,16 @@ describe("profiles", () => {
     expect(profiles.standard.include).not.toContain("feel");
   });
 
-  it("labOnly contains bampenpien, contacts, dream, feel, i-believed, inbox, machines, schedule, team-agents, vault", () => {
-    expect(labOnly).toContain("bampenpien");
-    expect(labOnly).toContain("contacts");
-    expect(labOnly).toContain("dream");
-    expect(labOnly).toContain("feel");
-    expect(labOnly).toContain("i-believed");
-    expect(labOnly).toContain("inbox");
-    expect(labOnly).toContain("machines");
-    expect(labOnly).toContain("schedule");
-    expect(labOnly).toContain("team-agents");
-    expect(labOnly).toContain("vault");
+  it("labOnly contains all experimental skills (18)", () => {
+    const expected = [
+      "bampenpien", "contacts", "dream", "feel", "fleet", "harden",
+      "i-believed", "inbox", "machines", "mailbox", "morpheus",
+      "release", "schedule", "team-agents", "vault", "warp", "watch", "wormhole",
+    ];
+    expect(labOnly).toHaveLength(expected.length);
+    for (const name of expected) {
+      expect(labOnly).toContain(name);
+    }
   });
 });
 

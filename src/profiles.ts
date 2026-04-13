@@ -20,6 +20,15 @@ export const LAB_SKILLS = [
   'release', 'schedule', 'team-agents', 'vault', 'warp', 'watch', 'worktree', 'wormhole',
 ] as const;
 
+/** Zombie skills — internal development candidates from arra-symbiosis-skills.
+ *  Excluded from ALL profiles. Install by name only: `arra install -s workon`
+ *  These are dormant — available for development, not for users. */
+export const ZOMBIE_SKILLS = [
+  'alpha-feature', 'birth', 'deep-research', 'gemini', 'handover',
+  'list-issues-pr-pulse', 'mine', 'new-issue', 'oracle-manage',
+  'speak', 'what-we-done', 'whats-next', 'workon',
+] as const;
+
 // Backwards-compatible aliases
 export const labOnly = [...LAB_SKILLS] as string[];
 
@@ -35,28 +44,29 @@ export const profiles: Record<string, { include?: string[]; exclude?: string[] }
 
 /**
  * Resolve a profile to a filtered list of skill names.
- * Returns null for profiles that mean "all skills" (lab) — unless secrets exist.
- * Secret skills are excluded from ALL profiles; install by name only (-s flag).
+ * Returns null for profiles that mean "all skills" (lab) — unless secrets/zombies exist.
+ * Secret and zombie skills are excluded from ALL profiles; install by name only (-s flag).
  */
 export function resolveProfile(
   profileName: string,
   allSkillNames: string[],
-  secretSkillNames?: string[]
+  secretSkillNames?: string[],
+  zombieSkillNames?: string[]
 ): string[] | null {
-  const secrets = new Set(secretSkillNames || []);
+  const excluded = new Set([...(secretSkillNames || []), ...(zombieSkillNames || [])]);
   const profile = profiles[profileName];
   if (!profile) return null;
 
   if (profile.include && profile.include.length > 0) {
-    return profile.include.filter((s) => !secrets.has(s));
+    return profile.include.filter((s) => !excluded.has(s));
   }
 
   if (profile.exclude && profile.exclude.length > 0) {
-    return allSkillNames.filter((s) => !profile.exclude!.includes(s) && !secrets.has(s));
+    return allSkillNames.filter((s) => !profile.exclude!.includes(s) && !excluded.has(s));
   }
 
-  // Empty = all skills (lab) — but still exclude secrets
-  return secretSkillNames && secretSkillNames.length > 0
-    ? allSkillNames.filter((s) => !secrets.has(s))
+  // Empty = all skills (lab) — but still exclude secrets + zombies
+  return excluded.size > 0
+    ? allSkillNames.filter((s) => !excluded.has(s))
     : null;
 }

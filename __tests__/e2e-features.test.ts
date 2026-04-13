@@ -77,8 +77,8 @@ describe("e2e: install with full profile", () => {
     });
 
     const installed = await listSkillDirs(SKILLS_DIR);
-    const secretCount = allSkills.filter(s => s.secret).length;
-    const expectedCount = allSkills.length - labOnly.filter(s => allSkills.some(sk => sk.name === s)).length - secretCount;
+    const excludedCount = allSkills.filter(s => s.secret || s.zombie).length;
+    const expectedCount = allSkills.length - labOnly.filter(s => allSkills.some(sk => sk.name === s)).length - excludedCount;
     expect(installed.length).toBe(expectedCount);
     for (const name of labOnly) {
       expect(installed).not.toContain(name);
@@ -89,7 +89,7 @@ describe("e2e: install with full profile", () => {
 describe("e2e: install with lab profile", () => {
   beforeEach(cleanup);
 
-  it("lab installs all skills", async () => {
+  it("lab installs all skills (excludes secrets + zombies)", async () => {
     const allSkills = await discoverSkills();
     await installSkills([TEST_AGENT], {
       global: true,
@@ -98,8 +98,8 @@ describe("e2e: install with lab profile", () => {
     });
 
     const installed = await listSkillDirs(SKILLS_DIR);
-    const secretCount = allSkills.filter(s => s.secret).length;
-    expect(installed.length).toBe(allSkills.length - secretCount);
+    const excludedCount = allSkills.filter(s => s.secret || s.zombie).length;
+    expect(installed.length).toBe(allSkills.length - excludedCount);
   });
 });
 
@@ -116,8 +116,8 @@ describe("e2e: profile switch (full → standard)", () => {
 
     const allSkills = await discoverSkills();
     let installed = await listSkillDirs(SKILLS_DIR);
-    const secretCount = allSkills.filter(s => s.secret).length;
-    const fullCount = allSkills.length - labOnly.filter(s => allSkills.some(sk => sk.name === s)).length - secretCount;
+    const excludedCount = allSkills.filter(s => s.secret || s.zombie).length;
+    const fullCount = allSkills.length - labOnly.filter(s => allSkills.some(sk => sk.name === s)).length - excludedCount;
     expect(installed.length).toBe(fullCount);
 
     // Switch to standard

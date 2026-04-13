@@ -30,6 +30,7 @@ if not profiles_path:
 # Read profile constants from profiles.ts
 std_skills = []
 lab_skills = []
+zombie_skills = []
 if profiles_path and os.path.exists(profiles_path):
     with open(profiles_path) as f:
         content = f.read()
@@ -39,9 +40,13 @@ if profiles_path and os.path.exists(profiles_path):
     lab_match = re.search(r'LAB_SKILLS = \[(.*?)\]', content, re.DOTALL)
     if lab_match:
         lab_skills = re.findall(r"'([^']+)'", lab_match.group(1))
+    zombie_match = re.search(r'ZOMBIE_SKILLS = \[(.*?)\]', content, re.DOTALL)
+    if zombie_match:
+        zombie_skills = re.findall(r"'([^']+)'", zombie_match.group(1))
 
 std_set = set(std_skills)
 lab_set = set(lab_skills)
+zombie_set = set(zombie_skills)
 
 # Discover all skills
 all_skills = []
@@ -52,11 +57,14 @@ if os.path.isdir(skills_dir):
             continue
 
         skill_md = os.path.join(skill_dir, 'SKILL.md')
+        if not os.path.exists(skill_md):
+            continue
+
         desc = ''
         skill_type = 'skill'
         hidden = False
 
-        if os.path.exists(skill_md):
+        if True:
             with open(skill_md) as f:
                 content = f.read()
             # Extract description
@@ -72,8 +80,15 @@ if os.path.isdir(skills_dir):
             if re.search(r'hidden:\s*(true|yes)', content, re.IGNORECASE):
                 hidden = True
 
+        # Zombie?
+        zombie = False
+        if re.search(r'zombie:\s*(true|yes)', content if os.path.exists(skill_md) else '', re.IGNORECASE):
+            zombie = True
+
         # Profile tier
-        if name in std_set:
+        if name in zombie_set or zombie:
+            profile = 'zombie'
+        elif name in std_set:
             profile = 'standard'
         elif name in lab_set:
             profile = 'lab'
@@ -86,28 +101,31 @@ if os.path.isdir(skills_dir):
             'type': skill_type,
             'description': desc,
             'hidden': hidden,
+            'zombie': zombie,
             'has_scripts': os.path.isdir(os.path.join(skill_dir, 'scripts')),
         })
 
 # Output
+visible_skills = [s for s in all_skills if s['profile'] != 'zombie']
+zombie_only = [s for s in all_skills if s['profile'] == 'zombie']
+
 if '--json' in sys.argv:
     print(json.dumps({
         'total': len(all_skills),
+        'visible': len(visible_skills),
         'standard': len(std_skills),
-        'full': len(all_skills) - len(lab_skills),
-        'lab': len(all_skills),
+        'full': len(visible_skills) - len(lab_skills),
+        'lab': len(visible_skills),
+        'zombie': len(zombie_only),
         'skills': all_skills,
     }, indent=2))
 else:
-    std_count = sum(1 for s in all_skills if s['profile'] == 'standard')
-    full_count = sum(1 for s in all_skills if s['profile'] in ('standard', 'full'))
-
     full_only = [s for s in all_skills if s['profile'] == 'full']
     lab_only = [s for s in all_skills if s['profile'] == 'lab']
     std_only = [s for s in all_skills if s['profile'] == 'standard']
 
     print()
-    print(f'📦 Oracle Skills — {len(all_skills)} total')
+    print(f'📦 Oracle Skills — {len(visible_skills)} skills ({len(zombie_only)} zombie)')
     print()
 
     # Standard
@@ -131,6 +149,17 @@ else:
         scripts = ' ✓' if s['has_scripts'] else ''
         print(f"     /{s['name']:24s} {s['type']:12s}{scripts}")
 
+    # Zombie (only show with --zombie flag)
+    if '--zombie' in sys.argv and zombie_only:
+        print()
+        print(f'  ── Zombie ({len(zombie_only)}) ── internal only ───────────────────')
+        for s in zombie_only:
+            scripts = ' ✓' if s['has_scripts'] else ''
+            print(f"     /{s['name']:24s} {s['type']:12s}{scripts} [zombie]")
+    elif zombie_only:
+        print()
+        print(f'  + {len(zombie_only)} zombie skills (internal dev — use --zombie to show)')
+
     print()
-    print(f'  standard={len(std_only)} | full={len(std_only)+len(full_only)} | lab={len(all_skills)}')
+    print(f'  standard={len(std_only)} | full={len(std_only)+len(full_only)} | lab={len(visible_skills)} | zombie={len(zombie_only)}')
     print()

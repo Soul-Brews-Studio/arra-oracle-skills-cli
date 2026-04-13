@@ -64,12 +64,14 @@ export async function discoverSkills(): Promise<Skill[]> {
         const descMatch = skillMd.match(/description:\s*(.+)/);
         const hiddenMatch = skillMd.match(/hidden:\s*(true|yes)/i);
         const secretMatch = skillMd.match(/secret:\s*(true|yes)/i);
+        const zombieMatch = skillMd.match(/zombie:\s*(true|yes)/i);
         skills.push({
           name,
           description: descMatch?.[1]?.trim() || '',
           path: `vfs://${name}`, // Virtual path marker
           ...(hiddenMatch ? { hidden: true } : {}),
           ...(secretMatch ? { secret: true } : {}),
+          ...(zombieMatch ? { zombie: true } : {}),
         });
       }
     }
@@ -92,12 +94,14 @@ export async function discoverSkills(): Promise<Skill[]> {
       const descMatch = content.match(/description:\s*(.+)/);
       const hiddenMatch = content.match(/hidden:\s*(true|yes)/i);
       const secretMatch = content.match(/secret:\s*(true|yes)/i);
+      const zombieMatch = content.match(/zombie:\s*(true|yes)/i);
       skills.push({
         name,
         description: descMatch?.[1]?.trim() || '',
         path: join(skillsPath, name),
         ...(hiddenMatch ? { hidden: true } : {}),
         ...(secretMatch ? { secret: true } : {}),
+        ...(zombieMatch ? { zombie: true } : {}),
       });
     }
   }

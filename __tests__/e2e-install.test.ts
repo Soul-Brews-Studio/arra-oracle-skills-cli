@@ -147,14 +147,14 @@ describe("e2e: install full profile", () => {
     });
 
     const installed = await listSkillDirs(SKILLS_DIR);
-    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret);
+    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret && !s.zombie);
     expect(installed.length).toBe(fullSkills.length);
   });
 
   it("every full-profile skill has a directory", async () => {
     const allSkills = await discoverSkills();
     const installed = await listSkillDirs(SKILLS_DIR);
-    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret);
+    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret && !s.zombie);
 
     for (const skill of fullSkills) {
       expect(installed).toContain(skill.name);
@@ -251,7 +251,7 @@ describe("e2e: profile switch (full → standard)", () => {
     });
 
     const allSkills = await discoverSkills();
-    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret);
+    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret && !s.zombie);
     let skills = await listSkillDirs(SKILLS_DIR);
     expect(skills.length).toBe(fullSkills.length);
 

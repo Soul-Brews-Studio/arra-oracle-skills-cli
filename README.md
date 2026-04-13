@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-42 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+55 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -44,41 +44,54 @@ npx arra-oracle-skills@3.9.0-alpha.2 install -g -y --agent claude-code codex ope
 | 6 | **recap** | skill + code | Session orientation and awareness |
 | 7 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
 | - |  |  |  |
-| 8 | **auto-retrospective** | skill | Configure auto-rrr |
-| 9 | **awaken** | skill | "Guided Oracle birth and awakening ritual |
-| 10 | **bampenpien** | skill | "บำเพ็ญเพียร |
-| 11 | **contacts** | skill | Manage Oracle contacts |
-| 12 | **create-shortcut** | skill | Create local skills as shortcuts |
-| 13 | **dig** | skill | Mine Claude Code sessions |
-| 14 | **dream** | skill | "Cross-repo pattern discovery |
-| 15 | **feel** | skill | "Capture how the system feels |
-| 16 | **fleet** | skill | 'Deep fleet census |
-| 17 | **forward** | skill | Create handoff + enter plan mode for next |
-| 18 | **go** | skill | Switch skill profiles (standard/full/lab) |
-| 19 | **harden** | skill | 'Audit Oracle configuration for safety |
-| 20 | **i-believed** | skill | "Declare belief |
-| 21 | **inbox** | skill | Read and write to Oracle inbox |
-| 22 | **incubate** | skill | Clone or create repos for active development |
-| 23 | **machines** | skill | 'Fleet machines |
-| 24 | **mailbox** | skill | 'Persistent agent mailbox |
-| 25 | **morpheus** | skill | 'Speculative dreaming |
-| 26 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 27 | **philosophy** | skill | Display Oracle philosophy |
-| 28 | **release** | skill | 'Automated release flow |
-| 29 | **resonance** | skill | Capture a resonance moment |
-| 30 | **skills-list** | skill | 'List all Oracle skills |
-| 31 | **standup** | skill | Daily standup check |
-| 32 | **talk-to** | skill | Talk to another Oracle agent |
-| 33 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 34 | **trace** | skill | Find projects, code |
-| 35 | **vault** | skill | Connect external knowledge bases (Obsidian |
-| 36 | **warp** | skill | 'Teleport to a remote oracle node |
-| 37 | **watch** | skill | 'Extract YouTube video transcripts |
-| 38 | **where-we-are** | skill | Session awareness |
-| 39 | **who-are-you** | skill | Know ourselves |
-| 40 | **worktree** | skill | 'Work in an isolated git worktree |
-| 41 | **wormhole** | skill | 'Federated query proxy |
-| 42 | **xray** | skill | X-ray deep scan |
+| 8 | **alpha-feature** | skill | 'Full skill development pipeline |
+| 9 | **auto-retrospective** | skill | Configure auto-rrr |
+| 10 | **awaken** | skill | "Guided Oracle birth and awakening ritual |
+| 11 | **bampenpien** | skill | "บำเพ็ญเพียร |
+| 12 | **birth** | skill | 'Prepare Oracle birth props for a new repo |
+| 13 | **contacts** | skill | Manage Oracle contacts |
+| 14 | **create-shortcut** | skill | Create local skills as shortcuts |
+| 15 | **deep-research** | skill | 'Deep Research via Gemini |
+| 16 | **dig** | skill | Mine Claude Code sessions |
+| 17 | **dream** | skill | "Cross-repo pattern discovery |
+| 18 | **feel** | skill | "Capture how the system feels |
+| 19 | **fleet** | skill | 'Deep fleet census |
+| 20 | **forward** | skill | Create handoff + enter plan mode for next |
+| 21 | **gemini** | skill | 'Control Gemini browser tab |
+| 22 | **go** | skill | Switch skill profiles (standard/full/lab) |
+| 23 | **handover** | skill | 'Transfer work to another Oracle |
+| 24 | **harden** | skill | 'Audit Oracle configuration for safety |
+| 25 | **i-believed** | skill | "Declare belief |
+| 26 | **inbox** | skill | Read and write to Oracle inbox |
+| 27 | **incubate** | skill | Clone or create repos for active development |
+| 28 | **list-issues-pr-pulse** | skill | 'Open issues, PRs |
+| 29 | **machines** | skill | 'Fleet machines |
+| 30 | **mailbox** | skill | 'Persistent agent mailbox |
+| 31 | **mine** | skill | 'Extract a specific topic from a single |
+| 32 | **morpheus** | skill | 'Speculative dreaming |
+| 33 | **new-issue** | skill | 'Quick GitHub issue creation |
+| 34 | **oracle-manage** | skill | 'Skill and profile management |
+| 35 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 36 | **philosophy** | skill | Display Oracle philosophy |
+| 37 | **release** | skill | 'Automated release flow |
+| 38 | **resonance** | skill | Capture a resonance moment |
+| 39 | **skills-list** | skill | 'List all Oracle skills |
+| 40 | **speak** | skill | 'Text-to-speech using edge-tts neural voices |
+| 41 | **standup** | skill | Daily standup check |
+| 42 | **talk-to** | skill | Talk to another Oracle agent |
+| 43 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 44 | **trace** | skill | Find projects, code |
+| 45 | **vault** | skill | Connect external knowledge bases (Obsidian |
+| 46 | **warp** | skill | 'Teleport to a remote oracle node |
+| 47 | **watch** | skill | 'Extract YouTube video transcripts |
+| 48 | **what-we-done** | skill | 'Facts-only progress report |
+| 49 | **whats-next** | skill | 'Smart action suggestions |
+| 50 | **where-we-are** | skill | Session awareness |
+| 51 | **who-are-you** | skill | Know ourselves |
+| 52 | **workon** | skill | 'Work on a GitHub issue |
+| 53 | **worktree** | skill | 'Work in an isolated git worktree |
+| 54 | **wormhole** | skill | 'Federated query proxy |
+| 55 | **xray** | skill | X-ray deep scan |
 
 <!-- skills:end -->
 
@@ -89,8 +102,8 @@ npx arra-oracle-skills@3.9.0-alpha.2 install -g -y --agent claude-code codex ope
 | Profile | Count | Skills |
 |---------|-------|--------|
 | **standard** | 16 | `about-oracle`, `awaken`, `create-shortcut`, `dig`, `forward`, `go`, `learn`, `oracle-family-scan`, `oracle-soul-sync-update`, `recap`, `rrr`, `skills-list`, `standup`, `talk-to`, `trace`, `xray` |
-| **full** | 42 | all |
-| **lab** | 42 | all |
+| **full** | 55 | all |
+| **lab** | 55 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

@@ -47,7 +47,7 @@ export async function listSkills(): Promise<void> {
   p.log.info(`Found ${skills.length} skills:\n`);
 
   for (const skill of skills) {
-    const tag = skill.hidden ? ' (hidden)' : '';
+    const tag = skill.hidden ? ' (hidden)' : skill.zombie ? ' (zombie)' : '';
     console.log(`  ${skill.name}${tag}`);
     if (skill.description) {
       console.log(`    ${skill.description}\n`);
@@ -73,7 +73,8 @@ export async function installSkills(
   if (options.profile) {
     const allNames = allSkills.map((s) => s.name);
     const secretNames = allSkills.filter((s) => s.secret).map((s) => s.name);
-    profileSkillNames = resolveProfile(options.profile, allNames, secretNames);
+    const zombieNames = allSkills.filter((s) => s.zombie).map((s) => s.name);
+    profileSkillNames = resolveProfile(options.profile, allNames, secretNames, zombieNames);
 
     if (profileSkillNames) {
       const extras = options.skills || [];

@@ -132,6 +132,28 @@ ln -sf "$GHQ_ROOT/github.com/$OWNER/$REPO" "$ROOT/ψ/incubate/$OWNER/$REPO/origi
 echo "$OWNER/$REPO" >> "$ROOT/ψ/incubate/.origins"
 sort -u -o "$ROOT/ψ/incubate/.origins" "$ROOT/ψ/incubate/.origins"
 
+# Drop breadcrumb — INCUBATED_BY links repo back to owning oracle
+ORACLE_NAME=$(grep -m1 '^## Identity' "$ROOT/CLAUDE.md" -A5 2>/dev/null | grep '^\*\*I am\*\*' | sed 's/.*: //' | head -1)
+[ -z "$ORACLE_NAME" ] && ORACLE_NAME=$(basename "$ROOT")
+TARGET_DIR="$GHQ_ROOT/github.com/$OWNER/$REPO"
+mkdir -p "$TARGET_DIR/.claude"
+{
+  echo "oracle: $ORACLE_NAME"
+  echo "path: $ROOT"
+  echo "incubated: $(date +%Y-%m-%d)"
+  # Check if we learned from this repo's upstream
+  LEARNED=$(find "$ROOT/ψ/learn" -name "origin" -type l 2>/dev/null | while read l; do
+    readlink "$l" | grep -qi "$REPO" && dirname "$l" | sed "s|$ROOT/ψ/learn/||" && break
+  done)
+  [ -n "$LEARNED" ] && echo "learned-from: $LEARNED"
+  # Check for copyleft license
+  if [ -f "$TARGET_DIR/LICENSE" ]; then
+    LIC=$(head -5 "$TARGET_DIR/LICENSE" | tr '\n' ' ' | grep -oEi '(AGPL|GPL)' | head -1)
+    [ -n "$LIC" ] && echo "license-warning: $LIC — clean-room only, no code copying"
+  fi
+} > "$TARGET_DIR/.claude/INCUBATED_BY"
+echo "✓ Breadcrumb: $TARGET_DIR/.claude/INCUBATED_BY"
+
 echo "✓ Ready: $ROOT/ψ/incubate/$OWNER/$REPO/origin → source"
 ```
 

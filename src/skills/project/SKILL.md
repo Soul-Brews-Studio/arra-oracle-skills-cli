@@ -46,6 +46,16 @@ ln -sf "$GHQ_ROOT/github.com/owner/repo" ψ/learn/owner/repo
 > If the user says `/project incubate [args]`, run `/incubate [args]` instead.
 > Do NOT execute incubate logic here — invoke the standalone `/incubate` skill with the same arguments.
 
+### workon [repo-name]
+
+Warp into an incubated repo's context. Shows status, provenance (INCUBATED_BY), license warnings, hub file, recent commits.
+
+```bash
+bash .claude/skills/project/scripts/workon.sh [repo-name]
+```
+
+After running, read the target repo's CLAUDE.md and hub file to fully load context. Then work on files at `ψ/incubate/<owner>/<repo>/origin/`.
+
 ### find [query]
 
 Search for project across all locations:

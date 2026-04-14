@@ -15,7 +15,7 @@ export const STANDARD_SKILLS = [
 
 /** Lab-only skills — experimental, not in standard or full */
 export const LAB_SKILLS = [
-  'bampenpien', 'contacts', 'dream', 'feel', 'fleet', 'harden',
+  'bampenpien', 'bud', 'contacts', 'dream', 'feel', 'fleet', 'harden',
   'i-believed', 'inbox', 'machines', 'mailbox', 'morpheus',
   'release', 'schedule', 'team-agents', 'vault', 'warp', 'watch', 'worktree', 'wormhole',
 ] as const;

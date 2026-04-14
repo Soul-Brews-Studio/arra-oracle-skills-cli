@@ -45,7 +45,7 @@ fi
 Delegate to `maw bud` — it handles all 8 steps (repo, ψ/, CLAUDE.md, fleet config, soul-sync, commit, wake):
 
 ```bash
-$MAW bud "$NAME" ${FROM:+--from "$FROM"} ${ORG:+--org "$ORG"} ${NOTE:+--note "$NOTE"} ${DRY_RUN:+--dry-run}
+$MAW bud "$NAME" ${FROM:+--from "$FROM"} ${ORG:+--org "$ORG"} ${NOTE:+--note "$NOTE"} ${SPLIT:+--split} ${DRY_RUN:+--dry-run}
 ```
 
 ### If --birth flag
@@ -73,16 +73,17 @@ This sends `/birth` as the new oracle's first message — creates Issue #1 with 
 
 ### If --split flag (watch the child being born)
 
-After bud completes, split the current tmux pane and show the child:
+With maw: `--split` is handled natively by `maw bud` (commit a8ffce9). It uses `hostExec` + `listSessions()` to resolve the child session and split the pane. No raw tmux needed.
+
+Without maw (standalone fallback):
 
 ```bash
 # Check if in tmux
 if [ -n "$TMUX" ]; then
-  # Split pane horizontally — child appears on the right
-  tmux split-window -h -l 50% "cd $(ghq root)/github.com/${ORG}/${NAME}-oracle && claude"
+  tmux split-window -h -l 50% "cd $TARGET && claude"
   echo "✓ Split — child oracle visible on the right pane"
 else
-  echo "⚠️ Not in tmux — --split requires tmux. Child is running in its own window."
+  echo "⚠️ Not in tmux — --split requires tmux."
 fi
 ```
 

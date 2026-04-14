@@ -24,6 +24,8 @@ Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`:
 
 Without this flag, TeamCreate/SendMessage/TaskList tools don't exist. Fall back to parallel subagents (fire-and-forget) if unavailable.
 
+**Note**: The swarm killswitch gate is `tengu_amber_flint` (GrowthBook). If swarms stop working, this gate was flipped.
+
 ## Usage
 
 ```
@@ -57,7 +59,7 @@ Without this flag, TeamCreate/SendMessage/TaskList tools don't exist. Fall back 
 | `--manual` | Human controls agents via lead relay |
 | `--worktree` | Each agent gets its own git worktree + branch |
 | `--panes` | Peek at tmux panes |
-| `--plan` | Show team design, wait for approval |
+| `--plan` | Show team design, wait for approval. NOTE: `plan_mode_required` on agents forces plan generation but plans are AUTO-APPROVED by the leader's inbox poller — this is a generation gate, not a human review gate |
 | `--roles N` | Override default agent count |
 | `--model X` | Override default model (sonnet/opus/haiku) |
 
@@ -74,6 +76,34 @@ Without this flag, TeamCreate/SendMessage/TaskList tools don't exist. Fall back 
 | **Cross-Oracle** | Inter-session, multi-repo | /talk-to + contacts | Persistent — maw/thread/inbox |
 
 **Rule**: If the task can be done with 2 independent subagents, DON'T use team-agents. Use this for tasks that need coordination — where Agent B's work depends on Agent A's findings, or where a lead needs to compile structured reports.
+
+### How the Base System Works (from source)
+
+Understanding what Claude Code provides vs what we add:
+
+**What the base system provides:**
+- Mailbox: JSON files at `~/.claude/teams/{team}/inboxes/{agent}.json` with file locking
+- 10 structured message types (permission, shutdown, plan approval, sandbox, mode set, team permission update)
+- Permission escalation: worker→leader→user via ToolUseConfirmQueue
+- Auto-resume: SendMessage to a stopped agent wakes it up from disk transcript
+- Task self-claim: idle in-process agents auto-grab unclaimed tasks from team task list
+- Deterministic IDs: `name@team` format (not random UUIDs)
+- Plan auto-approval: leader's inbox poller auto-approves teammate plans (NOT human review)
+- Session resume: teams from prior sessions can resume; this-session teams auto-clean on exit
+
+**What the base system does NOT provide (we add these):**
+- Heartbeat protocol (PROGRESS/STUCK/DONE/ABORT) — the base system has NO progress reporting
+- Presence dots (7 states) — the base `teammatePromptAddendum.ts` only says "use SendMessage"
+- Ghost agent detection — `isActive()` always returns true for tmux agents (bug #220)
+- Structured task handoff between agents
+- "Agent X should help Agent Y" coordination
+
+**Key architecture facts:**
+- Message priority: shutdown > leader > peer > FIFO (leader messages aren't starved)
+- Structured messages CANNOT broadcast (`to: "*"` rejects them)
+- Two abort controllers per agent: lifecycle (kills teammate) vs work (Escape stops current turn only)
+- Pane creation uses a Promise-chain mutex (sequential, not parallel)
+- 50-message UI cap per agent (from a 36.8GB whale session incident with 292 agents)
 
 ---
 
@@ -242,8 +272,10 @@ Lead waits for SendMessage reports from all teammates. Expected time: 60-120 sec
 **If a teammate crashes**:
 1. Check TaskList — is their task still `in_progress`?
 2. SendMessage to the agent: "status check — are you still working?"
-3. If no response after 30s: lead does the work manually
-4. Note in final output: "Agent [role] crashed — lead completed manually"
+   - NOTE: SendMessage to a stopped agent AUTO-RESUMES it from disk transcript. The agent wakes up with your message as its new prompt. This is built into the base system (SendMessageTool.ts).
+3. If no response after 60s: the agent is likely dead (ghost). `isActive()` in the base system always returns `true` for tmux agents (bug #220), so you can't detect this via the API. Check the tmux pane directly.
+4. If truly dead: lead does the work manually
+5. Note in final output: "Agent [role] crashed — lead completed manually"
 
 ---
 
@@ -325,8 +357,18 @@ bash ~/.claude/skills/team-agents/scripts/cleanup.sh    # safe — idle only
 bash ~/.claude/skills/team-agents/scripts/killshot.sh    # nuclear — all panes
 ```
 
-**Never skip shutdown** — TeamDelete fails if agents are still active.
-**Never broadcast shutdown** — use sequential sends, one per agent.
+**Never skip shutdown** — TeamDelete fails if agents are still active (`isActive !== false` check).
+**Never broadcast shutdown** — structured messages CANNOT broadcast (`to: "*"` returns error). Use sequential sends.
+**Session cleanup** — Teams created THIS session auto-clean on exit (gh-32730). Teams from PRIOR sessions persist and can resume. TeamDelete before exit preserves the team for future resume (counterintuitive but correct).
+
+### What Happens During Shutdown (from source)
+
+1. Leader sends `shutdown_request` to agent's mailbox
+2. Agent's model decides to approve or reject (the model, not the system)
+3. On approve: agent sends `shutdown_approved` with `paneId` + `backendType`
+4. Leader's `useInboxPoller` receives → kills pane → removes from team file → unassigns tasks → sends `teammate_terminated` system message
+5. For tmux agents: `gracefulShutdown(0, 'other')` fires on next tick (not synchronous — approval message sends first)
+6. For in-process agents: AbortController is signaled, one-shot listener kills pane
 
 ---
 

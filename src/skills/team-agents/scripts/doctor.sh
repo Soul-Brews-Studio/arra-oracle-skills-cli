@@ -78,23 +78,33 @@ else
 fi
 
 # 2. Check orphaned worktrees
+# Uses `git worktree list --porcelain` as source of truth — catches stale
+# registrations even if the directory was manually deleted. Covers both
+# team-agents worktree patterns: agents/* and .claude/worktrees/* (#336).
 echo "  Worktrees:"
 ORPHAN_WTS=0
 for repo in ~/Code/github.com/Soul-Brews-Studio/*/; do
-  WT_DIR="$repo/.claude/worktrees"
-  if [ -d "$WT_DIR" ]; then
-    for wt in "$WT_DIR"/*/; do
-      [ -d "$wt" ] || continue
-      name=$(basename "$wt")
-      echo "    ⚠️ Orphaned: $(basename "$repo")/.claude/worktrees/$name"
-      ORPHAN_WTS=$((ORPHAN_WTS + 1))
+  [ -d "$repo/.git" ] || [ -f "$repo/.git" ] || continue
+  REPO_ROOT=$(git -C "$repo" rev-parse --show-toplevel 2>/dev/null) || continue
+  MAIN_WT="$REPO_ROOT"
 
-      if [ "$FIX" = true ]; then
-        cd "$repo" && git worktree remove "$wt" --force 2>/dev/null
-        echo "       → Removed worktree"
-      fi
-    done
-  fi
+  while IFS= read -r line; do
+    [ "${line:0:9}" = "worktree " ] || continue
+    WT_PATH="${line:9}"
+    [ "$WT_PATH" = "$MAIN_WT" ] && continue
+    REL="${WT_PATH#$MAIN_WT/}"
+    case "$REL" in
+      agents/*|.claude/worktrees/*)
+        echo "    ⚠️ Orphaned: $(basename "$REPO_ROOT")/$REL"
+        ORPHAN_WTS=$((ORPHAN_WTS + 1))
+        if [ "$FIX" = true ]; then
+          git -C "$REPO_ROOT" worktree remove --force "$WT_PATH" 2>/dev/null \
+            && echo "       → Removed worktree" \
+            || echo "       → Failed to remove (try manually)"
+        fi
+        ;;
+    esac
+  done < <(git -C "$REPO_ROOT" worktree list --porcelain 2>/dev/null)
 done
 [ "$ORPHAN_WTS" -eq 0 ] && echo "    ✅ No orphaned worktrees"
 

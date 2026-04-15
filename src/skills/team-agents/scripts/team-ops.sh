@@ -35,6 +35,10 @@ case "$CMD" in
     bash "$SCRIPT_DIR/shutdown-skills.sh" "$@"
     ;;
 
+  shutdown-worktrees|sweep-worktrees)
+    bash "$SCRIPT_DIR/shutdown-worktrees.sh" "$@"
+    ;;
+
   cleanup|sweep)
     bash "$SCRIPT_DIR/cleanup.sh" "$@"
     ;;
@@ -129,6 +133,7 @@ print(', '.join(m['name'] for m in config.get('members', [])))
     echo "    panes [team]                  👁 Peek at tmux panes"
     echo "    spawn-skills <team> <agents>  🔧 Create /agent skills"
     echo "    shutdown-skills <team> <agents> 📦 Archive skills to /tmp"
+    echo "    shutdown-worktrees [repo]     🌳 Remove agent worktrees (#336)"
     echo "    cleanup [--dry-run]           🧹 Kill idle panes (safe)"
     echo "    killshot                      💀 Kill ALL non-lead panes"
     echo "    doctor [--fix]                🩺 Detect ghosts + orphans"

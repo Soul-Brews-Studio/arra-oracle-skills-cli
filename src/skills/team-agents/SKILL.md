@@ -336,7 +336,7 @@ SendMessage({ to: "testing", message: { type: "shutdown_request" } })
 TeamDelete()
 ```
 
-**After shutdown, archive agent findings to persistent mailbox + skills to /tmp:**
+**After shutdown, archive agent findings to persistent mailbox + skills to /tmp + sweep worktrees:**
 
 ```bash
 # 1. Archive each agent's findings to persistent mailbox (ψ/memory/mailbox/)
@@ -346,7 +346,17 @@ done
 
 # 2. Archive ephemeral skills to /tmp (Nothing is Deleted)
 bash ~/.claude/skills/team-agents/scripts/shutdown-skills.sh pr-review security performance testing
+
+# 3. Sweep agent worktrees (#336 — root-cause fix)
+#    TeamDelete usually removes worktrees, but crashes / killed sessions
+#    leave them behind and they pollute subsequent test runs.
+#    ALWAYS run unconditionally — no-op when there's nothing to clean.
+bash ~/.claude/skills/team-agents/scripts/shutdown-worktrees.sh "$REPO_PATH"
 ```
+
+The sweeper matches both worktree patterns used by this skill:
+- `agents/<name>/` — Mode 1 (`--worktree` flag)
+- `.claude/worktrees/<name>/` — Mode 2 (Agent tool `isolation: "worktree"`)
 
 Next time you spawn the same agent name, their mailbox context is auto-loaded into the prompt.
 
@@ -359,6 +369,7 @@ bash ~/.claude/skills/team-agents/scripts/killshot.sh    # nuclear — all panes
 
 **Never skip shutdown** — TeamDelete fails if agents are still active (`isActive !== false` check).
 **Never broadcast shutdown** — structured messages CANNOT broadcast (`to: "*"` returns error). Use sequential sends.
+**Always sweep worktrees** — even if shutdown looked clean, run `shutdown-worktrees.sh`. Previously stale agent worktrees polluted maw-js `bun test` with ~1700 ghost tests (#336).
 **Session cleanup** — Teams created THIS session auto-clean on exit (gh-32730). Teams from PRIOR sessions persist and can resume. TeamDelete before exit preserves the team for future resume (counterintuitive but correct).
 
 ### What Happens During Shutdown (from source)
@@ -912,7 +923,10 @@ Force graceful shutdown of current team:
 SendMessage shutdown_request → all agents
 Wait for responses (10s timeout)
 TeamDelete()
+bash ~/.claude/skills/team-agents/scripts/shutdown-worktrees.sh "$REPO_PATH"  # #336
 ```
+
+The final worktree sweep is defensive — TeamDelete's own cleanup misses crashed/killed sessions.
 
 ---
 

@@ -7,16 +7,17 @@ const ALL_SKILLS = [
   ...LAB_SKILLS,
   ...ZOMBIE_SKILLS,
   // Full/other skills (not standard, not lab-only)
-  "auto-retrospective", "incubate", "philosophy", "project",
-  "resonance", "where-we-are", "who-are-you",
+  "about-oracle", "auto-retrospective", "create-shortcut", "incubate",
+  "oracle-family-scan", "oracle-soul-sync-update", "philosophy", "project",
+  "resonance", "skills-list", "standup", "where-we-are", "who-are-you",
 ].sort();
 
 const ZOMBIE_LIST = [...ZOMBIE_SKILLS] as string[];
 
 describe("profiles", () => {
-  it("standard has 18 skills", () => {
-    expect(STANDARD_SKILLS).toHaveLength(18);
-    expect(profiles.standard.include).toHaveLength(18);
+  it("standard has 12 skills", () => {
+    expect(STANDARD_SKILLS).toHaveLength(12);
+    expect(profiles.standard.include).toHaveLength(12);
   });
 
   it("full excludes lab-only skills", () => {
@@ -32,8 +33,8 @@ describe("profiles", () => {
     expect(STANDARD_SKILLS).toContain("dig");
   });
 
-  it("standard includes create-shortcut", () => {
-    expect(STANDARD_SKILLS).toContain("create-shortcut");
+  it("standard includes team-agents", () => {
+    expect(STANDARD_SKILLS).toContain("team-agents");
   });
 
   it("standard does NOT include dream or feel", () => {
@@ -71,9 +72,9 @@ describe("profiles", () => {
 });
 
 describe("resolveProfile", () => {
-  it("standard returns 18 skills", () => {
+  it("standard returns 12 skills", () => {
     const result = resolveProfile("standard", ALL_SKILLS);
-    expect(result).toHaveLength(18);
+    expect(result).toHaveLength(12);
   });
 
   it("full returns all minus lab-only and zombies", () => {

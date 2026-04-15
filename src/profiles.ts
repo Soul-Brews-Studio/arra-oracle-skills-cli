@@ -1,16 +1,20 @@
 /**
  * Skill profiles — 3 tiers, single source of truth.
  *
- * standard: daily driver (default) — 15 essential skills
+ * standard: daily driver (default) — 13 essential skills (data-driven, session 8)
  * full: all stable skills (excludes lab-only experiments)
  * lab: everything including experimental / bleeding edge
+ *
+ * Profile audit: 120 sessions mined (2026-04-15). Skills earning standard
+ * must have 10+ session appearances. Demoted: about-oracle (5), create-shortcut (6),
+ * oracle-soul-sync-update (6), standup (10), skills-list (3), oracle-family-scan (8).
+ * These move to full (still installable, not lab-gated).
  */
 
 /** Standard profile — daily driver skills (always installed) */
 export const STANDARD_SKILLS = [
-  'about-oracle', 'awaken', 'bud', 'create-shortcut', 'dig', 'forward', 'go',
-  'learn', 'oracle-family-scan', 'oracle-soul-sync-update',
-  'recap', 'rrr', 'skills-list', 'standup', 'talk-to', 'team-agents', 'trace', 'xray',
+  'awaken', 'bud', 'dig', 'forward', 'go',
+  'learn', 'recap', 'rrr', 'talk-to', 'team-agents', 'trace', 'xray',
 ] as const;
 
 /** Lab-only skills — experimental, not in standard or full */

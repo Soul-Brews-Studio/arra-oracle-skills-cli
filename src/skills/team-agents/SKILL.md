@@ -12,7 +12,7 @@ Spin up a coordinated team of agents for any task. Each agent can get its own gi
 
 ## Prerequisites
 
-Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`:
+Requires Claude Code **v2.1.32+** and `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`:
 
 ```json
 {
@@ -24,7 +24,24 @@ Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`:
 
 Without this flag, TeamCreate/SendMessage/TaskList tools don't exist. Fall back to parallel subagents (fire-and-forget) if unavailable.
 
-**Note**: The swarm killswitch gate is `tengu_amber_flint` (GrowthBook). If swarms stop working, this gate was flipped.
+### Display Modes
+
+Agent teams support two display modes:
+
+| Mode | How | When |
+|------|-----|------|
+| **in-process** | All teammates run inside main terminal. `Shift+Down` to cycle through teammates, type to message directly. | Default when not in tmux. Works in any terminal. |
+| **split-pane** | Each teammate gets its own tmux/iTerm2 pane. Click into a pane to interact. | Default when already in tmux. Requires tmux or iTerm2. |
+
+Default is `"auto"` (split-pane if in tmux, in-process otherwise). Override in `~/.claude.json`:
+
+```json
+{ "teammateMode": "in-process" }
+```
+
+Or per-session: `claude --teammate-mode in-process`
+
+**Direct messaging (in-process)**: `Shift+Down` to cycle teammates, type to send. `Enter` to view session, `Escape` to interrupt. `Ctrl+T` to toggle task list.
 
 ## Usage
 
@@ -76,6 +93,62 @@ Without this flag, TeamCreate/SendMessage/TaskList tools don't exist. Fall back 
 | **Cross-Oracle** | Inter-session, multi-repo | /talk-to + contacts | Persistent — maw/thread/inbox |
 
 **Rule**: If the task can be done with 2 independent subagents, DON'T use team-agents. Use this for tasks that need coordination — where Agent B's work depends on Agent A's findings, or where a lead needs to compile structured reports.
+
+### Sizing Guidelines (from official docs)
+
+- **3-5 teammates** for most workflows — balances parallelism with coordination overhead
+- **5-6 tasks per teammate** keeps everyone productive without excessive context switching
+- Token costs scale **linearly** with teammate count — each has its own context window
+- Start with **research and review** tasks before trying parallel implementation
+
+### Subagent Definitions for Teammates
+
+You can reference `.claude/agents/` definitions when spawning teammates. This lets you define a role once (e.g., `security-reviewer`) and reuse it:
+
+```
+Spawn a teammate using the security-reviewer agent type to audit the auth module.
+```
+
+The teammate honors the definition's `tools` allowlist and `model`. Team coordination tools (SendMessage, TaskUpdate, etc.) are always available even when `tools` restricts other tools.
+
+**Note**: `skills` and `mcpServers` frontmatter in subagent definitions are NOT applied to teammates. Teammates load skills/MCP from project and user settings.
+
+### Quality Gate Hooks
+
+Enforce rules when teammates finish work or tasks change state:
+
+| Hook | Fires When | Exit Code 2 = |
+|------|-----------|----------------|
+| `TeammateIdle` | Teammate is about to go idle | Send feedback, keep working |
+| `TaskCreated` | A task is being created | Prevent creation, send feedback |
+| `TaskCompleted` | A task is being marked complete | Prevent completion, send feedback |
+
+Example in `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "TaskCompleted": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "bash ~/scripts/check-task-quality.sh \"$TASK_SUBJECT\""
+      }]
+    }]
+  }
+}
+```
+
+### Task Dependencies
+
+Tasks can depend on other tasks. A pending task with unresolved dependencies cannot be claimed:
+
+```
+TaskUpdate({ taskId: "2", addBlockedBy: ["1"] })  // task 2 waits for task 1
+TaskUpdate({ taskId: "1", addBlocks: ["3"] })      // task 1 blocks task 3
+```
+
+When a teammate completes a blocking task, dependent tasks unblock automatically.
 
 ### How the Base System Works (from source)
 
@@ -1121,6 +1194,21 @@ Readable anytime: `tmux display-message -t <paneId> -p '#{@agent-name}'`
 Arrows fly independently — you aim them and hope they hit. A squad communicates, coordinates, adapts. Use arrows for quick shots. Use a squad when the mission is complex.
 
 The cost is real (~3-7x tokens). The benefit is real (structured coordination, named roles, shared tasks, crash resilience). Choose based on the task, not the novelty.
+
+---
+
+## Known Limitations (from official docs)
+
+| Limitation | Detail |
+|-----------|--------|
+| **No session resume** | `/resume` and `/rewind` do NOT restore in-process teammates. After resume, lead may message dead teammates — spawn new ones. |
+| **Task status lag** | Teammates sometimes fail to mark tasks completed, blocking dependents. Check manually if stuck. |
+| **Slow shutdown** | Teammates finish current request/tool call before shutting down. |
+| **One team per session** | Lead can only manage one team at a time. Clean up before starting another. |
+| **No nested teams** | Teammates cannot spawn their own teams. Only the lead manages the team. |
+| **Lead is fixed** | The session that creates the team is lead for its lifetime. No promotion or transfer. |
+| **Permissions at spawn** | All teammates start with lead's permission mode. Can change individually after spawning, not at spawn time. |
+| **Split panes** | Requires tmux or iTerm2. Not supported in VS Code terminal, Windows Terminal, or Ghostty. |
 
 ---
 

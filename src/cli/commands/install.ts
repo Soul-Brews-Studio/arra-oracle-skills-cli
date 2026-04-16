@@ -12,7 +12,7 @@ export function registerInstall(program: Command, version: string) {
     .option('-g, --global', 'Install to user directory instead of project')
     .option('-a, --agent <agents...>', 'Target specific agents (e.g., claude-code, opencode)')
     .option('-s, --skill <skills...>', 'Install specific skills by name')
-    .option('-p, --profile <name>', 'Install a skill profile (standard, full, lab)', 'standard')
+    .option('-p, --profile <name>', 'Install a skill profile (minimal, standard, full, lab)', 'minimal')
     .option('-l, --list', 'List available skills without installing')
     .option('-y, --yes', 'Skip confirmation prompts')
     .option('--with-commands', 'Also install command stubs to ~/.claude/commands/')

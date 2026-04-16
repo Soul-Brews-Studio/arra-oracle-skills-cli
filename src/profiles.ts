@@ -1,7 +1,7 @@
 /**
  * Skill profiles — 3 tiers, single source of truth.
  *
- * starter: newcomer essentials — 6 skills (lifecycle + trace + upgrade path)
+ * minimal: newcomer essentials — 6 skills (lifecycle + trace + upgrade path)
  * standard: daily driver (default) — 13 essential skills (data-driven, session 8+9)
  * full: all stable skills (excludes lab-only experiments)
  * lab: everything including experimental / bleeding edge
@@ -13,7 +13,7 @@
  */
 
 /** Starter profile — lite lifecycle + trace + upgrade path (Nat's pick, token-optimized) */
-export const STARTER_SKILLS = [
+export const MINIMAL_SKILLS = [
   'about-oracle', 'forward-lite', 'go', 'recap-lite', 'rrr-lite', 'trace',
 ] as const;
 
@@ -43,8 +43,8 @@ export const ZOMBIE_SKILLS = [
 export const labOnly = [...LAB_SKILLS] as string[];
 
 export const profiles: Record<string, { include?: string[]; exclude?: string[] }> = {
-  starter: {
-    include: [...STARTER_SKILLS],
+  minimal: {
+    include: [...MINIMAL_SKILLS],
   },
   standard: {
     include: [...STANDARD_SKILLS],

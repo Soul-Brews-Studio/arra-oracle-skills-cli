@@ -17,22 +17,13 @@ All-in-one skill: `/soul-sync` + `/calibrate` + `/update` combined.
 /oracle-soul-sync-update --cleanup # Uninstall first, then reinstall (removes old skills)
 ```
 
-## Step 0: Timestamp
-```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
-
----
-
-## Step 1: Check Current Version
+## Step 0: Timestamp + Check Current Version
 
 Your current version is shown in the skill description above (e.g., `v1.5.37 G-SKLL`).
 
 Extract just the version number:
 ```bash
-# Current version from this skill's description
-CURRENT="v1.5.37"  # Read from description above
-echo "Current installed: $CURRENT"
+date "+🕐 %H:%M %Z (%A %d %B %Y)" && CURRENT="v1.5.37" && echo "Current installed: $CURRENT"
 ```
 
 ---

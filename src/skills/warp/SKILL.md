@@ -43,13 +43,7 @@ SSH into a remote oracle node and attach to their tmux session. You become the r
 ## Step 0: Resolve Target
 
 ```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
-
-### Oracle Root Detection
-
-```bash
-ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+date "+🕐 %H:%M %Z (%A %d %B %Y)" && ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
   PSI="$ORACLE_ROOT/ψ"
 else

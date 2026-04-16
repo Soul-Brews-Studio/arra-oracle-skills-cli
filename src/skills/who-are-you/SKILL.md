@@ -14,10 +14,9 @@ description: Know ourselves — show current AI identity, model info, session st
 /who-are-you tech     # Technical only (model, tokens, shell)
 ```
 
-## Step 0: Timestamp
-```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
+## Step 0: Timestamp + Output Format
+
+_(Chain date with Step 1 bash call — don't call date alone)_
 
 ---
 

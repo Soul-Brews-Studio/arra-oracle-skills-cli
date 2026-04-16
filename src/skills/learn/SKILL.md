@@ -77,13 +77,9 @@ done < "$ROOT/ψ/learn/.origins"
 
 ## Step 0: Detect Input Type + Resolve Path
 
-```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
-
 **CRITICAL: Capture ABSOLUTE paths first (before spawning any agents):**
 ```bash
-ROOT="$(pwd)"
+date "+🕐 %H:%M %Z (%A %d %B %Y)" && ROOT="$(pwd)"
 echo "Learning from: $ROOT"
 ```
 

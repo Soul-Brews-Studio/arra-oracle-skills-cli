@@ -27,15 +27,10 @@ Automates the full release cycle: version bump, changelog generation, git tag, p
 
 ## Step 0: Preflight
 
-```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
-
 ### Checks
 
 ```bash
-# Must be on main branch
-BRANCH=$(git branch --show-current)
+date "+🕐 %H:%M %Z (%A %d %B %Y)" && BRANCH=$(git branch --show-current)
 if [ "$BRANCH" != "main" ]; then
   echo "⚠️ On branch '$BRANCH' — releases should be from main"
   echo "Continue anyway? [y/N]"

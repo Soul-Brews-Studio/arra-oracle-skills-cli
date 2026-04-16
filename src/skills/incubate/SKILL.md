@@ -85,13 +85,9 @@ done < "$ROOT/ψ/incubate/.origins"
 
 ## Step 0: Detect Input Type + Resolve Path
 
-```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
-
 **CRITICAL: Capture ABSOLUTE paths first:**
 ```bash
-ROOT="$(pwd)"
+date "+🕐 %H:%M %Z (%A %d %B %Y)" && ROOT="$(pwd)"
 echo "Incubating from: $ROOT"
 ```
 

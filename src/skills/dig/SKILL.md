@@ -44,16 +44,7 @@ Output metadata includes detected timezone name and offset.
 ## Step 0: Timestamp
 
 ```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
-
----
-
-## Step 1: Discover Project Dirs
-
-**Default** (current repo only):
-```bash
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
+date "+🕐 %H:%M %Z (%A %d %B %Y)" && ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
 for wt in "$HOME/.claude/projects/${ENCODED_PWD}"-wt*; do [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"; done

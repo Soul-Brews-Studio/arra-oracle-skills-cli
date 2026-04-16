@@ -12,9 +12,9 @@
  * These move to full (still installable, not lab-gated).
  */
 
-/** Starter profile — session lifecycle + upgrade path (Nat's pick, debated session 9) */
+/** Starter profile — lite lifecycle + upgrade path (Nat's pick, token-optimized) */
 export const STARTER_SKILLS = [
-  'about-oracle', 'forward', 'go', 'recap', 'rrr',
+  'about-oracle', 'forward-lite', 'go', 'recap-lite', 'rrr-lite',
 ] as const;
 
 /** Standard profile — daily driver skills (always installed) */

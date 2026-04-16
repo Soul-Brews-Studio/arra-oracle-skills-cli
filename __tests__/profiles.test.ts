@@ -15,9 +15,9 @@ const ALL_SKILLS = [
 const ZOMBIE_LIST = [...ZOMBIE_SKILLS] as string[];
 
 describe("profiles", () => {
-  it("starter has 6 skills", () => {
-    expect(STARTER_SKILLS).toHaveLength(6);
-    expect(profiles.starter.include).toHaveLength(6);
+  it("starter has 5 skills", () => {
+    expect(STARTER_SKILLS).toHaveLength(5);
+    expect(profiles.starter.include).toHaveLength(5);
   });
 
   it("starter includes go for upgrade path", () => {
@@ -83,7 +83,7 @@ describe("profiles", () => {
 describe("resolveProfile", () => {
   it("starter returns 6 skills", () => {
     const result = resolveProfile("starter", ALL_SKILLS);
-    expect(result).toHaveLength(6);
+    expect(result).toHaveLength(5);
   });
 
   it("standard returns 13 skills", () => {

@@ -27,7 +27,8 @@ Create context for next session, then enter plan mode to define next steps.
 ### Session Detection
 
 ```bash
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|/|-|g')
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_DIR="$HOME/.claude/projects/${ENCODED_PWD}"
 LATEST_JSONL=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -1)
 if [ -n "$LATEST_JSONL" ]; then

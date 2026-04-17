@@ -1,6 +1,6 @@
 ---
 name: recap-lite
-description: Quick session orientation — git state + last handoff. Lite version for starter profile. Use when user says "recap", "where are we", "status". For full version with retro summaries and session mining, upgrade to standard (/go standard → /recap).
+description: Quick session orientation — git state + last handoff. Lite version for minimal profile. Use when user says "recap", "where are we", "status". For full version with retro summaries and session mining, upgrade to standard (/go standard → /recap).
 ---
 
 # /recap-lite

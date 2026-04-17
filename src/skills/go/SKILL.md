@@ -13,9 +13,10 @@ disable-model-invocation: true
 
 ```
 /go                     # show installed skills
-/go standard            # switch to standard profile (14 skills)
-/go full                # all stable skills (21)
-/go lab                 # full + experimental (28)
+/go minimal             # newcomer essentials (7 skills, default)
+/go standard            # daily driver (13 skills)
+/go full                # all stable (excludes lab-only experiments)
+/go lab                 # everything including experimental
 /go cleanup             # remove ALL skills → fetch latest → fresh install
 /go enable trace dig    # enable specific skills
 /go disable watch       # disable specific skills

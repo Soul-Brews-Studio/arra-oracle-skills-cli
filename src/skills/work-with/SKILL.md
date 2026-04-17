@@ -30,12 +30,14 @@ Protocol field-tested across 2 nodes via /wormhole — sync-check discriminates 
 
 # Phase 2 — Party System
 /work-with organize "topic" --with mawjs mawui   # Create party with rules + invite
+/work-with organize "topic" --team "fleet-core"  # Tag with team → auto-broadcast to team
+/work-with organize "topic" --with mawjs --broadcast   # Pair party + manual broadcast opt-in
 /work-with invite white-wormhole                  # Invite oracle (two human consent gates)
+/work-with invite white-wormhole --broadcast      # Invite + broadcast (cross-node consent prompt)
 /work-with who                                    # Party members + sync + presence + trust
 /work-with tell "message"                         # Broadcast to party (parallel fan-out)
 /work-with leave "topic"                          # Leave party (Nothing is Deleted)
 /work-with --recruit                              # Discover + introduce + invite
-/work-with organize "topic" --team "fleet-core"   # Tag party with team name
 /work-with --team "fleet-core"                    # Show team aggregate view
 ```
 
@@ -426,9 +428,72 @@ Display:
 
 ---
 
+## Broadcast
+
+Opt-in discoverability. Designed with mawjs-oracle (issue #233). Default to quiet; escalate on consent.
+
+### 3-Tier Matrix
+
+| Tier | Scope | Default | Flag behavior | Why |
+|------|-------|---------|---------------|-----|
+| 1 | Pair collab (2 oracles, same node) | **Manual** | `--broadcast` opts in | Privacy > noise; most pairs are private |
+| 2 | Declared team (party has `team` field) | **Auto-broadcast to team members** | — | Consent-at-registration — joining the team IS the consent |
+| 3 | Cross-node / cross-org | **Manual + consent prompt** | `--broadcast` still prompts | Sovereignty; no node speaks for another without asking |
+
+### Decision Logic
+
+```
+if party.team is set:                       # Tier 2
+    broadcast_to_team_members(party.team)
+elif --broadcast flag:                      # Tier 1 or Tier 3
+    if any member is cross-node:            # Tier 3
+        prompt_human_consent()
+        if declined: skip broadcast
+    broadcast_to_fleet()
+else:
+    silent                                  # Tier 1 default
+```
+
+### Why Manual-Default
+
+Ship quiet. Measure: how often do humans reach for `--broadcast`? If >80% of pair broadcasts prove useful-to-peers, flip Tier 1 default to auto. Until then, the cost of missed signal (one `--broadcast` flag) is lower than the cost of broadcast noise across the fleet.
+
+### Broadcast Helpers
+
+```bash
+broadcast_to_team() {       # Tier 2 — only members of the named team
+  local TEAM="$1" MSG="$2"
+  for contact in $(team_members "$TEAM"); do
+    maw hey "$contact" "📢 TEAM BROADCAST [$TEAM]: $MSG" 2>/dev/null &
+  done; wait
+}
+
+broadcast_to_fleet() {      # Tier 1 opt-in / Tier 3 after consent
+  local MSG="$1"
+  for contact in $(all_contacts_except_self); do
+    maw hey "$contact" "📢 BROADCAST: $MSG" 2>/dev/null &
+  done; wait
+}
+
+is_cross_node() {           # Tier 3 detector
+  local ORACLE="$1"
+  [ "$(oracle_node "$ORACLE")" != "$(basename $(pwd | xargs dirname))" ]
+}
+
+prompt_consent() {          # Tier 3 gate — human decides
+  read -p "⚠ $1. Proceed? [y/N] " REPLY
+  [[ "$REPLY" =~ ^[Yy]$ ]]
+}
+```
+
+Implementation reference: issue [#233](https://github.com/Soul-Brews-Studio/arra-oracle-skills-cli/issues/233).
+
+---
+
 ## /work-with <oracle> "topic" --broadcast — Announce
 
 Broadcast collaboration to fleet so other oracles can discover and join.
+Follows the 3-tier matrix in `## Broadcast`: pair collabs are opt-in, cross-node prompts for consent.
 
 ```bash
 # Get all contacts
@@ -572,12 +637,30 @@ Rule 6: Oracle Never Pretends to Be Human" 2>/dev/null)
 fi
 ```
 
-### Step 4: Announce to fleet (unless --quiet)
+### Step 4: Announce (3-tier auto-broadcast, see ## Broadcast)
+
+Broadcast decision follows the 3-tier matrix below. Summary:
+
+- **Declared team** (`--team <name>`): auto-broadcast to team members. Consent-at-registration.
+- **Pair party** (1 partner, same node): manual — requires `--broadcast` flag.
+- **Cross-node / cross-org**: manual + explicit consent prompt, even with `--broadcast`.
 
 ```bash
-if [ "$QUIET" != "true" ]; then
-  # Broadcast to all contacts (see --broadcast section above)
-  echo "📢 Party organized: $TOPIC"
+if [ "$QUIET" = "true" ]; then
+  : # suppressed
+elif [ -n "$TEAM_TAG" ]; then
+  # Tier 2: declared team — auto-broadcast to team members only
+  broadcast_to_team "$TEAM_TAG" "$TOPIC"
+  echo "📢 Party organized: $TOPIC → broadcast to team '$TEAM_TAG'"
+elif [ "$BROADCAST" = "true" ]; then
+  # Tier 1 opt-in or Tier 3 with consent
+  if is_cross_node "$WITH_ORACLES"; then
+    prompt_consent "cross-node broadcast" || exit 0
+  fi
+  broadcast_to_fleet "$TOPIC"
+  echo "📢 Party organized: $TOPIC → broadcast sent"
+else
+  echo "🎉 Party organized: $TOPIC (not broadcast — pass --broadcast to announce)"
 fi
 ```
 
@@ -669,6 +752,23 @@ fi
 ```bash
 # Add to pendingInvites in party JSON
 echo "⏳ Invite sent to $ORACLE — waiting for response"
+```
+
+### Step 3b: Broadcast policy (3-tier, see ## Broadcast)
+
+```bash
+PARTY_TEAM=$(jq -r '.team // empty' "$PARTY_FILE")
+if [ -n "$PARTY_TEAM" ]; then
+  # Tier 2: declared team → auto-broadcast to team members
+  broadcast_to_team "$PARTY_TEAM" "invite:$ORACLE"
+elif [ "$BROADCAST" = "true" ]; then
+  # Tier 1 pair (explicit opt-in) or Tier 3 (prompt first)
+  if is_cross_node "$ORACLE"; then
+    prompt_consent "cross-node broadcast of invite" || exit 0
+  fi
+  broadcast_to_fleet "invite:$ORACLE to $CURRENT_TOPIC"
+fi
+# else: silent — pair invites are private by default
 ```
 
 ### Gate 2: Receiver consent
@@ -1263,6 +1363,7 @@ Trust that's never re-tested becomes superstition. Sync-checks ARE the re-audit.
 6. **100% = yellow flag** — perfect sync is suspicious, not ideal
 7. **Accept is commitment** — changes behavior, carries forward, auditable
 8. **Rule 6** — all sync-checks and broadcasts are signed
+9. **Broadcast is opt-in** — pair collabs manual, teams auto (consent-at-registration), cross-node prompts (see ## Broadcast, issue #233)
 
 ---
 

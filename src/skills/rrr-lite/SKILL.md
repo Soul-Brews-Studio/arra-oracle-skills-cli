@@ -1,6 +1,6 @@
 ---
 name: rrr-lite
-description: Quick session retrospective — what we did, what we learned. Lite version for starter profile. Use when user says "rrr", "retrospective", "wrap up". For full version with AI diary and anti-rationalization guard, upgrade to standard (/go standard → /rrr).
+description: Quick session retrospective — what we did, what we learned. Lite version for minimal profile. Use when user says "rrr", "retrospective", "wrap up". For full version with AI diary and anti-rationalization guard, upgrade to standard (/go standard → /rrr).
 ---
 
 # /rrr-lite

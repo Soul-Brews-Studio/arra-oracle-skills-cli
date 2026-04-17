@@ -241,8 +241,11 @@ describe("e2e: uninstall preserves external skills", () => {
   });
 });
 
-describe("e2e: profile switch (full → standard)", () => {
-  it("installs full then switches to standard, removes extras", async () => {
+describe("e2e: profile switch (full → standard) is additive", () => {
+  // #254 Bug 5: install is additive only. A second install with a smaller
+  // profile must not remove skills from the larger profile. Users remove
+  // explicitly via `uninstall`.
+  it("installs full then switches to standard, keeps extras", async () => {
     await installSkills([TEST_AGENT], {
       global: true,
       profile: "full",
@@ -265,16 +268,13 @@ describe("e2e: profile switch (full → standard)", () => {
     skills = await listSkillDirs(SKILLS_DIR);
     const standardSkills = profiles.standard.include!;
 
-    expect(skills.length).toBe(standardSkills.length);
+    // Additive: count unchanged, all full skills still present.
+    expect(skills.length).toBe(fullSkills.length);
     for (const name of standardSkills) {
       expect(skills).toContain(name);
     }
-
-    const standardOnly = fullSkills.map(s => s.name).filter(
-      (s) => !standardSkills.includes(s)
-    );
-    for (const name of standardOnly) {
-      expect(skills).not.toContain(name);
+    for (const s of fullSkills) {
+      expect(skills).toContain(s.name);
     }
   });
 

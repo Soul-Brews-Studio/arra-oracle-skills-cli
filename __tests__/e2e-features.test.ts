@@ -103,11 +103,13 @@ describe("e2e: install with lab profile", () => {
   });
 });
 
-describe("e2e: profile switch (full → standard)", () => {
+describe("e2e: profile switch (full → standard) is additive", () => {
   beforeEach(cleanup);
 
-  it("switching from full to standard removes extra skills", async () => {
-    // Install full first
+  // #254 Bug 5: install is additive only. Switching full → standard must
+  // NOT silently drop full-only skills. Explicit `uninstall` is the only
+  // way to remove.
+  it("switching from full to standard keeps full-only skills", async () => {
     await installSkills([TEST_AGENT], {
       global: true,
       profile: "full",
@@ -120,7 +122,6 @@ describe("e2e: profile switch (full → standard)", () => {
     const fullCount = allSkills.length - labOnly.filter(s => allSkills.some(sk => sk.name === s)).length - excludedCount;
     expect(installed.length).toBe(fullCount);
 
-    // Switch to standard
     await installSkills([TEST_AGENT], {
       global: true,
       profile: "standard",
@@ -128,14 +129,10 @@ describe("e2e: profile switch (full → standard)", () => {
     });
 
     installed = await listSkillDirs(SKILLS_DIR);
-    expect(installed.length).toBe(profiles.standard.include!.length);
-
-    // Full-only skills should be gone
-    const allNames = allSkills.map((s) => s.name);
-    const standardSet = new Set(profiles.standard.include!);
-    const fullOnly = allNames.filter((s) => !standardSet.has(s));
-    for (const name of fullOnly) {
-      expect(installed).not.toContain(name);
+    // Additive: count unchanged, all full skills still present.
+    expect(installed.length).toBe(fullCount);
+    for (const name of profiles.standard.include!) {
+      expect(installed).toContain(name);
     }
   });
 });

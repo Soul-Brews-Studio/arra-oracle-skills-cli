@@ -430,35 +430,10 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
 
     p.log.success(`${agent.displayName}: ${targetDir}`);
 
-    // Profile mode: uninstall skills NOT in the profile set
-    if (profileSkillNames) {
-      const profileSet = new Set(skillsToInstall.map((s) => s.name));
-      const installed = readdirSync(targetDir, { withFileTypes: true })
-        .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
-        .map((d) => d.name);
-
-      const toRemove = installed.filter(
-        (name) => !profileSet.has(name) && !name.startsWith('.')
-      );
-
-      if (toRemove.length > 0) {
-        for (const skill of toRemove) {
-          const skillPath = join(targetDir, skill);
-          if (await isOurSkill(skillPath)) {
-            await rmrf(skillPath, shellMode);
-
-            if (agent.commandsDir) {
-              const commandsDir = options.global ? agent.globalCommandsDir! : join(process.cwd(), agent.commandsDir);
-              const ext = agent.commandFormat === 'toml' ? 'toml' : 'md';
-              const flatFile = join(commandsDir, `${skill}.${ext}`);
-              if (existsSync(flatFile)) await rmf(flatFile, shellMode);
-            }
-
-            p.log.info(`Profile cleanup: removed ${skill}`);
-          }
-        }
-      }
-    }
+    // #254 Bug 5: install is additive only. Skills present but not in the
+    // requested profile are kept — users must remove them via `uninstall`
+    // explicitly. The prior silent profile-downgrade caused capability loss
+    // without warning when running `install -g -y --profile <smaller>`.
   }
 
   spinner.stop(`Installed ${skillsToInstall.length} skills to ${targetAgents.length} agent(s)`);

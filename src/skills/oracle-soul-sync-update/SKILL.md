@@ -20,11 +20,16 @@ All-in-one skill: `/soul-sync` + `/calibrate` + `/update` combined.
 
 ## Step 0: Timestamp + Check Current Version
 
-Your current version is shown in the skill description above (e.g., `v1.5.37 G-SKLL`).
+Read the installed version from `~/.claude/skills/VERSION.md` (the installer writes this on every install). Fall back to `arra-oracle-skills --version` if the file is missing.
 
-Extract just the version number:
 ```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)" && CURRENT="v1.5.37" && echo "Current installed: $CURRENT"
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+CURRENT=$(grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-alpha\.[0-9]+)?' ~/.claude/skills/VERSION.md 2>/dev/null | head -1)
+if [ -z "$CURRENT" ]; then
+  CURRENT=$(arra-oracle-skills --version 2>/dev/null | grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+(-alpha\.[0-9]+)?' | head -1)
+  [ -n "$CURRENT" ] && [ "${CURRENT:0:1}" != "v" ] && CURRENT="v$CURRENT"
+fi
+echo "Current installed: ${CURRENT:-unknown}"
 ```
 
 ---

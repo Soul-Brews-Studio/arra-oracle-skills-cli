@@ -23,7 +23,7 @@ Inspect and manage Claude Code auto-memory, installed skills, and session histor
 ## Memory Location
 
 ```bash
-ENCODED=$(pwd | sed 's|^/|-|; s|/|-|g')
+ENCODED=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
 MEMORY_DIR="$HOME/.claude/projects/${ENCODED}/memory"
 ```
 
@@ -49,7 +49,7 @@ MEMORY_DIR="$HOME/.claude/projects/${ENCODED}/memory"
 List all memory files with type, age, and description.
 
 ```bash
-MEMORY_DIR="$HOME/.claude/projects/$(pwd | sed 's|^/|-|; s|/|-|g')/memory"
+MEMORY_DIR="$HOME/.claude/projects/$(pwd | sed 's|^/|-|; s|[/.]|-|g')/memory"
 ```
 
 Read each `.md` file (except MEMORY.md), extract frontmatter:

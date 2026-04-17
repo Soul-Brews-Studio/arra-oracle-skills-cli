@@ -16,7 +16,7 @@ const month = now.toISOString().slice(0, 7);
 // Session detection
 let sessionLine = "";
 try {
-  const encodedPwd = ROOT.replace(/^\//, '-').replace(/\//g, '-');
+  const encodedPwd = ROOT.replace(/^\//, '-').replace(/[\/.]/g, '-');
   const projectDir = `${process.env.HOME}/.claude/projects/${encodedPwd}`;
   if (existsSync(projectDir)) {
     const jsonls = (await $`ls -t ${projectDir}/*.jsonl 2>/dev/null`.text()).trim().split('\n').filter(Boolean);

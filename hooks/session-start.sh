@@ -21,7 +21,7 @@ HANDOFF_NAME=$(basename "$HANDOFF" 2>/dev/null || echo "none")
 SID=$(echo "$INPUT" | /usr/bin/jq -r '.session_id // ""' 2>/dev/null | cut -c1-8)
 
 # Previous session — find last .jsonl in project dir
-ENCODED_CWD=$(echo "$CWD" | sed 's|^/|-|; s|/|-|g')
+ENCODED_CWD=$(echo "$CWD" | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_DIR="$HOME/.claude/projects/${ENCODED_CWD}"
 PREV_JSONL=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -2 | tail -1)
 if [ -n "$PREV_JSONL" ]; then

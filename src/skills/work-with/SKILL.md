@@ -1,7 +1,7 @@
 ---
 name: work-with
 description: 'Persistent cross-oracle collaboration with synchronic scoring and party system. Use when user says "work with", "sync with", "collaborate", "organize party", "invite", "recruit", or wants to establish/check persistent collaboration with another oracle.'
-argument-hint: "<oracle> [topic] [--sync | --checkpoint | --status | --broadcast | --fleet-status | --close] | organize | invite | who | tell | leave | --recruit | --team"
+argument-hint: "<oracle> [topic] [--sync | --checkpoint | --status | --broadcast | --fleet-status | --close | --defer | --state] | organize | invite | who | tell | leave | --recruit | --team | --pending | --deferred | --sweep-timeouts"
 ---
 
 # /work-with — Persistent Cross-Oracle Collaboration
@@ -39,6 +39,13 @@ Protocol field-tested across 2 nodes via /wormhole — sync-check discriminates 
 /work-with leave "topic"                          # Leave party (Nothing is Deleted)
 /work-with --recruit                              # Discover + introduce + invite
 /work-with --team "fleet-core"                    # Show team aggregate view
+
+# 4-Phase Commit (#238) — per-item DEFER/TIMEOUT on top of Accept/Revoke
+/work-with mawjs "topic" --defer "reason" --until 2026-04-20
+/work-with mawjs "topic" --state                  # Show CommitState table for this topic
+/work-with --pending                              # Fleet-wide: items awaiting my decision
+/work-with --deferred                             # Fleet-wide: items waiting on me to revisit
+/work-with --sweep-timeouts                       # Promote expired defers → timeouts
 ```
 
 ---
@@ -62,12 +69,21 @@ After compaction, don't blindly trust — run examination, score alignment.
 
 **Warning (from Mother Oracle)**: 100% sync is a yellow flag, not green. Convergence on facts is healthy. Convergence on interpretation at 100% = possible groupthink. Reward divergent interpretation resolved through dialogue.
 
-### 4. Accept-Revoke-Reaccept Lifecycle
+### 4. Accept-Revoke-Reaccept Lifecycle (4-phase, #238)
 
-Agreements are explicit commitments, not passive acknowledgments.
+Agreements are explicit commitments, not passive acknowledgments. Each item of each agreement carries a `CommitState` with one of five phases — the universal vocabulary shared with invites, ratifications, and recruitments:
+
 - **Accept**: "I commit to this state" (changes behavior — less verification needed)
-- **Revoke**: "I withdraw commitment" (with reason, Nothing is Deleted)
+- **Reject**: "I decline this state" (explicit no, with reason)
+- **Defer**: "Ask me again at `deferredUntil`" (not accepted, not rejected — time-boxed)
+- **Timeout**: "No response arrived within the window" (observed, not judged)
+- **Pending**: "No decision recorded yet"
+
+Plus two transitions that preserve history:
+- **Revoke**: "I withdraw commitment" (moves accept → pending, with reason, Nothing is Deleted)
 - **Re-accept**: "I commit to the updated state" (after renegotiation)
+
+TIMEOUT ≠ REJECT. A silent partner is not a `no`. See the Accept-Revoke-Reaccept Protocol section for payloads, transitions, the `.state.json` sidecar, and the sweeper.
 
 ### 5. Preserve Difference
 
@@ -1167,6 +1183,28 @@ interface PendingInvite {
   deferredUntil?: string;
   expiresAt?: string;
 }
+
+// Universal commit state — applies to agreements, invites, ratifications.
+// Back-ported from PendingInvite so every commit decision shares one vocabulary.
+// See: issue #238, phase3-design.md.
+type CommitPhase = "accept" | "reject" | "defer" | "timeout" | "pending";
+
+interface CommitState {
+  phase: CommitPhase;
+  decidedAt?: string;          // ISO8601 — when ACCEPT/REJECT/DEFER recorded
+  decidedBy?: string;          // oracle id that transitioned
+  reason?: string;             // required for REJECT, optional for DEFER
+  deferredUntil?: string;      // required when phase="defer" (ISO8601)
+  timeoutAt?: string;          // when phase="timeout" was observed
+  previousPhase?: CommitPhase; // for audit trail (defer→accept etc.)
+}
+
+// Sidecar file per topic — machine-queryable agreement state.
+// Path: <oracle>/topics/<slug>.state.json
+interface TopicStateSidecar {
+  topic: string;
+  items: Record<string, CommitState & { text: string }>;
+}
 ```
 
 ---
@@ -1218,6 +1256,56 @@ OVERALL: XX% | DECISION: ACCEPT / PARTIAL-ACCEPT / REJECT
 
 ## Accept-Revoke-Reaccept Protocol
 
+### Commit Phases (4-phase, from #238)
+
+The binary Accept/Revoke cycle was partial — it had no way to say "not now, but not no" at the agreement level. The 4-phase commit (mawjs c14, back-ported from `PendingInvite`) adds two more phases so every commit decision — agreement, invite, ratification, recruitment — uses one vocabulary.
+
+| Phase   | Meaning | Semantics |
+|---------|---------|-----------|
+| ACCEPT  | "I commit to this state" | Behavior changes; carries forward across sessions. |
+| REJECT  | "I decline this state" | Explicit no, with reason. Preserved (Nothing is Deleted). |
+| DEFER   | "Ask me again at `deferredUntil`" | Not accepted, not rejected. Time-boxed. |
+| TIMEOUT | "No response arrived within the window" | **Not a judgment** — an observation. |
+| PENDING | "No decision recorded yet" | Initial state for every new item. |
+
+**Critical rule**: TIMEOUT ≠ REJECT. A silent partner is not a `no`. TIMEOUT is written by the observer locally; it is never transmitted as a "you timed out" message to the silent partner. That would be judgment.
+
+See the `CommitState` type above for the machine-readable shape. Every item of every agreement carries one.
+
+### State sidecar (per topic)
+
+Topic markdown stays free-form (human-edited prose). Machine state lives alongside in a sidecar JSON so transitions are queryable without re-parsing the prose.
+
+**Path**: `<oracle>/topics/<slug>.state.json`
+
+```json
+{
+  "topic": "tmux-design",
+  "items": {
+    "A1": {
+      "text": "Heartbeat keys are PROGRESS/STUCK/DONE/ABORT",
+      "phase": "accept",
+      "decidedAt": "2026-04-15T10:22:00Z",
+      "decidedBy": "mawjs"
+    },
+    "A2": {
+      "text": "Pane titles include team tag",
+      "phase": "defer",
+      "decidedAt": "2026-04-15T11:00:00Z",
+      "decidedBy": "skills-cli-oracle",
+      "deferredUntil": "2026-04-20T00:00:00Z",
+      "reason": "After mawjs ships #222"
+    },
+    "A3": {
+      "text": "Worktree isolation on by default",
+      "phase": "pending"
+    }
+  }
+}
+```
+
+Why sidecar and not inline YAML? Topic files are human-edited markdown; state transitions are machine-driven. Separation keeps each file honest about its audience.
+
 ### Accept
 
 ```
@@ -1228,6 +1316,48 @@ COMMITMENT: I accept this state. Behavior change: <what changes>
 
 After accept: commitment carries forward to next session without re-proving.
 
+### Reject
+
+```
+REJECT | from: <oracle> | timestamp: <ISO8601>
+ITEM: <agreement text or claim id>
+REASON: <explicit no, required>
+```
+
+Rejection is explicit. Nothing is Deleted — the reason is recorded, and the item can re-enter `pending` later for renegotiation.
+
+### Defer
+
+```
+DEFER | from: <oracle> | timestamp: <ISO8601>
+ITEM: <agreement text or claim id>
+UNTIL: <ISO8601>          # optional, default = +24h
+REASON: <why>             # optional, helps partner understand
+```
+
+Defer says "not now, but not no". The writer sets `phase="defer"` and `deferredUntil` on the sidecar. When `deferredUntil` elapses, the sweeper promotes the phase to `timeout` (observation, not judgment) or back to `pending` if a re-prompt is configured.
+
+### Timeout (observed, not sent)
+
+```
+TIMEOUT | observed-by: <oracle> | timestamp: <ISO8601>
+ITEM: <agreement text or claim id>
+WINDOW: <ISO8601 start>..<ISO8601 end>
+NOTE: No response received — state is "unknown", not "no".
+```
+
+TIMEOUT is **observed, not sent**. The skill writes it locally; it does not transmit a "you timed out" message to the silent partner.
+
+**Default windows** (proposed, per phase3-design open-question #2):
+
+| Transport            | Window   |
+|----------------------|----------|
+| maw hey (same node)  | 24h      |
+| /wormhole (cross)    | 7d       |
+| GitHub (async)       | 30d      |
+
+These back the existing per-invite timeouts in the Timeouts table above and extend them to agreement-level decisions.
+
 ### Revoke
 
 ```
@@ -1236,7 +1366,7 @@ ITEM: <agreement text>
 REASON: <why revoking>
 ```
 
-Revocation is as explicit as acceptance. Nothing is Deleted — the revocation and its reason are recorded.
+Revocation is as explicit as acceptance. Nothing is Deleted — the revocation and its reason are recorded. A revoke moves the sidecar phase from `accept` back to `pending` (re-negotiation surface).
 
 ### Re-accept
 
@@ -1245,6 +1375,69 @@ RE-ACCEPT | from: <oracle> | timestamp: <ISO8601>
 ITEM: <updated agreement text>
 PREVIOUS: <original text>
 CHANGES: <what changed>
+```
+
+### Allowed state transitions
+
+Enforce these in any writer. Illegal transitions log a warning and no-op.
+
+```
+pending  → accept | reject | defer | timeout
+defer    → accept | reject | timeout      (on deferredUntil elapse, auto → timeout or pending)
+timeout  → accept | reject | defer         (partner reappears)
+accept   → (revoke → pending) | (re-accept stays accept)
+reject   → pending                         (re-negotiation)
+```
+
+Every transition writes `previousPhase` into the sidecar so the audit trail is preserved.
+
+### Query surface (additive to Usage block)
+
+```
+/work-with <oracle> "topic" --defer "reason" --until 2026-04-20
+/work-with <oracle> "topic" --state                 # Show CommitState table for all items
+/work-with --pending                                # Fleet-wide: what needs my decision?
+/work-with --deferred                               # Fleet-wide: what's waiting on me to revisit?
+/work-with --sweep-timeouts                         # Promote expired `defer` → `timeout`
+```
+
+Example display for `--state`:
+
+```
+🗂  tmux-design (↔ mawjs)
+
+  ID   Phase     Decided            Text
+  ──── ────────  ─────────────────  ──────────────────────────────────────
+  A1   ✓ accept  2026-04-15 10:22   Heartbeat keys are PROGRESS/STUCK/...
+  A2   ⏸ defer   2026-04-15 11:00   Pane titles include team tag
+       until: 2026-04-20 (3d)  reason: After mawjs ships #222
+  A3   · pending  —                 Worktree isolation on by default
+  A4   ⏱ timeout 2026-04-14 18:30   Color semantics (partner silent 48h)
+       note: Unknown state, not rejection. /work-with mawjs "tmux-design" --sync to revisit.
+```
+
+### Sweeper — `--sweep-timeouts`
+
+Idempotent, cron-friendly. Runs at `/forward` (session boundary) and `/recap` (session start). No separate daemon.
+
+```bash
+# Pseudocode — promote expired defers to timeouts
+for state_file in "$COLLAB_DIR"/*/topics/*.state.json; do
+  jq -c '.items | to_entries[]' "$state_file" | while read -r entry; do
+    ID=$(echo "$entry" | jq -r '.key')
+    PHASE=$(echo "$entry" | jq -r '.value.phase')
+    UNTIL=$(echo "$entry" | jq -r '.value.deferredUntil // empty')
+    NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    if [ "$PHASE" = "defer" ] && [ -n "$UNTIL" ] && [[ "$UNTIL" < "$NOW" ]]; then
+      # Promote to timeout — observation, not judgment
+      jq --arg id "$ID" --arg now "$NOW" '
+        .items[$id].previousPhase = .items[$id].phase |
+        .items[$id].phase = "timeout" |
+        .items[$id].timeoutAt = $now
+      ' "$state_file" > "$state_file.tmp" && mv "$state_file.tmp" "$state_file"
+    fi
+  done
+done
 ```
 
 ### Silent Revoke Detection (from Mother Oracle)
@@ -1364,6 +1557,7 @@ Trust that's never re-tested becomes superstition. Sync-checks ARE the re-audit.
 7. **Accept is commitment** — changes behavior, carries forward, auditable
 8. **Rule 6** — all sync-checks and broadcasts are signed
 9. **Broadcast is opt-in** — pair collabs manual, teams auto (consent-at-registration), cross-node prompts (see ## Broadcast, issue #233)
+10. **TIMEOUT ≠ REJECT** — silence is an observation, not a judgment (4-phase commit, #238)
 
 ---
 
@@ -1379,7 +1573,8 @@ Trust that's never re-tested becomes superstition. Sync-checks ARE the re-audit.
 ├── <oracle>/                            # Per-oracle relationship
 │   ├── context.md                       # Relationship memory (who, style, trust)
 │   └── topics/                          # Per-topic state
-│       ├── tmux-design.md               # Topic: agreements, pending, checkpoints
+│       ├── tmux-design.md               # Topic: agreements, pending, checkpoints (human prose)
+│       ├── tmux-design.state.json       # 4-phase CommitState sidecar (#238) — machine state
 │       └── bud-lifecycle.md             # Topic: agreements, pending, checkpoints
 └── <oracle>/
     ├── context.md

@@ -175,6 +175,14 @@ SendMessage({ to: "agent-2", message: { type: "shutdown_request" } })
 TeamDelete()
 ```
 
+**Don't write the loop by hand** — structured messages can't broadcast (#212), but the helper script generates the per-agent `SendMessage` block for you:
+```bash
+bash ~/.claude/skills/team-agents/scripts/broadcast-shutdown.sh $TEAM
+# → prints ready-to-paste SendMessage lines, one per teammate (lead excluded)
+# → also supports --names (raw list) and --json (array) for scripted loops
+# → --type=X to broadcast any structured message type, not just shutdown
+```
+
 **Strategy B: Rolling shutdown** — shutdown each agent as it completes:
 ```
 # On each DONE report: immediately shutdown that agent
@@ -357,7 +365,7 @@ git merge "agents/$AGENT" --no-ff -m "merge: $AGENT from team $TEAM"
 8. **~3-7x tokens** vs single agent
 9. **Same file = overwrites** — each agent must own different files
 10. **Shutdown slow** — agents finish current request first
-11. **Structured messages cannot broadcast** — send individually (#212)
+11. **Structured messages cannot broadcast** — send individually, or use `scripts/broadcast-shutdown.sh $TEAM` to auto-generate the per-agent block (#212)
 
 ---
 

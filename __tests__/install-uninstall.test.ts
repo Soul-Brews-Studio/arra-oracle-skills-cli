@@ -120,6 +120,59 @@ describe("uninstall preserves external skills", () => {
   });
 });
 
+describe("#230 local-skill-precedence shield", () => {
+  const LOCAL_SKILLS_DIR = join(process.cwd(), "test-skills");
+
+  beforeEach(async () => {
+    await cleanup();
+    if (existsSync(LOCAL_SKILLS_DIR)) await rm(LOCAL_SKILLS_DIR, { recursive: true });
+  });
+
+  afterAll(async () => {
+    if (existsSync(LOCAL_SKILLS_DIR)) await rm(LOCAL_SKILLS_DIR, { recursive: true });
+  });
+
+  it("skips global install of a skill shadowed by a non-ours local skill", async () => {
+    // Seed a local user-authored skill at <cwd>/test-skills/recap/ (NOT ours — no marker)
+    const localRecap = join(LOCAL_SKILLS_DIR, "recap");
+    await mkdir(localRecap, { recursive: true });
+    await writeFile(join(localRecap, "SKILL.md"), "# local recap\n\nUser's own recap.\n");
+
+    await installSkills([TEST_AGENT], { global: true, yes: true });
+
+    const installed = await listSkillDirs(SKILLS_DIR);
+    expect(installed).not.toContain("recap");
+    // Other skills should still install
+    expect(installed.length).toBeGreaterThan(0);
+  });
+
+  it("does NOT skip if the local skill is ours (installer marker present)", async () => {
+    const localTrace = join(LOCAL_SKILLS_DIR, "trace");
+    await mkdir(localTrace, { recursive: true });
+    await writeFile(
+      join(localTrace, "SKILL.md"),
+      "---\ninstaller: arra-oracle-skills-cli v1.0.0\n---\n# trace\n"
+    );
+
+    await installSkills([TEST_AGENT], { global: true, yes: true });
+
+    const installed = await listSkillDirs(SKILLS_DIR);
+    expect(installed).toContain("trace");
+  });
+
+  it("--force-global installs the skill anyway", async () => {
+    const localRrr = join(LOCAL_SKILLS_DIR, "rrr");
+    await mkdir(localRrr, { recursive: true });
+    await writeFile(join(localRrr, "SKILL.md"), "# local rrr\n");
+
+    await installSkills([TEST_AGENT], { global: true, yes: true, forceGlobal: true });
+
+    const installed = await listSkillDirs(SKILLS_DIR);
+    expect(installed).toContain("rrr");
+  });
+
+});
+
 describe("orphan cleanup on install", () => {
   beforeEach(cleanup);
 

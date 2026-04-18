@@ -16,6 +16,7 @@ export function registerInstall(program: Command, version: string) {
     .option('-l, --list', 'List available skills without installing')
     .option('-y, --yes', 'Skip confirmation prompts')
     .option('--with-commands', 'Also install command stubs to ~/.claude/commands/')
+    .option('--force-global', 'Install global skills even if a same-named local skill exists (#230)')
     .option('--shell', 'Force Bun.$ shell commands (use on Windows to test shell compatibility)')
     .option('--no-shell', 'Force Node.js fs operations (use on Unix if Bun.$ causes issues)')
     .action(async (options) => {
@@ -98,6 +99,7 @@ export function registerInstall(program: Command, version: string) {
           profile: options.profile,
           yes: options.yes,
           commands: options.withCommands,
+          forceGlobal: options.forceGlobal,
           shellMode,
         });
 

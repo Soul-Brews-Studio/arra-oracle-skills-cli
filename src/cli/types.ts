@@ -49,5 +49,6 @@ export interface InstallOptions {
   yes?: boolean;
   agents?: string[];
   commands?: boolean; // Also install command stubs (for agents with commandsOptIn)
+  forceGlobal?: boolean; // #230 Override local-skill-precedence check and install global anyway
   shellMode?: ShellMode;
 }

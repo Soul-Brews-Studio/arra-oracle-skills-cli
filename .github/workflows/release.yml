@@ -1,9 +1,14 @@
 name: Release
 
+# Legacy path — serves scripts/release.sh for non-CalVer (pre-v26) tags.
+# CalVer tags (v26.x.x, v27.x.x, ...) are handled by calver-release.yml
+# in a single job, bypassing the GITHUB_TOKEN cascade gap.
+
 on:
   push:
     tags:
       - 'v*'
+      - '!v[2-9][0-9].*'   # exclude v20-v99 (CalVer year range)
 
 jobs:
   release:

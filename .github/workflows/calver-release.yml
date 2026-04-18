@@ -80,7 +80,8 @@ jobs:
             echo "npm_tag=latest" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "✅ valid CalVer: $TAG (prerelease=${{ github.event.head_commit.id }})"
+          PRERELEASE="false"; [[ "$VERSION" == *-alpha.* ]] && PRERELEASE="true"
+          echo "✅ valid CalVer: $TAG (prerelease=$PRERELEASE)"
 
       - name: Fail loud on tag collision
         if: steps.ver.outputs.skip != 'true'
@@ -122,7 +123,8 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-          bun run prepublishOnly
+          # Note: compile + build already ran in the test step above.
+          # Skipping prepublishOnly to avoid redundant work (per review).
           npm publish --access public --tag "${{ steps.ver.outputs.npm_tag }}"
 
       - name: Summary

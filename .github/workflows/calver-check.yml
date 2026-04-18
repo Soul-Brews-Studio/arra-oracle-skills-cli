@@ -1,0 +1,61 @@
+name: CalVer Tag Check
+
+# Validates any tag pushed to the repo against the CalVer scheme proposed in
+# Soul-Brews-Studio/mawjs-oracle PR #3.
+#
+# Scheme: v{yy}.{m}.{d}[-alpha.{hour}[a-z]?]
+#   yy    2-digit year       (26, 27, ...)
+#   m     month 1-12         (no zero-pad)
+#   d     day 1-31           (no zero-pad)
+#   hour  0-23 bucket        (optional; max 24 alphas/day)
+#   a-z   collision suffix   (optional; e.g. alpha.9b)
+#
+# This workflow is a pure validator — no side effects. Belt-and-suspenders
+# for calver-release.yml which also validates before tagging.
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate CalVer format
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -e
+          VERSION="${TAG#v}"
+          echo "Validating: $TAG ($VERSION)"
+
+          REGEX='^[0-9]{2}\.[0-9]{1,2}\.[0-9]{1,2}(-alpha\.[0-9]{1,2}[a-z]?)?$'
+          if [[ ! "$VERSION" =~ $REGEX ]]; then
+            echo "::error title=CalVer violation::Tag '$TAG' does not match v{yy}.{m}.{d}[-alpha.{hour}]"
+            echo "::error::Spec: https://github.com/Soul-Brews-Studio/mawjs-oracle/blob/main/%CF%88/inbox/2026-04-18_proposal-calver-skills-cli.md"
+            exit 1
+          fi
+
+          BASE="${VERSION%%-*}"
+          IFS='.' read -r YY M D <<< "$BASE"
+
+          if (( M < 1 || M > 12 )); then
+            echo "::error::Month must be 1-12, got $M"
+            exit 1
+          fi
+          if (( D < 1 || D > 31 )); then
+            echo "::error::Day must be 1-31, got $D"
+            exit 1
+          fi
+
+          if [[ "$VERSION" == *-alpha.* ]]; then
+            HOUR_RAW="${VERSION##*-alpha.}"
+            HOUR="${HOUR_RAW%%[a-z]*}"
+            if (( HOUR < 0 || HOUR > 23 )); then
+              echo "::error::Hour must be 0-23, got $HOUR"
+              exit 1
+            fi
+          fi
+
+          echo "✅ $TAG is valid CalVer"

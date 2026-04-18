@@ -1,0 +1,135 @@
+name: CalVer Release
+
+# Unified tag + release + npm publish pipeline for CalVer versions.
+#
+# Triggered when package.json is modified on main. All steps run in ONE job
+# so there is no workflow-cascade gap (GITHUB_TOKEN-created tags/releases
+# deliberately don't trigger downstream workflows; doing it inline sidesteps
+# that rule entirely).
+#
+# Secret required: NPM_TOKEN
+# Everything else uses the repo's built-in GITHUB_TOKEN with write perms.
+#
+# Spec: https://github.com/Soul-Brews-Studio/mawjs-oracle/blob/main/%CF%88/inbox/2026-04-18_proposal-calver-skills-cli.md
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+concurrency:
+  group: calver-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Fetch tags
+        run: git fetch --tags --force
+
+      - name: Read + validate version
+        id: ver
+        run: |
+          set -e
+          VERSION=$(jq -r '.version' package.json)
+          TAG="v$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+          # Only act on CalVer-shaped versions. Non-CalVer bumps (legacy v3.x
+          # chore commits, etc.) are skipped — no-op, not a failure.
+          REGEX='^[0-9]{2}\.[0-9]{1,2}\.[0-9]{1,2}(-alpha\.[0-9]{1,2}[a-z]?)?$'
+          if [[ ! "$VERSION" =~ $REGEX ]]; then
+            echo "::notice title=Skipped::Version '$VERSION' is not CalVer — no release cut."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Range validation — regex alone passes alpha.99.
+          BASE="${VERSION%%-*}"
+          IFS='.' read -r YY M D <<< "$BASE"
+          if (( M < 1 || M > 12 )); then
+            echo "::error::Month must be 1-12, got $M"; exit 1
+          fi
+          if (( D < 1 || D > 31 )); then
+            echo "::error::Day must be 1-31, got $D"; exit 1
+          fi
+          if [[ "$VERSION" == *-alpha.* ]]; then
+            HOUR_RAW="${VERSION##*-alpha.}"
+            HOUR="${HOUR_RAW%%[a-z]*}"
+            if (( HOUR < 0 || HOUR > 23 )); then
+              echo "::error::Hour must be 0-23, got $HOUR"; exit 1
+            fi
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "npm_tag=alpha" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "npm_tag=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "✅ valid CalVer: $TAG (prerelease=${{ github.event.head_commit.id }})"
+
+      - name: Fail loud on tag collision
+        if: steps.ver.outputs.skip != 'true'
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "::error title=Tag collision::$TAG already exists. Two cuts in one hour? Use the 'alpha.Nb' collision suffix, or wait for the next hour."
+            exit 1
+          fi
+          echo "✓ $TAG is free"
+
+      - name: Install + compile + test
+        if: steps.ver.outputs.skip != 'true'
+        run: |
+          bun install --frozen-lockfile
+          bun run compile
+          bun test __tests__/
+
+      - name: Tag + GitHub release
+        if: steps.ver.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+          FLAGS="--generate-notes --title $TAG"
+          if [[ "${{ steps.ver.outputs.prerelease }}" == "true" ]]; then
+            FLAGS="$FLAGS --prerelease"
+          fi
+          gh release create "$TAG" $FLAGS
+
+      - name: Publish to npm
+        if: steps.ver.outputs.skip != 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+          bun run prepublishOnly
+          npm publish --access public --tag "${{ steps.ver.outputs.npm_tag }}"
+
+      - name: Summary
+        if: steps.ver.outputs.skip != 'true'
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          echo "### 🎉 Released $TAG" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Channel:** ${{ steps.ver.outputs.npm_tag }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Release:** https://github.com/${{ github.repository }}/releases/tag/$TAG" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **npm:** https://www.npmjs.com/package/arra-oracle-skills/v/${{ steps.ver.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"

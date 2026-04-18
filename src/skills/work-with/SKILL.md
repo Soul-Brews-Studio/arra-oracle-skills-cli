@@ -1109,6 +1109,78 @@ The CLI only renders text. The mesh UI renders edges between oracles. Consumer c
 - **Stale indicator** = if `hoursSinceLastSync > 3 × halfLife` (i.e. decayed < ~0.125), show dashed edge
 - **No auto-kick** = a decayed edge is a signal, never an eviction. Kicking is a human decision.
 
+### Mesh Data Contract (for xyflow CollaborationMesh UI — issue #235)
+
+The mesh UI (`maw-ui` federation_2d, xyflow + deep-ocean theme) is a pure consumer of files this skill writes. The mesh does not call any API — it reads, maps, renders. This section is the full contract.
+
+#### What is emitted
+
+| File                                                  | Schema                                 | Shape           | Update model   |
+|-------------------------------------------------------|----------------------------------------|-----------------|----------------|
+| `ψ/memory/collaborations/parties/<slug>.json`         | `schema/party.schema.json`             | `PartyStatus`   | Overwrite (atomic) |
+| `ψ/memory/collaborations/<oracle>/sync.history.jsonl` | `schema/sync-history.schema.json`      | append-only log | Append-only    |
+| `ψ/memory/collaborations/<oracle>/topics/<slug>.state.json` | (inline in SKILL.md § CommitState) | `TopicStateSidecar` | Overwrite      |
+
+Both schemas ship with this skill under `src/skills/work-with/schema/`. Installers place them at `~/.claude/skills/work-with/schema/` so the UI can fetch them at a stable path.
+
+#### Node / edge mapping (what xyflow consumes)
+
+For each party file, the UI builds:
+
+- **Nodes** — one per distinct `PartyMember.id` across all parties (union), plus the `leader.human` as a special `human` node:
+  - `id` = member id
+  - `label` = member id (display name comes from contacts.json; mesh UI may read that too, but it is NOT part of this contract)
+  - `data.node` = member.node (fleet node, used for swim-lane grouping)
+  - `data.status` = member.status (drives node color + pulse animation)
+  - `data.trust` = member.trust (drives node border style)
+  - `data.lastSync` = member.lastSync (drives "last-seen" badge)
+  - `position` — **not emitted**. Layout is UI-side (xyflow's layouting or persisted per-view). /work-with does not own screen coordinates.
+
+- **Edges** — one per (party × member) pair, representing the relationship *within that party*:
+  - `source` = party.leader.actingVia ?? party-initiator id
+  - `target` = member.id
+  - `data.topic` = party.topic
+  - `data.anchor` = party.anchor (e.g. 'maw-js#332')
+  - `data.syncRaw` = member.syncScore
+  - `data.decayedScore` = `decay(syncScore, lastSync, λ)` — **UI computes this on every render**, never trust a stored value (see § Sync Decay storage discipline)
+  - `data.lambda` = rules.decay_lambda (party override wins; else UI resolves via trust tier from `sync.history.jsonl`)
+  - `data.trust` = member.trust
+  - `data.role` = member.role
+  - `data.team` = party.team
+  - Edge is **directed** (leader acting-via → member) for layout purposes; sync itself is pairwise and each direction will eventually carry its own score — until then, render the single emitted value on both ends.
+
+#### Sparkline / history
+
+Each edge's hover sparkline comes from filtering `sync.history.jsonl`:
+
+```
+ψ/memory/collaborations/<member.id>/sync.history.jsonl
+  filter: topic == party.topic
+  sort: ts ascending
+  take last 7
+  map: (raw, ts, lambda) -> decay(raw, ts, lambda)
+```
+
+The optional `source` field on history entries (added for #235) lets a *federated* mesh consumer distinguish which oracle observed the score — one oracle's view of the same topic-pair may disagree with another's, and both are valid. Single-node UIs may ignore it.
+
+#### Update mechanism
+
+The mesh is pulled, not pushed. Recommended consumer loop:
+
+1. **On mount**: list `parties/*.json`, build initial graph.
+2. **Poll every 5s** (same cadence `/fleet` uses): re-stat each party file's mtime. If changed, re-read and diff nodes/edges.
+3. **Tail `sync.history.jsonl`** for each connected partner — any new line triggers sparkline refresh + edge opacity recompute.
+4. **No file-watch hooks**: `/work-with` emits no signals, spawns no daemons. File mtimes are the event bus (consistent with Rule: no hooks for /work-with, see MEMORY.md).
+
+A future `/work-with --mesh-json` query (not yet implemented; see GAP below) would emit a single normalised snapshot `{ nodes, edges, ts }` so a UI can bootstrap without scanning the whole `parties/` directory. Until then, scan + filter.
+
+#### What is NOT emitted (known gaps — tracked as follow-ups on #235)
+
+- **Position hints** — xyflow layout is owned by the UI.
+- **Directional sync pairs** — both halves of `A↔B` currently share one `syncScore`. When each side scores the other independently, the schema will grow a `direction` field.
+- **Cross-node federation snapshot** — pulling parties from *other* nodes requires /fleet or /wormhole glue that is not this skill's responsibility. Issue #235 comment thread tracks the federation-snapshot design.
+- **Human-node identity** — the leader appears as `{ human, actingVia }`; mesh can represent the human as a root node, but this skill does not enumerate humans across parties.
+
 ### Aggregation: `--team` Uses Decayed, Not Raw
 
 When `/work-with --team "name"` computes an aggregate sync score, it aggregates over the **decayed** score of each party member, not the raw one:
@@ -1832,6 +1904,7 @@ Trust that's never re-tested becomes superstition. Sync-checks ARE the re-audit.
 
 Schemas shipped with this skill:
 
+- `schema/party.schema.json` — contract for `parties/<slug>.json` (PartyStatus + nested PartyMember, PartyRules, PendingInvite). Consumed by the xyflow CollaborationMesh UI (issue #235). See the Mesh Data Contract section.
 - `schema/sync-history.schema.json` — contract for `sync.history.jsonl`. Consumed by mawui federation_2d and `/fleet` for fading-edge / sparkline rendering. See the Sync Decay section.
 
 ---

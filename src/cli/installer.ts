@@ -137,6 +137,38 @@ export async function installSkills(
     // Create target directory
     await mkdirp(targetDir, shellMode);
 
+    // #230 Local-skill-precedence shield (workaround for Claude Code's
+    // global-over-local loader order): when installing GLOBALLY, skip any
+    // skill whose name already exists as a NON-OURS local skill in the
+    // user's cwd. Claude Code would load the global copy and shadow the
+    // user's local override — which is the opposite of what they want.
+    // Use --force-global to install anyway.
+    let agentSkillsToInstall = skillsToInstall;
+    const shadowedSkills: string[] = [];
+    if (options.global && !options.forceGlobal) {
+      const localSkillsDir = join(process.cwd(), agent.skillsDir);
+      if (existsSync(localSkillsDir)) {
+        const filtered: Skill[] = [];
+        for (const skill of skillsToInstall) {
+          const localSkillMd = join(localSkillsDir, skill.name, 'SKILL.md');
+          if (existsSync(localSkillMd) && !(await isOurSkill(join(localSkillsDir, skill.name)))) {
+            shadowedSkills.push(skill.name);
+            continue;
+          }
+          filtered.push(skill);
+        }
+        agentSkillsToInstall = filtered;
+      }
+      if (shadowedSkills.length > 0) {
+        p.log.warn(
+          `Skipping ${shadowedSkills.length} skill(s) shadowed by your local ${agent.skillsDir}/: ${shadowedSkills.join(', ')}`
+        );
+        p.log.info(
+          `Your local skill(s) take precedence. Use --force-global to install the Oracle version anyway.`
+        );
+      }
+    }
+
     // Auto-cleanup: remove orphaned skills installed by arra-oracle-skills-cli
     // Only removes skills that: 1) have installer: arra-oracle-skills-cli marker, 2) no longer exist in source
     const sourceSkillNames = allSkills.map((s) => s.name);
@@ -195,7 +227,7 @@ export async function installSkills(
     // Track skills with hooks for separate plugin installation
     const skillsWithHooks: Skill[] = [];
 
-    for (const skill of skillsToInstall) {
+    for (const skill of agentSkillsToInstall) {
       // Check if skill has hooks - needs plugin installation
       if (await skillHasHooks(skill.name)) {
         skillsWithHooks.push(skill);
@@ -282,7 +314,7 @@ export async function installSkills(
     const manifest = {
       version: pkg.version,
       installedAt: new Date().toISOString(),
-      skills: skillsToInstall.map((s) => s.name),
+      skills: agentSkillsToInstall.map((s) => s.name),
       agent: agentName,
     };
     await Bun.write(join(targetDir, '.arra-oracle-skills.json'), JSON.stringify(manifest, null, 2));
@@ -293,7 +325,7 @@ export async function installSkills(
 Installed by: **arra-oracle-skills-cli v${pkg.version}**
 Installed at: ${new Date().toISOString()}
 Agent: ${agent.displayName}
-Skills: ${skillsToInstall.length}
+Skills: ${agentSkillsToInstall.length}
 
 ## Report This Version
 
@@ -304,7 +336,7 @@ arra-oracle-skills-cli v${pkg.version}
 
 ## Installed Skills
 
-${skillsToInstall.map((s) => `- ${s.name}`).join('\n')}
+${agentSkillsToInstall.map((s) => `- ${s.name}`).join('\n')}
 
 ## Update Skills
 
@@ -321,7 +353,7 @@ bunx --bun arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli#v$
       const commandsDir = options.global ? agent.globalCommandsDir! : join(process.cwd(), agent.commandsDir);
       if (existsSync(commandsDir)) {
         const ext = agent.commandFormat === 'toml' ? 'toml' : 'md';
-        for (const skill of skillsToInstall) {
+        for (const skill of agentSkillsToInstall) {
           const cmdFile = join(commandsDir, `${skill.name}.${ext}`);
           if (existsSync(cmdFile)) {
             await rmf(cmdFile, shellMode);
@@ -341,7 +373,7 @@ bunx --bun arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli#v$
       
       const cmdFormat = agent.commandFormat || 'md';
 
-      for (const skill of skillsToInstall) {
+      for (const skill of agentSkillsToInstall) {
         // Hidden skills: install SKILL.md but skip command stub (not in autocomplete)
         if (skill.hidden) continue;
 

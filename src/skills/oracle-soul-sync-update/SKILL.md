@@ -36,6 +36,8 @@ echo "Current installed: ${CURRENT:-unknown}"
 
 ## Step 2: Check Latest Version (stable vs alpha)
 
+Tag format moved to CalVer (`v{YY}.{M}.{D}`, first number ≥ 25) in April 2026. Older tags are SemVer (`v3.x.x`). The latest-check picks CalVer first and treats SemVer as legacy.
+
 ```bash
 # Get ALL tags via jq, separate stable from alpha
 TAGS=$(curl -s https://api.github.com/repos/Soul-Brews-Studio/arra-oracle-skills-cli/tags | jq -r '.[].name')
@@ -63,13 +65,52 @@ echo "Track: $TRACK → comparing against $LATEST"
 
 ---
 
-## Step 3: Compare Versions
+## Step 3: Compare Versions — date-drift, not semver-drift (#265)
+
+CalVer tags encode the release date directly (`v26.4.18` = 2026-04-18). Staleness is more useful as "N days behind" than as a semver gap. Legacy SemVer tags (`v3.x.x`) are flagged for migration.
 
 ```bash
+# Helpers — parse tag → YYYY-MM-DD, diff in days
+tag_era() {  # "calver" | "semver" | "unknown"
+  local first=$(echo "$1" | sed 's/^v//; s/-.*$//' | cut -d. -f1)
+  [ -z "$first" ] && { echo unknown; return; }
+  [ "$first" -ge 25 ] 2>/dev/null && echo calver || echo semver
+}
+tag_to_date() {  # v26.4.18 → 2026-04-18
+  local core=$(echo "$1" | sed 's/^v//; s/-alpha.*$//')
+  local yy=$(echo "$core" | cut -d. -f1)
+  local m=$(echo "$core" | cut -d. -f2)
+  local d=$(echo "$core" | cut -d. -f3)
+  printf "%04d-%02d-%02d" "$((2000 + yy))" "$m" "$d"
+}
+alpha_hour() { echo "$1" | grep -oE 'alpha\.[0-9]+' | cut -d. -f2; }
+
+CUR_ERA=$(tag_era "$CURRENT")
+LAT_ERA=$(tag_era "$LATEST")
+
 if [ "$CURRENT" = "$LATEST" ]; then
   echo "✅ Soul synced! ($CURRENT) [$TRACK track]"
+elif [ "$CUR_ERA" = "semver" ] && [ "$LAT_ERA" = "calver" ]; then
+  echo "⚠️ Legacy version — migrate $CURRENT → $LATEST (CalVer cut-over)"
 else
-  echo "⚠️ Sync needed: $CURRENT → $LATEST [$TRACK track]"
+  CUR_DATE=$(tag_to_date "$CURRENT")
+  LAT_DATE=$(tag_to_date "$LATEST")
+  DAYS=$(( ( $(date -d "$LAT_DATE" +%s) - $(date -d "$CUR_DATE" +%s) ) / 86400 ))
+  if [ "$DAYS" -eq 0 ]; then
+    CUR_H=$(alpha_hour "$CURRENT")
+    LAT_H=$(alpha_hour "$LATEST")
+    if [ -n "$CUR_H" ] || [ -n "$LAT_H" ]; then
+      HOURS=$(( ${LAT_H:-0} - ${CUR_H:-0} ))
+      [ "$HOURS" -lt 0 ] && HOURS=$(( -HOURS ))
+      echo "⚠️ ${HOURS}h stale: $CURRENT → $LATEST ($CUR_DATE, same day)"
+    else
+      echo "⚠️ Same day, different tag: $CURRENT → $LATEST"
+    fi
+  else
+    echo "Current installed: $CURRENT   ($CUR_DATE)"
+    echo "Latest available:  $LATEST   ($LAT_DATE)"
+    echo "⚠️ $DAYS days stale [$TRACK track]"
+  fi
 fi
 ```
 

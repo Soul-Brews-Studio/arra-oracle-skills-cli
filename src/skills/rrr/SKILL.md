@@ -98,11 +98,57 @@ Write immediately, no prompts. Include:
 
 **Path**: `$PSI/memory/learnings/YYYY-MM-DD_slug.md`
 
+### 3.5. Append Session-Metrics Row (REQUIRED)
+
+**Path**: `$PSI/memory/learnings/session-metrics.md`
+
+If the file doesn't exist, create with this header:
+
+```markdown
+# Oracle Session Metrics
+
+Rule (parent CLAUDE.md §"Self-Evaluation Loop"): same friction 3 sessions → fix root cause, not another workaround.
+
+| when | session | done | stuck | win | friction |
+|---|---|---|---|---|---|
+```
+
+Then append ONE row:
+
+| Column | Content |
+|---|---|
+| `when` | `YYYY-MM-DD HH:MM` in GMT+7 |
+| `session` | first 8 chars of `SESSION_ID` (from Step 1.5). If detection failed, write `unknown` |
+| `done` | tasks/items completed this session (comma-separated, terse) |
+| `stuck` | items blocked, deferred, or dropped — or `n/a` |
+| `win` | biggest unlock or ship this session (one line) |
+| `friction` | biggest drag, wall, or recurring pain (one line) |
+
+**Rule**: never skip. Trivial session? Still append with `trivial` in win/friction. Gaps break the pattern-detection value of the file.
+
 ### 4. Oracle Sync
 
 ```
 arra_learn({ pattern: [lesson content], concepts: [tags], source: "rrr: REPO" })
 ```
+
+### 4.5. Pattern Check (last 7 rows)
+
+Read the last 7 rows (or all rows if fewer) of `$PSI/memory/learnings/session-metrics.md`.
+
+Count keyword themes in the `friction` column. If any theme appears **≥3 times** in the window, append this section to the retrospective:
+
+```markdown
+## 🔁 Recurring Pattern Detected
+
+"<theme>" appeared in <N> of last 7 sessions (<session IDs>). Per parent CLAUDE.md §"Self-Evaluation Loop" — consider root-cause fix instead of another workaround.
+
+Suggested: open issue `root-cause: <theme>` or raise with Boss during next standup.
+```
+
+If no theme reaches ≥3 → skip this section silently.
+
+**Rule**: surface only. Do NOT auto-open issues or take action beyond flagging. Principle 3 (External Brain, Not Command) — Boss decides.
 
 ### 5. Save
 

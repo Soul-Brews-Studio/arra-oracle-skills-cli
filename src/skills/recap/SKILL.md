@@ -119,6 +119,52 @@ Script outputs git status + focus state (~0.1s). Then LLM adds:
 1. **ONE bash call** — never multiple parallel calls (adds latency)
 2. **No subagents** — everything in main agent
 3. **Ask, don't suggest** — "What next?" not "You should..."
+4. **Verify pending before reporting** — see "Verify Before Reporting" section below. This is NON-NEGOTIABLE.
+
+---
+
+## Verify Before Reporting (MANDATORY)
+
+Handoffs, retros, and memory files are **point-in-time claims**, not live state. Between the previous session ending and this one starting, work may have been done, PRs may have merged, files may have been copied. **Echoing a stale pending list as if it were current is a lie by omission** — the human ends up chasing items that are already done.
+
+### The rule
+
+Before outputting any "Pending" table or "Next action" suggestion, you MUST verify each claimed pending item against current reality:
+
+| Claim type | How to verify |
+|---|---|
+| "Copy file X to path Y" | `ls path/Y` — is it already there? |
+| "PR #N open/merged" | `gh pr view N --json state` |
+| "Branch X needs push" | `git log origin/X..X` — any commits? |
+| "Apply pattern P to file F" | `grep` for the pattern in F |
+| "Issue #N pending" | `gh issue view N --json state` |
+| "Migration ready to run" | check migrations table or list |
+
+### What to do with each verified item
+
+- **Already done** → drop from pending, note in "Actually done since handoff"
+- **Still pending** → keep, show in table
+- **Partially done** → split into remaining sub-items
+- **Can't verify** (offline/ambiguous) → mark `⚠️ unverified` in the table, do not assert state
+
+### The correction pattern
+
+If the handoff pending list and reality diverge (>1 item stale), show the correction explicitly so the human sees the drift:
+
+```
+| Item | Handoff said | Reality |
+|------|--------------|---------|
+| Copy cache/ to maw-ui | pending | DONE (Apr 20 04:16) |
+| PR #4 merge | open | MERGED |
+```
+
+### Why this is non-negotiable
+
+- Handoffs are written before work stops, but work often continues between sessions (other Oracles, scheduled tasks, user actions).
+- Memory files age — an older memory claiming "feature X is broken" may be stale if a fix shipped.
+- Humans trust recap output as ground truth. An unverified echo breaks that trust fast.
+
+**Patterns over intentions** — the code is the truth, the handoff is an intention. Always verify.
 
 ---
 
@@ -181,6 +227,15 @@ Same as `--now` but adds bigger picture context.
 3. Git status: git status --short
 4. Tracks: cat ψ/inbox/tracks/INDEX.md 2>/dev/null
 ```
+
+### Step 1.5: VERIFY pending from handoff
+
+Before outputting, run verification checks against each pending item (see "Verify Before Reporting" above). Batch checks in parallel:
+- `gh pr list --state all` for PR claims
+- `ls path/to/file` for "copy X" claims
+- `grep` for "apply pattern" claims
+
+If any diverge from the handoff, show the correction table.
 
 ### Step 2: Output
 

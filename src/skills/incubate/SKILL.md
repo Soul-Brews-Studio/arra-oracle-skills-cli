@@ -18,8 +18,10 @@ Clone or create repos for active development → set up branches, make changes, 
 /incubate [repo-name]                    # Finds in ghq or creates with default org
 /incubate [url] --flash "fix desc"       # Issue → branch → fix → PR → offload
 /incubate [url] --contribute             # Fork if needed → branch per feature → PRs
-/incubate --status                       # List all ψ/incubate/ with git status
+/incubate --status                       # List all active ψ/incubate/ with git status
+/incubate --status --include-offloaded   # Also list offloaded entries from .origins (#280)
 /incubate --offload [slug]               # Remove symlink, keep ghq clone
+/incubate --offload [slug] --purge       # Also drop entry from .origins manifest (#280)
 /incubate --init                         # Restore all origins after git clone
 ```
 
@@ -371,13 +373,21 @@ echo "✓ Offloaded (ghq kept for PR feedback)"
 
 No clone needed. List all active incubations with git status.
 
+Add `--include-offloaded` to also list entries in `.origins` whose symlinks
+have been removed (#280) — surfaces the historical record without losing it.
+
 ```bash
 ROOT="$(pwd)"
+INCLUDE_OFFLOADED="${1:-}"   # pass "--include-offloaded" to enable
 echo "🌱 Active Incubations"
 echo ""
+
+# Collect active slugs (those with live symlinks)
+declare -A ACTIVE_SLUGS=()
 for link in $(find "$ROOT/ψ/incubate" -name "origin" -type l 2>/dev/null); do
   REPO_DIR=$(dirname "$link")
   SLUG=$(echo "$REPO_DIR" | sed "s|$ROOT/ψ/incubate/||")
+  ACTIVE_SLUGS["$SLUG"]=1
   TARGET=$(readlink "$link")
   if [ -d "$TARGET" ]; then
     BRANCH=$(git -C "$TARGET" branch --show-current 2>/dev/null)
@@ -391,8 +401,39 @@ for link in $(find "$ROOT/ψ/incubate" -name "origin" -type l 2>/dev/null); do
   echo ""
 done
 
-COUNT=$(find "$ROOT/ψ/incubate" -name "origin" -type l 2>/dev/null | wc -l)
-echo "Total: $COUNT active incubation(s)"
+ACTIVE_COUNT=${#ACTIVE_SLUGS[@]}
+
+# --include-offloaded: also list .origins entries with no live symlink (#280)
+if [ "$INCLUDE_OFFLOADED" = "--include-offloaded" ] && [ -f "$ROOT/ψ/incubate/.origins" ]; then
+  echo ""
+  echo "📦 Offloaded (in .origins, no live symlink)"
+  echo ""
+  OFFLOADED_COUNT=0
+  while IFS= read -r slug; do
+    [ -z "$slug" ] && continue
+    if [ -z "${ACTIVE_SLUGS[$slug]:-}" ]; then
+      GHQ_ROOT=$(ghq root 2>/dev/null)
+      GHQ_PATH="$GHQ_ROOT/github.com/$slug"
+      if [ -d "$GHQ_PATH" ]; then
+        echo "  $slug (ghq preserved at $GHQ_PATH)"
+      else
+        echo "  $slug (ghq absent — fully purged)"
+      fi
+      OFFLOADED_COUNT=$((OFFLOADED_COUNT + 1))
+    fi
+  done < "$ROOT/ψ/incubate/.origins"
+  echo ""
+  echo "Active: $ACTIVE_COUNT | Offloaded: $OFFLOADED_COUNT"
+else
+  echo "Total: $ACTIVE_COUNT active incubation(s)"
+  if [ -f "$ROOT/ψ/incubate/.origins" ]; then
+    TOTAL_RECORDED=$(grep -cv '^$' "$ROOT/ψ/incubate/.origins" 2>/dev/null || echo 0)
+    OFFLOADED_HIDDEN=$((TOTAL_RECORDED - ACTIVE_COUNT))
+    if [ "$OFFLOADED_HIDDEN" -gt 0 ]; then
+      echo "  ($OFFLOADED_HIDDEN offloaded — use --include-offloaded to view)"
+    fi
+  fi
+fi
 ```
 
 **Done.** No hub file update needed.
@@ -403,9 +444,13 @@ echo "Total: $COUNT active incubation(s)"
 
 Remove symlink, keep ghq clone and hub file.
 
+Add `--purge` to also remove the entry from `.origins` manifest (#280) —
+useful when you want the offloaded slug to NOT count toward "Total" any more.
+
 ```bash
 ROOT="$(pwd)"
 SLUG="[OWNER/REPO or REPO]"
+PURGE="${1:-}"   # pass "--purge" to also remove from .origins
 
 # Find the symlink
 LINK=$(find "$ROOT/ψ/incubate" -name "origin" -type l | xargs -I{} dirname {} | grep -i "$SLUG" | head -1)
@@ -421,9 +466,19 @@ unlink "$LINK/origin"
 OWNER_DIR=$(dirname "$LINK")
 rmdir "$OWNER_DIR" 2>/dev/null
 
-echo "✓ Offloaded: $(echo $LINK | sed "s|$ROOT/ψ/incubate/||")"
+DEFLATED_SLUG=$(echo $LINK | sed "s|$ROOT/ψ/incubate/||")
+echo "✓ Offloaded: $DEFLATED_SLUG"
 echo "  Hub file remains: $LINK/$REPO_NAME.md"
 echo "  ghq clone preserved for future use"
+
+# --purge: remove from .origins manifest (#280)
+if [ "$PURGE" = "--purge" ] && [ -f "$ROOT/ψ/incubate/.origins" ]; then
+  TMPFILE=$(mktemp)
+  grep -v "^${DEFLATED_SLUG}$" "$ROOT/ψ/incubate/.origins" > "$TMPFILE" || true
+  mv "$TMPFILE" "$ROOT/ψ/incubate/.origins"
+  echo "  ✂ Purged '$DEFLATED_SLUG' from .origins manifest"
+  echo "  ⚠ This breadcrumb is gone — re-incubate to restore it (Principle 1: prefer --include-offloaded over --purge)"
+fi
 ```
 
 ---

@@ -103,6 +103,20 @@ OWNER=$(echo "$URL" | sed -E 's|.*github.com/([^/]+)/.*|\1|')
 REPO=$(echo "$URL" | sed -E 's|.*/([^/]+)(\.git)?$|\1|')
 SLUG="$OWNER/$REPO"
 
+# Auto-stash unstaged changes in source clone before pulling (#279).
+# `ghq get -u` runs `git pull` under the hood and aborts on dirty trees,
+# stranding the ritual. Detect + stash with a clear log + restore hint.
+GHQ_ROOT_PRECHECK=$(ghq root 2>/dev/null)
+SOURCE_PRECHECK="$GHQ_ROOT_PRECHECK/github.com/$SLUG"
+if [ -d "$SOURCE_PRECHECK/.git" ]; then
+  if [ -n "$(git -C "$SOURCE_PRECHECK" status --porcelain 2>/dev/null)" ]; then
+    STASH_NAME="pre-incubate-$(date +%Y-%m-%d)"
+    echo "⚠️  Source clone has uncommitted changes — auto-stashing as '$STASH_NAME'"
+    git -C "$SOURCE_PRECHECK" stash push -u -m "$STASH_NAME"
+    echo "    (run \`git -C $SOURCE_PRECHECK stash pop\` to restore)"
+  fi
+fi
+
 # Check if repo exists on GitHub
 if gh repo view "$SLUG" --json name &>/dev/null; then
   ghq get -u "https://github.com/$SLUG"

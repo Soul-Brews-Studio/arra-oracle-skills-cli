@@ -100,8 +100,10 @@ Write immediately, no prompts. Include:
 
 ### 4. Oracle Sync
 
-```
-arra_learn({ pattern: [lesson content], concepts: [tags], source: "rrr: REPO" })
+```bash
+curl -sS -X POST http://localhost:47778/api/learn \
+  -H 'Content-Type: application/json' \
+  -d '{"pattern":"<lesson content>","concepts":["<tags>"],"source":"rrr: <REPO>"}'
 ```
 
 ### 5. Save

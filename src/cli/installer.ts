@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'fs';
 import { join, dirname, basename } from 'path';
 import { homedir, tmpdir } from 'os';
+import { rm } from 'fs/promises';
 import * as p from '@clack/prompts';
 import { agents } from './agents.js';
 import type { Skill, InstallOptions } from './types.js';
@@ -106,6 +107,70 @@ export async function installSkills(
   if (skillsToInstall.length === 0) {
     p.log.error(`No matching skills found. Available: ${allSkills.map((s) => s.name).join(', ')}`);
     return;
+  }
+
+  // #285 Part 2 — Explicit-profile alignment.
+  // When --profile <name> was explicitly passed on the CLI (not the default value),
+  // remove arra-managed skills that are no longer in the target profile.
+  // Bare `install` (no flag) and `install -s <skill>` remain purely additive (#257 Bug 5).
+  if (options.profileExplicit && profileSkillNames !== null) {
+    const targetSet = new Set(skillsToInstall.map((s) => s.name));
+
+    for (const agentName of targetAgents) {
+      const agent = agents[agentName as keyof typeof agents];
+      if (!agent) continue;
+
+      const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
+      if (!existsSync(skillsDir)) continue;
+
+      const installedDirs = readdirSync(skillsDir, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
+        .map((d) => d.name);
+
+      const toRemove: string[] = [];
+      for (const name of installedDirs) {
+        if (targetSet.has(name)) continue;
+        if (await isOurSkill(join(skillsDir, name))) {
+          toRemove.push(name);
+        }
+      }
+
+      if (toRemove.length === 0) continue;
+
+      // Always print the diff (even under -y, per #267 follow-up)
+      console.log(`\n⚠  Profile alignment — will REMOVE arra-managed skills not in '${options.profile}': ${toRemove.join(', ')}\n`);
+
+      if (!options.yes) {
+        const confirmed = await p.confirm({
+          message: `Remove ${toRemove.length} skill(s) from ${agent.displayName}?`,
+        });
+        if (p.isCancel(confirmed) || !confirmed) {
+          p.log.info('Alignment cancelled — continuing with additive install only');
+          continue;
+        }
+      }
+
+      const shellMode: ShellMode = options.shellMode || 'auto';
+      for (const name of toRemove) {
+        const skillPath = join(skillsDir, name);
+        await rm(skillPath, { recursive: true, force: true });
+
+        // Also remove command stubs if commands mode is active
+        if (agent.commandsDir && options.commands) {
+          const commandsDir = options.global ? agent.globalCommandsDir! : join(process.cwd(), agent.commandsDir);
+          const ext = agent.commandFormat === 'toml' ? 'toml' : 'md';
+          const flatFile = join(commandsDir, `${name}.${ext}`);
+          if (existsSync(flatFile)) await rmf(flatFile, shellMode);
+        }
+
+        // Also remove from plugins if present
+        const pluginPath = join(homedir(), '.claude', 'plugins', name);
+        if (existsSync(pluginPath) && await isOurSkill(pluginPath)) {
+          await rm(pluginPath, { recursive: true, force: true });
+        }
+      }
+      p.log.info(`Alignment: removed ${toRemove.length} skill(s) not in '${options.profile}' profile`);
+    }
   }
 
   // Confirm installation
@@ -462,10 +527,11 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
 
     p.log.success(`${agent.displayName}: ${targetDir}`);
 
-    // #254 Bug 5: install is additive only. Skills present but not in the
-    // requested profile are kept — users must remove them via `uninstall`
-    // explicitly. The prior silent profile-downgrade caused capability loss
-    // without warning when running `install -g -y --profile <smaller>`.
+    // Install semantics (post-#285):
+    //   `install` (no flag)              → purely additive (Bug 5 protection, #257)
+    //   `install -s <skill>`             → purely additive
+    //   `install --profile <name>` (explicit) → ALIGN: remove arra-managed skills not in target
+    //                                            Non-arra skills NEVER touched.
   }
 
   spinner.stop(`Installed ${skillsToInstall.length} skills to ${targetAgents.length} agent(s)`);

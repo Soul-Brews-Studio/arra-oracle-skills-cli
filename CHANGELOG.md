@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### feat(profiles): explicit-profile alignment (#285 part 2, closes #267)
+
+- `install --profile <name>` when explicit now ALIGNS (removes arra-managed skills not in target).
+- Bare `install` and `-s <skill>` remain purely additive (#257 / Bug 5 protection preserved).
+- Non-arra skills NEVER touched (matches existing `/go cleanup` precedent).
+- Pre-removal diff printed even under `-y`.
+- `/go <profile>` now correctly includes `minimal` in usage and profile table.
+
+---
+
 ## v3.9.0-alpha.2 (2026-04-13)
 
 ### Team Ops + Mailbox + -s Fix

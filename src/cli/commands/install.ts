@@ -19,7 +19,7 @@ export function registerInstall(program: Command, version: string) {
     .option('--force-global', 'Install global skills even if a same-named local skill exists (#230)')
     .option('--shell', 'Force Bun.$ shell commands (use on Windows to test shell compatibility)')
     .option('--no-shell', 'Force Node.js fs operations (use on Unix if Bun.$ causes issues)')
-    .action(async (options) => {
+    .action(async (options, cmd) => {
       p.intro(`🔮 Oracle Skills Installer v${version}`);
 
       try {
@@ -93,10 +93,16 @@ export function registerInstall(program: Command, version: string) {
           return;
         }
 
+        // Detect whether --profile was explicitly passed on CLI or came from the default value.
+        // Commander exposes this via getOptionValueSource: 'cli' = user typed it, 'default' = default.
+        const profileSource = (cmd as any).getOptionValueSource?.('profile') ?? 'default';
+        const profileExplicit = profileSource === 'cli';
+
         await installSkills(targetAgents, {
           global: options.global,
           skills: options.skill,
           profile: options.profile,
+          profileExplicit,
           yes: options.yes,
           commands: options.withCommands,
           forceGlobal: options.forceGlobal,

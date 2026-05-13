@@ -22,6 +22,11 @@ disable-model-invocation: true
 /go disable watch       # disable specific skills
 ```
 
+> ⚠ NEW (#285): `/go <profile>` now ALIGNS your installed skills to the target profile.
+> arra-managed skills NOT in the target profile will be **removed**.
+> External / non-arra skills are never touched.
+> A pre-removal diff is shown before any deletion occurs.
+
 ---
 
 ## CLI Detection
@@ -60,11 +65,15 @@ $ARRA list -g
 $ARRA install -g --profile <name> -y
 ```
 
-Profiles: `standard`, `full`, `lab`
+Profiles: `minimal`, `standard`, `full`, `lab`
 
+- `/go minimal` → `$ARRA install -g --profile minimal -y`
 - `/go standard` → `$ARRA install -g --profile standard -y`
 - `/go full` → `$ARRA install -g --profile full -y`
 - `/go lab` → `$ARRA install -g --profile lab -y`
+
+> Note: passing `--profile` explicitly triggers alignment — arra-managed skills NOT in the target
+> are removed automatically. External skills are never touched.
 
 ### `/go cleanup` — fresh install (safe)
 
@@ -235,9 +244,10 @@ $ARRA uninstall -g -s <skill...> -y
 
 | Profile | Count | Description |
 |---------|-------|-------------|
-| **standard** | 14 | Daily driver — essential Oracle skills (default) |
-| **full** | 21 | All stable skills (excludes lab-only) |
-| **lab** | 29 | Everything including experimental |
+| **minimal** | 7 | Newcomer essentials — lite lifecycle, trace, update (token-optimized) |
+| **standard** | 13 | Daily driver — essential Oracle skills |
+| **full** | ~30 | All stable skills (excludes lab-only + minimal-only lite variants) |
+| **lab** | ~48 | Everything including experimental (excludes minimal-only lite variants) |
 
 ---
 

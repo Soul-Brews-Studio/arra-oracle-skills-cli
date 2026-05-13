@@ -111,7 +111,7 @@ describe("integration: OpenCode global install", () => {
     expect(content).toContain(skillPath);
   });
 
-  it("all skills should have corresponding commands", async () => {
+  it("all non-hidden arra-managed skills should have corresponding commands", async () => {
     if (!existsSync(GLOBAL_OPENCODE_SKILLS) || !existsSync(GLOBAL_OPENCODE_COMMANDS)) {
       console.log("Skipping: OpenCode not installed globally");
       return;
@@ -123,8 +123,18 @@ describe("integration: OpenCode global install", () => {
     const commands = await readdir(GLOBAL_OPENCODE_COMMANDS);
     const cmdFiles = commands.filter(c => c.endsWith('.md')).map(c => c.replace('.md', ''));
 
-    // Every skill should have a command
+    // Only arra-managed, non-hidden skills require command stubs
+    // Hidden skills (e.g. auto-retrospective) are installed without command stubs by design
     for (const skill of skillDirs) {
+      const skillMdPath = join(GLOBAL_OPENCODE_SKILLS, skill, "SKILL.md");
+      if (!existsSync(skillMdPath)) continue;
+
+      const content = await readFile(skillMdPath, "utf-8");
+      // Skip non-arra-managed skills (external / user-installed)
+      if (!content.includes("installer: arra-oracle-skills-cli")) continue;
+      // Skip hidden skills (they don't get command stubs)
+      if (content.includes("hidden: true")) continue;
+
       expect(cmdFiles).toContain(skill);
     }
   });

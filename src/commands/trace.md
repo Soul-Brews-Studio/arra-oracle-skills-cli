@@ -1,5 +1,5 @@
 ---
-description: '[core] v26.5.13-alpha.1626 | Find projects, code, and knowledge across git history, repos, docs, and Oracle. Use when user asks "trace", "find project", "where is [project]", "search history", or needs to locate something across the codebase. Supports --oracle (fast), --smart (default), --deep (wave execution), --deep --dig (combo). Do NOT trigger for session mining or "past sessions" (use /dig), or codebase exploration "learn repo" (use /learn).'
+description: '[core] v26.5.13-alpha.1726 | Find projects, code, and knowledge across git history, repos, docs, and Oracle. Use when user asks "trace", "find project", "where is [project]", "search history", or needs to locate something across the codebase. Supports --oracle (fast), --smart (default), --deep (wave execution), --deep --dig (combo). Do NOT trigger for session mining or "past sessions" (use /dig), or codebase exploration "learn repo" (use /learn).'
 argument-hint: "<query> [--oracle | --smart | --deep] [--dig]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `trace` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "trace" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1626*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1726*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

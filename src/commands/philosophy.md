@@ -1,5 +1,5 @@
 ---
-description: '[core] v26.5.13-alpha.1626 | Display Oracle philosophy — the 5 Principles + Rule 6. Use when user asks about principles, "nothing deleted", "patterns over intentions", Oracle philosophy, or needs alignment check. Do NOT trigger for "who are you" (use /who-are-you), "what is oracle" (use /about-oracle), or session status questions.'
+description: '[core] v26.5.13-alpha.1726 | Display Oracle philosophy — the 5 Principles + Rule 6. Use when user asks about principles, "nothing deleted", "patterns over intentions", Oracle philosophy, or needs alignment check. Do NOT trigger for "who are you" (use /who-are-you), "what is oracle" (use /about-oracle), or session status questions.'
 ---
 
 # /philosophy
@@ -18,5 +18,5 @@ Execute the `philosophy` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "philosophy" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1626*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1726*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

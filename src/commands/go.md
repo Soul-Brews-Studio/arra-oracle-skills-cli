@@ -1,5 +1,5 @@
 ---
-description: '[core] v26.5.13-alpha.1626 | Switch skill profiles (standard/full/lab), fresh install, or enable/disable specific skills via arra-oracle-skills CLI. Destructive — modifies globally installed skills.'
+description: '[core] v26.5.13-alpha.1726 | Switch skill profiles (standard/full/lab), fresh install, or enable/disable specific skills via arra-oracle-skills CLI. Destructive — modifies globally installed skills.'
 argument-hint: "<standard|full|lab|cleanup> | enable|disable <skill...>"
 ---
 
@@ -19,5 +19,5 @@ Execute the `go` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "go" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1626*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1726*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

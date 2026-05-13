@@ -25,9 +25,16 @@ npx arra-oracle-skills@26.5.13-alpha.1726 install -g -y --agent gemini-cli --wit
 
 # Multiple agents
 npx arra-oracle-skills@26.5.13-alpha.1726 install -g -y --agent claude-code codex opencode
+
+# thClaws (auto-detected if thclaws binary is in PATH)
+bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g
+# Skills install to ~/.config/thclaws/skills/ AND ~/.claude/skills/
+
+# Opt out of thClaws target
+bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --no-thclaws
 ```
 
-18 agents: Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Amp, Kilo Code, Roo Code, Goose, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed
+19 agents: Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Amp, Kilo Code, Roo Code, Goose, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed, thClaws
 
 ## Skills
 

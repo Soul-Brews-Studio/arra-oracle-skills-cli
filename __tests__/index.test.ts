@@ -4,8 +4,9 @@ import { agents, detectInstalledAgents, getAgentNames } from '../src/cli/agents'
 import { discoverSkills } from '../src/cli/installer';
 
 describe('agents', () => {
-  it('should have 18 agents defined', () => {
-    expect(Object.keys(agents).length).toBe(18);
+  it('should have 19 agents defined', () => {
+    // 18 base targets + thClaws (4th install target — federation request from thclaws@m5)
+    expect(Object.keys(agents).length).toBe(19);
   });
 
   it('should return agent names', () => {
@@ -13,6 +14,7 @@ describe('agents', () => {
     expect(names).toContain('claude-code');
     expect(names).toContain('opencode');
     expect(names).toContain('cursor');
+    expect(names).toContain('thclaws');
   });
 
   it('should detect installed agents', () => {

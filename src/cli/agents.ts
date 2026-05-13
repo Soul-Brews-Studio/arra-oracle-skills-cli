@@ -5,6 +5,28 @@ import type { AgentConfig, AgentType } from './types.js';
 
 const home = homedir();
 
+/**
+ * Detect whether the `thclaws` binary is present on this system.
+ *
+ * thClaws is a Codex-family fork (Soul-Brews-Studio/thClaws) that ships a
+ * chatgpt-codex provider hitting chatgpt.com/backend-api/codex directly.
+ * When the binary is present we auto-enable the thClaws install target so
+ * existing arra-oracle skills are discoverable by the chatgpt-codex agent.
+ *
+ * Checked locations (in order):
+ *   ~/.cargo/bin/thclaws         (cargo install)
+ *   /usr/local/bin/thclaws       (manual install on Intel macOS / Linux)
+ *   /opt/homebrew/bin/thclaws    (Homebrew on Apple Silicon)
+ */
+export function thClawsAvailable(): boolean {
+  const paths = [
+    join(home, '.cargo', 'bin', 'thclaws'),
+    '/usr/local/bin/thclaws',
+    '/opt/homebrew/bin/thclaws',
+  ];
+  return paths.some((p) => existsSync(p));
+}
+
 export const agents: Record<AgentType, AgentConfig> = {
   opencode: {
     name: 'opencode',
@@ -146,10 +168,29 @@ export const agents: Record<AgentType, AgentConfig> = {
     globalSkillsDir: join(home, '.zed/skills'),
     detectInstalled: () => existsSync(join(home, '.zed')),
   },
+  thclaws: {
+    name: 'thclaws',
+    displayName: 'thClaws',
+    // Project-scoped install is intentionally out of scope for now — project
+    // owners make that decision manually. Only user-global path is supported.
+    // skillsDir is kept for the install path resolver but is never written to
+    // unless someone passes -g (which is the documented usage).
+    skillsDir: '.thclaws/skills',
+    globalSkillsDir: join(home, '.config/thclaws/skills'),
+    // Detect by binary presence rather than config-dir presence: thClaws may
+    // exist on PATH before the user has ever created ~/.config/thclaws.
+    detectInstalled: () => thClawsAvailable(),
+  },
 };
 
-/** Default agents to install to (unless --agent overrides) */
-export const defaultAgentNames = ['claude-code', 'codex'];
+/**
+ * Default agents to install to (unless --agent overrides).
+ *
+ * thclaws is included here so when the binary is detected it joins the
+ * auto-default set alongside claude-code + codex (federation request from
+ * thclaws@m5 — auto-detection, no explicit flag needed).
+ */
+export const defaultAgentNames = ['claude-code', 'codex', 'thclaws'];
 
 export function detectInstalledAgents(): string[] {
   return Object.entries(agents)

@@ -1,5 +1,5 @@
 ---
-description: '[core] v26.5.13-alpha.1626 | Clone and track external repos. Use when user shares GitHub URL to study or develop, or says "search repos", "find repo", "where is [project]". Actions - learn (clone for study), search/find (search repos), list (show tracked). For active development, use /incubate.'
+description: '[core] v26.5.13-alpha.1726 | Clone and track external repos. Use when user shares GitHub URL to study or develop, or says "search repos", "find repo", "where is [project]". Actions - learn (clone for study), search/find (search repos), list (show tracked). For active development, use /incubate.'
 argument-hint: "<github-url> | search <query>"
 ---
 
@@ -19,5 +19,5 @@ Execute the `project` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "project" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1626*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1726*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

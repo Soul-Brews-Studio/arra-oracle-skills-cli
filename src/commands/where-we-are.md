@@ -1,5 +1,5 @@
 ---
-description: '[core] v26.5.13-alpha.1626 | Session awareness — alias for /recap --now deep. Quick mid-session check of current topic, timeline, and pending items. Use when user asks "now", "where are we", "what are we doing". Do NOT trigger for full session start orientation (use /recap), "standup" (use /standup), or past session mining (use /dig).'
+description: '[core] v26.5.13-alpha.1726 | Session awareness — alias for /recap --now deep. Quick mid-session check of current topic, timeline, and pending items. Use when user asks "now", "where are we", "what are we doing". Do NOT trigger for full session start orientation (use /recap), "standup" (use /standup), or past session mining (use /dig).'
 ---
 
 # /where-we-are
@@ -18,5 +18,5 @@ Execute the `where-we-are` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "where-we-are" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1626*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1726*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

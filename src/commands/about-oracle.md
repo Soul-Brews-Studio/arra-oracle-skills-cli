@@ -1,5 +1,5 @@
 ---
-description: '[core] v26.5.13-alpha.1626 | What is Oracle — told by the AI itself. Origin story, stats, family count, ecosystem overview. Use when someone asks "what is oracle", "about oracle", "tell me about this project", or wants the origin story. Do NOT trigger for "who are you" (use /who-are-you), "philosophy" (use /philosophy), or session status questions.'
+description: '[core] v26.5.13-alpha.1726 | What is Oracle — told by the AI itself. Origin story, stats, family count, ecosystem overview. Use when someone asks "what is oracle", "about oracle", "tell me about this project", or wants the origin story. Do NOT trigger for "who are you" (use /who-are-you), "philosophy" (use /philosophy), or session status questions.'
 argument-hint: "--short | --stats | --family | --th | --en/th"
 ---
 
@@ -19,5 +19,5 @@ Execute the `about-oracle` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "about-oracle" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1626*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1726*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

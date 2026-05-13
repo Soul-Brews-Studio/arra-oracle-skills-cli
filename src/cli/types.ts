@@ -29,7 +29,8 @@ export type AgentType =
   | 'cline'
   | 'aider'
   | 'continue'
-  | 'zed';
+  | 'zed'
+  | 'thclaws';
 
 export interface Skill {
   name: string;
@@ -52,4 +53,6 @@ export interface InstallOptions {
   commands?: boolean; // Also install command stubs (for agents with commandsOptIn)
   forceGlobal?: boolean; // #230 Override local-skill-precedence check and install global anyway
   shellMode?: ShellMode;
+  noThclaws?: boolean; // thClaws target — opt out of auto-detected thClaws install
+  thclawsOnly?: boolean; // thClaws target — write ONLY to thClaws paths (testing)
 }

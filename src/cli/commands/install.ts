@@ -1,9 +1,49 @@
 import type { Command } from 'commander';
 import * as p from '@clack/prompts';
 import { agents, getDefaultAgents, getAgentNames, detectInstalledAgents, thClawsAvailable } from '../agents.js';
-import { listSkills, installSkills } from '../installer.js';
-import { profiles } from '../../profiles.js';
+import { listSkills, installSkills, discoverSkills } from '../installer.js';
+import { profiles, resolveProfile } from '../../profiles.js';
 import type { ShellMode } from '../fs-utils.js';
+
+/**
+ * #337 — Preview the skills that would be installed, so the install prompt
+ * can show the list BEFORE asking the user to confirm. Mirrors (a subset of)
+ * the resolution logic in `installSkills`:
+ *   - explicit `-s <names>` without explicit `--profile`  →  just those names
+ *     (the installer is also additive with already-installed skills, but for
+ *     preview purposes we show what the user explicitly asked for).
+ *   - otherwise  →  profile-resolved set ∪ any `-s` extras.
+ * Secrets + zombies are filtered out the same way `resolveProfile` filters them.
+ */
+async function computePreviewSkillNames(
+  options: { profile?: string; skill?: string[] },
+  cmd: any,
+): Promise<string[]> {
+  const profileSource = cmd?.getOptionValueSource?.('profile') ?? 'default';
+  const profileExplicit = profileSource === 'cli';
+
+  const all = await discoverSkills();
+  const allNames = all.map((s) => s.name);
+  const secretNames = all.filter((s) => s.secret).map((s) => s.name);
+  const zombieNames = all.filter((s) => s.zombie).map((s) => s.name);
+
+  // -s without explicit --profile: additive mode — show the explicit picks.
+  if (options.skill && options.skill.length > 0 && !profileExplicit) {
+    return [...new Set(options.skill)];
+  }
+
+  const resolved = resolveProfile(
+    options.profile || 'minimal',
+    allNames,
+    secretNames,
+    zombieNames,
+  );
+  const profileSkills = resolved ?? allNames.filter(
+    (s) => !secretNames.includes(s) && !zombieNames.includes(s),
+  );
+  const extras = options.skill || [];
+  return [...new Set([...profileSkills, ...extras])];
+}
 
 export function registerInstall(program: Command, version: string) {
   program
@@ -69,8 +109,19 @@ export function registerInstall(program: Command, version: string) {
             p.log.info(`Detected agents: ${detected.map((a) => agents[a as keyof typeof agents]?.displayName).join(', ')}`);
 
             if (!options.yes) {
+              // #337: show the skill list BEFORE asking to confirm — users
+              // shouldn't have to consent without knowing what's coming.
+              const previewSkills = await computePreviewSkillNames(options, cmd);
+              if (previewSkills.length > 0) {
+                const head = previewSkills.slice(0, 5).map((s) => `/${s}`).join(', ');
+                const more = previewSkills.length > 5 ? ` (+${previewSkills.length - 5} more)` : '';
+                p.log.info(`Skills to install (${previewSkills.length}): ${head}${more}`);
+              }
+
               const useDetected = await p.confirm({
-                message: 'Install to detected agents?',
+                message: previewSkills.length > 0
+                  ? `Install ${previewSkills.length} skills to detected agents?`
+                  : 'Install to detected agents?',
               });
 
               if (p.isCancel(useDetected)) {

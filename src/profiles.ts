@@ -29,7 +29,7 @@ export const STANDARD_SKILLS = [
 
 /** Lab-only skills — experimental, not in standard or full */
 export const LAB_SKILLS = [
-  'contacts', 'feel', 'fyi', 'inbox', 'mailbox', 'morpheus',
+  'contacts', 'dream', 'feel', 'fyi', 'inbox', 'mailbox',
   'schedule', 'watch', 'worktree',
 ] as const;
 
@@ -57,7 +57,7 @@ export const ZOMBIE_SKILLS = [
   // 2026-05-13 cull (#327): 13 zombies based on usage audit (3,685 sessions).
   // Kept active by explicit user request: bampenpien (standard), feel + morpheus (lab),
   // fyi (lab, imported from oracle-proof-of-concept-skills), resonance (implicit-full).
-  'i-believed', 'work-with', 'dream',
+  'i-believed', 'work-with', 'morpheus',
   'retrospective', 'auto-retrospective', 'skills-list',
   'fleet', 'machines', 'warp', 'release',
   'philosophy', 'wormhole', 'harden', 'vault',

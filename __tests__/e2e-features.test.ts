@@ -5,7 +5,7 @@ import { existsSync } from "fs";
 import { tmpdir } from "os";
 import { agents } from "../src/cli/agents";
 import { installSkills, discoverSkills } from "../src/cli/installer";
-import { profiles, labOnly, resolveProfile } from "../src/profiles";
+import { profiles, labOnly, minimalOnly, resolveProfile } from "../src/profiles";
 import type { AgentConfig } from "../src/cli/types";
 
 const TEST_DIR = join(tmpdir(), `arra-oracle-skills-profile-${Date.now()}`);
@@ -68,7 +68,7 @@ describe("e2e: install with standard profile", () => {
 describe("e2e: install with full profile", () => {
   beforeEach(cleanup);
 
-  it("full installs all stable skills (excludes lab-only)", async () => {
+  it("full installs all stable skills (excludes lab-only and minimal-only)", async () => {
     const allSkills = await discoverSkills();
     await installSkills([TEST_AGENT], {
       global: true,
@@ -78,9 +78,14 @@ describe("e2e: install with full profile", () => {
 
     const installed = await listSkillDirs(SKILLS_DIR);
     const excludedCount = allSkills.filter(s => s.secret || s.zombie).length;
-    const expectedCount = allSkills.length - labOnly.filter(s => allSkills.some(sk => sk.name === s)).length - excludedCount;
+    const labCount = labOnly.filter(s => allSkills.some(sk => sk.name === s)).length;
+    const minimalOnlyCount = minimalOnly.filter(s => allSkills.some(sk => sk.name === s)).length;
+    const expectedCount = allSkills.length - labCount - minimalOnlyCount - excludedCount;
     expect(installed.length).toBe(expectedCount);
     for (const name of labOnly) {
+      expect(installed).not.toContain(name);
+    }
+    for (const name of minimalOnly) {
       expect(installed).not.toContain(name);
     }
   });
@@ -89,7 +94,7 @@ describe("e2e: install with full profile", () => {
 describe("e2e: install with lab profile", () => {
   beforeEach(cleanup);
 
-  it("lab installs all skills (excludes secrets + zombies)", async () => {
+  it("lab installs all skills (excludes secrets + zombies + minimal-only)", async () => {
     const allSkills = await discoverSkills();
     await installSkills([TEST_AGENT], {
       global: true,
@@ -99,7 +104,11 @@ describe("e2e: install with lab profile", () => {
 
     const installed = await listSkillDirs(SKILLS_DIR);
     const excludedCount = allSkills.filter(s => s.secret || s.zombie).length;
-    expect(installed.length).toBe(allSkills.length - excludedCount);
+    const minimalOnlyCount = minimalOnly.filter(s => allSkills.some(sk => sk.name === s)).length;
+    expect(installed.length).toBe(allSkills.length - excludedCount - minimalOnlyCount);
+    for (const name of minimalOnly) {
+      expect(installed).not.toContain(name);
+    }
   });
 });
 
@@ -119,7 +128,9 @@ describe("e2e: profile switch (full → standard) is additive", () => {
     const allSkills = await discoverSkills();
     let installed = await listSkillDirs(SKILLS_DIR);
     const excludedCount = allSkills.filter(s => s.secret || s.zombie).length;
-    const fullCount = allSkills.length - labOnly.filter(s => allSkills.some(sk => sk.name === s)).length - excludedCount;
+    const labCount = labOnly.filter(s => allSkills.some(sk => sk.name === s)).length;
+    const minimalOnlyCount = minimalOnly.filter(s => allSkills.some(sk => sk.name === s)).length;
+    const fullCount = allSkills.length - labCount - minimalOnlyCount - excludedCount;
     expect(installed.length).toBe(fullCount);
 
     await installSkills([TEST_AGENT], {

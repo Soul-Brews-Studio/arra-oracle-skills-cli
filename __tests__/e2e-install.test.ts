@@ -5,7 +5,7 @@ import { existsSync } from "fs";
 import { tmpdir } from "os";
 import { agents } from "../src/cli/agents";
 import { installSkills, uninstallSkills, discoverSkills } from "../src/cli/installer";
-import { profiles, labOnly } from "../src/profiles";
+import { profiles, labOnly, minimalOnly } from "../src/profiles";
 import type { AgentConfig } from "../src/cli/types";
 
 const TEST_DIR = join(tmpdir(), `arra-oracle-skills-e2e-${Date.now()}`);
@@ -147,14 +147,14 @@ describe("e2e: install full profile", () => {
     });
 
     const installed = await listSkillDirs(SKILLS_DIR);
-    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret && !s.zombie);
+    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !minimalOnly.includes(s.name) && !s.secret && !s.zombie);
     expect(installed.length).toBe(fullSkills.length);
   });
 
   it("every full-profile skill has a directory", async () => {
     const allSkills = await discoverSkills();
     const installed = await listSkillDirs(SKILLS_DIR);
-    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret && !s.zombie);
+    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !minimalOnly.includes(s.name) && !s.secret && !s.zombie);
 
     for (const skill of fullSkills) {
       expect(installed).toContain(skill.name);
@@ -254,7 +254,7 @@ describe("e2e: profile switch (full → standard) is additive", () => {
     });
 
     const allSkills = await discoverSkills();
-    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !s.secret && !s.zombie);
+    const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !minimalOnly.includes(s.name) && !s.secret && !s.zombie);
     let skills = await listSkillDirs(SKILLS_DIR);
     expect(skills.length).toBe(fullSkills.length);
 

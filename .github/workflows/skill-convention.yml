@@ -1,0 +1,17 @@
+name: skill-convention
+on:
+  pull_request:
+    paths:
+      - 'src/skills/**/*.md'
+      - 'scripts/check_skill_convention.sh'
+  push:
+    branches: [main, alpha]
+    paths:
+      - 'src/skills/**/*.md'
+      - 'scripts/check_skill_convention.sh'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/check_skill_convention.sh

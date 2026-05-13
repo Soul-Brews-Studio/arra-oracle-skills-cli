@@ -1,0 +1,12 @@
+register: stale-snapshot-repo
+owner: Soul-Brews-Studio
+repo: thclaws-oracle
+# Seed list confirmed deleted post-PRD-111. Source: usage-anthropologist Round 3 section 2.
+# grep returns empty in tools.rs; THEMION-INTEGRATION.md cites the migration.
+known_deleted_symbols:
+  - stylos_request_talk
+  - stylos_request_task
+  - stylos_query_task_status
+  - stylos_query_task_result
+  - request_talk_handler
+deleted_in_commit: PRD-111

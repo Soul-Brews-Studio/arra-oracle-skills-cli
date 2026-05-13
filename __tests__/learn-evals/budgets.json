@@ -1,0 +1,17 @@
+{
+  "_comment": "Single source of truth for per-doc word budgets. Consumed by __tests__/learn-evals/* (Q1) AND (in a follow-up PR) the SKILL.md per-agent prompt templates. One edit propagates. Tuple = [floor, ceiling] from skill-designer Round 3 Edit 2.",
+  "doc_budgets": {
+    "OVERVIEW": {"floor": 300, "ceiling": 500},
+    "ARCHITECTURE": {"floor": 1000, "ceiling": 1400},
+    "CODE-SNIPPETS": {"floor": 800, "ceiling": 1200},
+    "QUICK-REFERENCE": {"floor": 400, "ceiling": 700},
+    "TESTING": {"floor": 700, "ceiling": 1000},
+    "API-SURFACE": {"floor": 700, "ceiling": 1000},
+    "SYNTHESIS": {"floor": 800, "ceiling": 1500}
+  },
+  "hub_prose_cap": 100,
+  "tolerance": {
+    "auto_trim_mult": 1.20,
+    "_comment_auto_trim": "100-120% of ceiling = auto-trim tier (re-spawn with trim instruction). >120% = BLOCK."
+  }
+}

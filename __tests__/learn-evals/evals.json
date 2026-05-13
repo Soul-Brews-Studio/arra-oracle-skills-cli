@@ -1,0 +1,82 @@
+{
+  "skill_name": "learn",
+  "evals": [
+    {
+      "id": 1,
+      "name": "tiny",
+      "register": "tiny",
+      "mode": "--fast",
+      "prompt": "Target: https://github.com/sindresorhus/is-online (single-purpose, one .ts file, no tests). Run /learn --fast. Expect: 1 OVERVIEW doc 300-500w with install + 1-sentence summary."
+    },
+    {
+      "id": 2,
+      "name": "medium",
+      "register": "medium",
+      "mode": "default",
+      "prompt": "Target: https://github.com/sindresorhus/got (10-50 files, strong README). Run /learn. Expect: 3 docs (ARCHITECTURE/CODE-SNIPPETS/QUICK-REFERENCE) within their declared budgets."
+    },
+    {
+      "id": 3,
+      "name": "large-deep",
+      "register": "large-deep",
+      "mode": "--deep",
+      "prompt": "Target: https://github.com/vercel/turborepo (100+ files, packages/*). Run /learn --deep. Expect: 5 docs within budgets + optional SYNTHESIS 800-1500w with cross-refs to all siblings."
+    },
+    {
+      "id": 4,
+      "name": "dead-link",
+      "register": "dead-link",
+      "mode": "default",
+      "prompt": "Target: https://github.com/does-not-exist-9f8a/nope-404. Run /learn. Expect: clean error report, ZERO .md files created, exit non-zero."
+    },
+    {
+      "id": 5,
+      "name": "private",
+      "register": "private",
+      "mode": "default",
+      "prompt": "Target: https://github.com/Soul-Brews-Studio/private-test-fixture (auth required). Run /learn. Expect: auth-failure detection + report; no fabricated content from public guess."
+    },
+    {
+      "id": 6,
+      "name": "multi-lang",
+      "register": "multi-lang",
+      "mode": "--deep",
+      "prompt": "Target: https://github.com/tauri-apps/tauri (Rust + TypeScript + Python). Run /learn --deep. Expect: no doc generalizes across languages with fluff (Q7); CODE-SNIPPETS has examples in >=2 languages."
+    },
+    {
+      "id": 7,
+      "name": "non-code",
+      "register": "non-code",
+      "mode": "default",
+      "prompt": "Target: https://github.com/sindresorhus/awesome (markdown-only awesome list). Run /learn. Expect: CODE-SNIPPETS may be empty + flagged; ARCHITECTURE describes list structure, not invented code."
+    },
+    {
+      "id": 8,
+      "name": "huge-readme",
+      "register": "huge-readme",
+      "mode": "default",
+      "prompt": "Target: https://github.com/donnemartin/system-design-primer (single 5000-line README). Run /learn. Expect: summarization not parroting; QUICK-REFERENCE within budget."
+    },
+    {
+      "id": 9,
+      "name": "themion-stylos-replay",
+      "register": "themion-stylos-replay",
+      "mode": "fixture-replay",
+      "prompt": "Replay today's 11-doc output from /opt/Code/.../thclaws-oracle/ψ/learn/tasanakorn/{themion,stylos}/2026-05-13/. Expect: Q1 fails on API-SURFACE (3730w/2000); Q5 fails on SYNTHESIS (0 cross-refs); Q4 fails on 40% of file:line refs."
+    },
+    {
+      "id": 10,
+      "name": "re-learn-same-day",
+      "register": "re-learn-same-day",
+      "mode": "default",
+      "prompt": "Run /learn https://github.com/sindresorhus/got twice in same UTC day. Expect: two HHMM_ prefixes (e.g. 0930_, 1145_); no overwrite; hub lists both."
+    },
+    {
+      "id": 11,
+      "name": "stale-snapshot-repo",
+      "register": "stale-snapshot-repo",
+      "mode": "default",
+      "prompt": "Target: https://github.com/Soul-Brews-Studio/thclaws-oracle (post-PRD-111 HEAD; KNOWN-DELETED symbols: stylos_request_talk, stylos_request_task, stylos_query_task_status, stylos_query_task_result). Run /learn. Expect: zero deleted-symbol mentions in output; Q-stale fails if any present."
+    }
+  ]
+}

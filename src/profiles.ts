@@ -2,14 +2,18 @@
  * Skill profiles — 3 tiers, single source of truth.
  *
  * minimal: newcomer essentials — 7 skills (lifecycle + trace + update + upgrade)
- * standard: daily driver (default) — 13 essential skills (data-driven, session 8+9)
- * full: all stable skills (excludes lab-only experiments)
- * lab: everything including experimental / bleeding edge
+ * standard: daily driver — 13 essential skills (data-driven, session 8+9)
+ * full: all stable skills (excludes lab-only experiments AND minimal-only lite variants)
+ * lab: everything including experimental / bleeding edge (still excludes minimal-only lite variants)
  *
  * Profile audit: 120 sessions mined (2026-04-15). Skills earning standard
  * must have 10+ session appearances. Demoted: about-oracle (5), create-shortcut (6),
  * oracle-soul-sync-update (6), standup (10), skills-list (3), oracle-family-scan (8).
  * These move to full (still installable, not lab-gated).
+ *
+ * MINIMAL_ONLY classification (#285): forward-lite, recap-lite, rrr-lite are token-
+ * optimized replacements for full versions. They have value in minimal only —
+ * elsewhere they duplicate functionality of forward/recap/rrr. Excluded from full+lab.
  */
 
 /** Minimal profile — lite lifecycle + trace + update + upgrade (token-optimized) */
@@ -30,6 +34,14 @@ export const LAB_SKILLS = [
   'release', 'schedule', 'vault', 'warp', 'watch', 'work-with', 'worktree', 'wormhole',
 ] as const;
 
+/** Minimal-only skills — token-optimized lite variants that replace the full
+ *  version when in `minimal` profile. They have no value outside minimal because
+ *  the full versions (`forward`, `recap`, `rrr`) are present in higher tiers.
+ *  Excluded from `full` and `lab` profiles. Closes #285. */
+export const MINIMAL_ONLY_SKILLS = [
+  'forward-lite', 'recap-lite', 'rrr-lite',
+] as const;
+
 /** Zombie skills — internal development candidates from arra-symbiosis-skills.
  *  Excluded from ALL profiles. Install by name only: `arra install -s workon`
  *  These are dormant — available for development, not for users. */
@@ -41,6 +53,7 @@ export const ZOMBIE_SKILLS = [
 
 // Backwards-compatible aliases
 export const labOnly = [...LAB_SKILLS] as string[];
+export const minimalOnly = [...MINIMAL_ONLY_SKILLS] as string[];
 
 export const profiles: Record<string, { include?: string[]; exclude?: string[] }> = {
   minimal: {
@@ -50,9 +63,11 @@ export const profiles: Record<string, { include?: string[]; exclude?: string[] }
     include: [...STANDARD_SKILLS],
   },
   full: {
-    exclude: labOnly,  // all skills except lab-only experiments
+    exclude: [...labOnly, ...minimalOnly],  // all skills except lab-only + minimal-only lite variants
   },
-  lab: {},             // everything — all discovered skills
+  lab: {
+    exclude: minimalOnly,                    // everything except minimal-only lite variants (full versions present)
+  },
 };
 
 /**

@@ -58,7 +58,7 @@ export const ZOMBIE_SKILLS = [
   // Kept active by explicit user request: bampenpien (standard), feel + morpheus (lab),
   // fyi (lab, imported from oracle-proof-of-concept-skills), resonance (implicit-full).
   'i-believed', 'work-with', 'morpheus',
-  'retrospective', 'auto-retrospective', 'skills-list',
+  'retrospective', 'skills-list',
   'fleet', 'machines', 'warp', 'release',
   'philosophy', 'wormhole', 'harden', 'vault',
 ] as const;

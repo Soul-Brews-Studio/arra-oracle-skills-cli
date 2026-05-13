@@ -36,13 +36,6 @@ dir="${cwd/#$HOME\/Code\/github.com\//}"
 # Fallback: if no match, shorten $HOME to ~
 [ "$dir" = "$cwd" ] && dir="${cwd/#$HOME/\~}"
 
-# Auto-scale thresholds
-TDIR="${TMPDIR:-${TMP:-${TEMP:-/tmp}}}"
-HOOK="$HOME/.claude/hooks/auto-scale.sh"
-rrr_int=$(grep "^RRR_INTERVAL=" "$HOOK" 2>/dev/null | cut -d= -f2) || rrr_int="?"
-fwd_int=$(grep "^FWD_INTERVAL=" "$HOOK" 2>/dev/null | cut -d= -f2) || fwd_int="?"
-auto_st="on"; [ -f "$TDIR/claude-auto-scale-off" ] && auto_st="off"
-
 # Session ID (short)
 sid=$(echo "$input" | jq -r '.session_id // ""' 2>/dev/null | cut -c1-8)
 
@@ -54,4 +47,4 @@ prev_info=""
 [ -n "$prev_sid" ] && [ "$prev_sid" != "$sid" ] && prev_info="${prev_sid} → "
 
 echo "📁 ${dir}${git}"
-echo "📡 ${sid}${prev_info} • $(date +%H:%M) • ${pct}% ${used_k}k/${max_k}k • r:${rrr_int}k f:${fwd_int}k ${auto_st} • ${model}"
+echo "📡 ${sid}${prev_info} • $(date +%H:%M) • ${pct}% ${used_k}k/${max_k}k • ${model}"

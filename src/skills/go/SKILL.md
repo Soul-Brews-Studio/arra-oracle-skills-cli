@@ -130,8 +130,7 @@ Build the combined table. For each of the 29 arra skills, show: profile tier, in
   #  Skill                    Profile    Installed  Version   Status       Usage
   ── ──────────────────────── ────────── ────────── ───────── ──────────── ─────
   1  about-oracle             standard   ✓          v3.7.2    ✓ ok         2
-  2  auto-retrospective       full       ✓          v3.7.2    ✓ ok         2
-  3  awaken                   standard   ✓          v3.7.2    ✓ ok         7
+  2  awaken                   standard   ✓          v3.7.2    ✓ ok         7
   4  contacts                 lab        ✓          v3.7.2    ✓ ok         5
   5  create-shortcut          lab        ✗          —         —            3
   6  dig                      standard   ✓          v3.7.2    ✓ ok         6
@@ -168,7 +167,7 @@ Build the combined table. For each of the 29 arra skills, show: profile tier, in
 **How to get usage counts**: for each skill, count sessions containing `/$skill`:
 
 ```bash
-for skill in about-oracle auto-retrospective awaken contacts create-shortcut \
+for skill in about-oracle awaken contacts create-shortcut \
   dig dream feel forward go inbox incubate learn oracle-family-scan \
   oracle-soul-sync-update philosophy project recap resonance rrr \
   schedule standup talk-to team-agents trace vault where-we-are who-are-you xray; do

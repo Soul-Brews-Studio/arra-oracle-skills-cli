@@ -19,9 +19,6 @@ Then register in `~/.claude/settings.json`:
     ],
     "SessionStart": [
       { "hooks": [{ "type": "command", "command": "~/.claude/hooks/session-start.sh", "timeout": 10 }] }
-    ],
-    "UserPromptSubmit": [
-      { "hooks": [{ "type": "command", "command": "~/.claude/hooks/auto-scale.sh", "timeout": 5 }] }
     ]
   },
   "statusLine": {
@@ -35,15 +32,6 @@ Then register in `~/.claude/settings.json`:
 
 | File | Event | What |
 |------|-------|------|
-| `auto-scale.sh` | UserPromptSubmit | Context display + auto /rrr every 100k + /forward every 195k |
 | `safety-check.sh` | PreToolUse (Bash) | Block: force push, push main, rm -rf, --amend |
 | `session-start.sh` | SessionStart | Show session ID, branch, issues, handoff |
-| `statusline-command.sh` | statusLine | Custom 2-line statusline with thresholds |
-
-## Configure
-
-```bash
-/auto-rrr status         # Check intervals
-/auto-rrr rrr:150k       # Change /rrr interval
-/auto-rrr off            # Disable auto-triggers
-```
+| `statusline-command.sh` | statusLine | Custom 2-line statusline |

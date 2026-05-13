@@ -123,7 +123,7 @@ describe("integration: OpenCode global install", () => {
     const cmdFiles = commands.filter(c => c.endsWith('.md')).map(c => c.replace('.md', ''));
 
     // Only arra-managed, non-hidden skills require command stubs
-    // Hidden skills (e.g. auto-rrr) are installed without command stubs by design
+    // Hidden skills (e.g. mailbox) are installed without command stubs by design
     for (const skill of skillDirs) {
       const skillMdPath = join(GLOBAL_OPENCODE_SKILLS, skill, "SKILL.md");
       if (!existsSync(skillMdPath)) continue;

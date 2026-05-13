@@ -43,7 +43,7 @@ python3 ~/.claude/skills/skills-list/scripts/skills-list.py
   #  Skill                    Profile    Type         Scripts
   ── ──────────────────────── ────────── ────────���─── ───────
    1 about-oracle             standard   skill+agent  
-   2 auto-retrospective       full       skill        
+   2 recap                    standard   skill        
    3 awaken                   standard   skill        
    ...
   41 xray                     standard   skill        

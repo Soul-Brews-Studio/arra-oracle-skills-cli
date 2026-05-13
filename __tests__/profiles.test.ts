@@ -56,8 +56,8 @@ describe("profiles", () => {
     expect(LAB_SKILLS).toHaveLength(9);
   });
 
-  it("ZOMBIE_SKILLS has 27 internal/archived candidates (13 original + 14 culled in #327)", () => {
-    expect(ZOMBIE_SKILLS).toHaveLength(27);
+  it("ZOMBIE_SKILLS has 26 archived candidates (13 original + 12 culled in #327 + 1 added in #333)", () => {
+    expect(ZOMBIE_SKILLS).toHaveLength(26);
   });
 
   it("labOnly matches LAB_SKILLS", () => {

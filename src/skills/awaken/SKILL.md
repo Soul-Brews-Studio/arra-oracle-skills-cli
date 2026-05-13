@@ -384,8 +384,8 @@ Ask each question separately. Wait for answer before asking next.
 | "ไม่" / "no" / "ไม่เอา" | false |
 
 Record `memory_consent`.
-- If `true` → Enable auto-rrr hooks and /forward in CLAUDE.md
-- If `false` → No auto hooks, user must manually invoke /rrr and /forward
+- If `true` → Encourage /rrr and /forward in CLAUDE.md
+- If `false` → No reminders, user must manually invoke /rrr and /forward
 
 ### Question 2: Family
 

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Removed (#334)
+- `/auto-retrospective` skill + command stub + `hooks/auto-scale.sh` engine + statusline threshold readout.
+  Skill was orphaned documentation for an uninstalled hook (3 invocations in 3,685 sessions).
+  Hook had real bugs (hard-coded /usr/bin/jq, scope error on line 43, threshold drift).
+  Violates Nothing-is-Deleted by design — git history preserves body. Rationale in #334.
+
 ### feat(profiles): explicit-profile alignment (#285 part 2, closes #267)
 
 - `install --profile <name>` when explicit now ALIGNS (removes arra-managed skills not in target).

@@ -46,6 +46,7 @@ export interface InstallOptions {
   global?: boolean;
   skills?: string[];
   profile?: string;
+  profileExplicit?: boolean; // #285: true when --profile was explicitly passed on CLI (not default)
   yes?: boolean;
   agents?: string[];
   commands?: boolean; // Also install command stubs (for agents with commandsOptIn)

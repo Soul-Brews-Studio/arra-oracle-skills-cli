@@ -84,15 +84,15 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 12 | **contacts** | skill | Manage Oracle contacts |
 | 13 | **create-shortcut** | skill | Create local skills as shortcuts |
 | 14 | **dig** | skill | Mine Claude Code sessions |
-| 15 | **feel** | skill | "Capture how the system feels |
-| 16 | **forward** | skill | Create handoff + enter plan mode for next |
-| 17 | **forward-lite** | skill | Quick handoff to next session |
-| 18 | **fyi** | skill | Log information for future reference |
-| 19 | **go** | skill | Switch skill profiles (standard/full/lab) |
-| 20 | **inbox** | skill | Read and write to Oracle inbox |
-| 21 | **incubate** | skill | Clone or create repos for active development |
-| 22 | **mailbox** | skill | 'Persistent agent mailbox |
-| 23 | **morpheus** | skill | 'Speculative dreaming |
+| 15 | **dream** | skill | "Cross-repo pattern discovery |
+| 16 | **feel** | skill | "Capture how the system feels |
+| 17 | **forward** | skill | Create handoff + enter plan mode for next |
+| 18 | **forward-lite** | skill | Quick handoff to next session |
+| 19 | **fyi** | skill | Log information for future reference |
+| 20 | **go** | skill | Switch skill profiles (standard/full/lab) |
+| 21 | **inbox** | skill | Read and write to Oracle inbox |
+| 22 | **incubate** | skill | Clone or create repos for active development |
+| 23 | **mailbox** | skill | 'Persistent agent mailbox |
 | 24 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
 | 25 | **recap-lite** | skill | Quick session orientation |
 | 26 | **resonance** | skill | Capture a resonance moment |

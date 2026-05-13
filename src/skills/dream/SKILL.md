@@ -2,9 +2,6 @@
 name: dream
 description: "Cross-repo pattern discovery with parallel agents. Finds pains, plans, gains, lost work, and feelings across all repositories. Use when user says 'dream', 'what hurts', 'cross-repo patterns', 'big picture', or wants to see connections between projects."
 argument-hint: "[--pain | --plan | --gain | --all]"
-zombie: true
-archived_reason: 'moved to zombie tier via #327 (usage audit, 3,685 sessions mined)'
-archived_date: 2026-05-13
 ---
 
 # /dream — Cross-Repo Pattern Discovery

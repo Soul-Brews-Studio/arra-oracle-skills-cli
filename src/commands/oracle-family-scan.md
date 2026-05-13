@@ -1,5 +1,5 @@
 ---
-description: '[core] v26.5.13-alpha.1200 | Oracle Family Registry — scan, query, welcome. 186+ Oracles indexed. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.'
+description: '[core] v26.5.13-alpha.1527 | Oracle Family Registry — scan, query, welcome. 186+ Oracles indexed. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.'
 argument-hint: "[--scan | --query <name> | --welcome | --activity-report | --timeline | --usage | --calibrate]"
 ---
 
@@ -19,5 +19,5 @@ Execute the `oracle-family-scan` skill with the provided arguments.
 **WARNING**: Do NOT use Glob, find, or search for this skill. The path above is the ONLY correct location. Other files with "oracle-family-scan" in the name are NOT this skill.
 
 ---
-*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1200*
+*🧬 Nat Weerawan × Oracle · Symbiotic Intelligence · v26.5.13-alpha.1527*
 *Digitized from Nat Weerawan's brain — thousands of hours working alongside AI, captured as code*

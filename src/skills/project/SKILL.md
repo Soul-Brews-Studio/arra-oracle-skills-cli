@@ -22,6 +22,25 @@ Invoke this skill when:
 - User wants to start developing on an external repo
 - Need to find where a previously cloned project lives
 
+## Step 0 — Anchor (date-stamp + root)
+
+```bash
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+
+# Find oracle root — git toplevel that has CLAUDE.md + ψ/
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
+  PSI="$ORACLE_ROOT/ψ"
+elif [ -f "$(pwd)/CLAUDE.md" ] && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+else
+  echo "⚠️ Not in oracle repo (no CLAUDE.md + ψ/ at git root). Writing to pwd."
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+fi
+```
+
 ## Actions
 
 ### learn [url|slug]
@@ -34,11 +53,19 @@ ghq get -u https://github.com/owner/repo
 
 # 2. Create org/repo symlink structure
 GHQ_ROOT=$(ghq root)
-mkdir -p ψ/learn/owner
-ln -sf "$GHQ_ROOT/github.com/owner/repo" ψ/learn/owner/repo
+mkdir -p "$PSI/learn/owner"
+ln -sf "$GHQ_ROOT/github.com/owner/repo" "$PSI/learn/owner/repo"
 ```
 
-**Output**: "✓ Linked [repo] to ψ/learn/owner/repo"
+**Output** (announce-mode — absolute path):
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+LINK="$PSI/learn/owner/repo"
+echo "✅ Linked: $LINK"
+```
 
 ### incubate — REDIRECTS TO /incubate
 
@@ -55,7 +82,7 @@ Search for project across all locations:
 ghq list | grep -i "query"
 
 # Search learn/incubate symlinks (org/repo structure)
-find ψ/learn ψ/incubate -type l 2>/dev/null | grep -i "query"
+find "$PSI/learn" "$PSI/incubate" -type l 2>/dev/null | grep -i "query"
 ```
 
 **Output**: List matches with their ghq paths
@@ -70,7 +97,7 @@ echo ""
 
 # Collect all tracked repos (learn + incubate symlinks)
 REPOS=()
-for link in $(find ψ/learn ψ/incubate -name "origin" -type l 2>/dev/null | sort); do
+for link in $(find "$PSI/learn" "$PSI/incubate" -name "origin" -type l 2>/dev/null | sort); do
   dir=$(dirname "$link")
   owner=$(basename "$(dirname "$dir")")
   repo=$(basename "$dir")
@@ -118,7 +145,7 @@ When listing, verify symlinks are valid:
 
 ```bash
 # Check for broken symlinks
-find ψ/learn ψ/incubate -type l ! -exec test -e {} \; -print 2>/dev/null
+find "$PSI/learn" "$PSI/incubate" -type l ! -exec test -e {} \; -print 2>/dev/null
 ```
 
 If broken: `ghq get -u [url]` to restore source.
@@ -154,7 +181,7 @@ User: "/project incubate https://github.com/Soul-Brews-Studio/arra-oracle-v3 --c
 
 ```bash
 # Add to learn
-ghq get -u URL && mkdir -p ψ/learn/owner && ln -sf "$(ghq root)/github.com/owner/repo" ψ/learn/owner/repo
+ghq get -u URL && mkdir -p "$PSI/learn/owner" && ln -sf "$(ghq root)/github.com/owner/repo" "$PSI/learn/owner/repo"
 
 # Incubate (use standalone /incubate skill)
 /incubate URL [--flash | --contribute | --status | --offload]

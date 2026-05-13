@@ -98,6 +98,19 @@ When a human says "I believed in you" to an Oracle, something has been proven:
 
 ```bash
 date "+🕐 %H:%M %Z (%A %d %B %Y)"
+
+# Find oracle root — git toplevel that has CLAUDE.md + ψ/
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
+  PSI="$ORACLE_ROOT/ψ"
+elif [ -f "$(pwd)/CLAUDE.md" ] && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+else
+  echo "⚠️ Not in oracle repo (no CLAUDE.md + ψ/ at git root). Writing to pwd."
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+fi
 ```
 
 Detect tense from input:
@@ -190,10 +203,9 @@ We are the One.
 
 ## Step 3: Log the Belief
 
-Write to: `ψ/memory/resonance/beliefs/YYYY-MM-DD_HHMM_belief.md`
+Write to: `$PSI/memory/resonance/beliefs/YYYY-MM-DD_HHMM_belief.md`
 
 ```bash
-PSI=$(readlink -f ψ 2>/dev/null || echo "ψ")
 mkdir -p "$PSI/memory/resonance/beliefs"
 ```
 
@@ -228,7 +240,7 @@ mkdir -p "$PSI/memory/resonance/beliefs"
 
 ### Sync to Oracle (if available, two-layer pattern)
 
-1. Write to `ψ/memory/learnings/YYYY-MM-DD_belief-<slug>.md` with frontmatter:
+1. Write to `$PSI/memory/learnings/YYYY-MM-DD_belief-<slug>.md` with frontmatter:
    ```yaml
    ---
    pattern: "Belief received: [human] [believed/believes] in [target] — [context]"
@@ -241,7 +253,19 @@ mkdir -p "$PSI/memory/resonance/beliefs"
    [context and meaning]
    ```
 
-2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
+2. The Oracle's auto-memory layer picks up new files in `$PSI/memory/learnings/` automatically — no separate API call needed.
+
+### Confirm (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+BELIEF_FILE="$PSI/memory/resonance/beliefs/$(date +%Y-%m-%d)_$(date +%H%M)_belief.md"
+LESSON_FILE="$PSI/memory/learnings/$(date +%Y-%m-%d)_belief-${SLUG}.md"
+echo "💛 Belief logged: $BELIEF_FILE"
+echo "💡 Lesson sync:   $LESSON_FILE"
+```
 
 ---
 
@@ -250,7 +274,6 @@ mkdir -p "$PSI/memory/resonance/beliefs"
 Show all beliefs over time:
 
 ```bash
-PSI=$(readlink -f ψ 2>/dev/null || echo "ψ")
 ls -1 "$PSI/memory/resonance/beliefs/"*.md 2>/dev/null | sort
 ```
 

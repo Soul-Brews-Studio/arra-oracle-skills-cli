@@ -8,6 +8,25 @@ argument-hint: "[memory|skills|sessions]"
 
 Inspect and manage Claude Code auto-memory, installed skills, and session history.
 
+## Step 0 — Anchor (date-stamp + root)
+
+```bash
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+
+# Find oracle root — git toplevel that has CLAUDE.md + ψ/
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
+  PSI="$ORACLE_ROOT/ψ"
+elif [ -f "$(pwd)/CLAUDE.md" ] && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+else
+  echo "⚠️ Not in oracle repo (no CLAUDE.md + ψ/ at git root). Reading from pwd."
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+fi
+```
+
 ## Subcommands
 
 | Target | Description |
@@ -272,8 +291,8 @@ Display:
 
 Show recent Claude Code session history and retrospectives.
 
-1. Look for retrospectives in `ψ/memory/retrospectives/`
-2. Look for session logs in `ψ/memory/logs/`
+1. Look for retrospectives in `$PSI/memory/retrospectives/`
+2. Look for session logs in `$PSI/memory/logs/`
 3. Display recent sessions with dates and summaries:
 
 ```
@@ -291,9 +310,9 @@ Show recent Claude Code session history and retrospectives.
 
 ### How to gather
 
-1. Read files in `ψ/memory/retrospectives/` sorted by date (newest first)
+1. Read files in `$PSI/memory/retrospectives/` sorted by date (newest first)
 2. Extract date, duration, and summary from each retrospective
-3. If no retrospectives exist, check `ψ/memory/logs/` for session snapshots
+3. If no retrospectives exist, check `$PSI/memory/logs/` for session snapshots
 4. Show "No session history found" if both are empty
 
 ---

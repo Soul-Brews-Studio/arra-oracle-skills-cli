@@ -24,6 +24,25 @@ AI should consider auto-suggesting /resonance when user says:
 
 ## Steps
 
+### 0. Anchor (date-stamp + root)
+
+```bash
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+
+# Find oracle root — git toplevel that has CLAUDE.md + ψ/
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
+  PSI="$ORACLE_ROOT/ψ"
+elif [ -f "$(pwd)/CLAUDE.md" ] && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+else
+  echo "⚠️ Not in oracle repo (no CLAUDE.md + ψ/ at git root). Writing to pwd."
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+fi
+```
+
 ### 1. Analyze Recent Conversation
 
 Look back at the last 5-10 messages. Find:
@@ -36,7 +55,6 @@ Look back at the last 5-10 messages. Find:
 ### 2. Log to Vault
 
 ```bash
-PSI=$(readlink -f ψ 2>/dev/null || echo "ψ")
 mkdir -p "$PSI/memory/resonance"
 ```
 
@@ -67,7 +85,7 @@ Write to: `$PSI/memory/resonance/YYYY-MM-DD_HHMM_slug.md`
 
 ### 3. Sync to Oracle (if available, two-layer pattern)
 
-1. Write to `ψ/memory/learnings/YYYY-MM-DD_resonance-<slug>.md` with frontmatter:
+1. Write to `$PSI/memory/learnings/YYYY-MM-DD_resonance-<slug>.md` with frontmatter:
    ```yaml
    ---
    pattern: "[resonance title]: [what resonated]"
@@ -80,14 +98,19 @@ Write to: `$PSI/memory/resonance/YYYY-MM-DD_HHMM_slug.md`
    [what resonated and why]
    ```
 
-2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
+2. The Oracle's auto-memory layer picks up new files in `$PSI/memory/learnings/` automatically — no separate API call needed.
 
-### 4. Output
+### 4. Confirm (announce-mode — absolute paths required)
 
-```
-✨ Resonance captured: [title]
-   → ψ/memory/resonance/YYYY-MM-DD_HHMM_slug.md
-   Tags: [tags]
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+RES_FILE="$PSI/memory/resonance/$(date +%Y-%m-%d)_$(date +%H%M)_${SLUG}.md"
+LESSON_FILE="$PSI/memory/learnings/$(date +%Y-%m-%d)_resonance-${SLUG}.md"
+echo "✨ Resonance captured: ${TITLE}"
+echo "📥 Saved:   $RES_FILE"
+echo "💡 Lesson:  $LESSON_FILE"
 ```
 
 Short. Don't over-explain. The moment speaks for itself.

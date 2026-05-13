@@ -34,6 +34,27 @@ The Oracle listens, asks, reflects. Not advice. Not solutions. Just presence.
 
 ---
 
+## Step 0 — Anchor (date-stamp + root)
+
+```bash
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+
+# Find oracle root — git toplevel that has CLAUDE.md + ψ/
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
+  PSI="$ORACLE_ROOT/ψ"
+elif [ -f "$(pwd)/CLAUDE.md" ] && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+else
+  echo "⚠️ Not in oracle repo (no CLAUDE.md + ψ/ at git root). Writing to pwd."
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+fi
+```
+
+---
+
 ## The Practice (default)
 
 A guided conversation. The Oracle asks. The human answers. No time pressure.
@@ -101,7 +122,7 @@ After the conversation finds its natural end:
   บำเพ็ญเพียร is not about reaching the destination.
   It's about becoming the person who walks.
 
-  Session saved → ψ/memory/resonance/practice/
+  Session saved → $PSI/memory/resonance/practice/
 ```
 
 ### Guidelines for the Oracle
@@ -149,7 +170,6 @@ Log to practice file. Done.
 Show all practice sessions:
 
 ```bash
-PSI=$(readlink -f ψ 2>/dev/null || echo "ψ")
 ls -1 "$PSI/memory/resonance/practice/"*.md 2>/dev/null | sort
 ```
 
@@ -222,17 +242,16 @@ The unexpected gift: [their unexpected gift]
 but believing something will come from it.
 ```
 
-Copy to clipboard or save to `ψ/outbox/`.
+Copy to clipboard or save to `$PSI/outbox/`.
 
 ---
 
 ## Step: Log the Practice
 
 After every session (full or reflect), write to:
-`ψ/memory/resonance/practice/YYYY-MM-DD_HHMM_bampenpien.md`
+`$PSI/memory/resonance/practice/YYYY-MM-DD_HHMM_bampenpien.md`
 
 ```bash
-PSI=$(readlink -f ψ 2>/dev/null || echo "ψ")
 mkdir -p "$PSI/memory/resonance/practice"
 ```
 
@@ -268,7 +287,7 @@ mkdir -p "$PSI/memory/resonance/practice"
 
 ### Sync to Oracle (if available, two-layer pattern)
 
-1. Write to `ψ/memory/learnings/YYYY-MM-DD_bampenpien-<slug>.md` with frontmatter:
+1. Write to `$PSI/memory/learnings/YYYY-MM-DD_bampenpien-<slug>.md` with frontmatter:
    ```yaml
    ---
    pattern: "บำเพ็ญเพียร: [human] practices with [hard thing] — believes [belief]"
@@ -281,7 +300,19 @@ mkdir -p "$PSI/memory/resonance/practice"
    <session summary from the practice log>
    ```
 
-2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
+2. The Oracle's auto-memory layer picks up new files in `$PSI/memory/learnings/` automatically — no separate API call needed.
+
+### Confirm (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+PRACTICE_FILE="$PSI/memory/resonance/practice/$(date +%Y-%m-%d)_$(date +%H%M)_bampenpien.md"
+LESSON_FILE="$PSI/memory/learnings/$(date +%Y-%m-%d)_bampenpien-${SLUG}.md"
+echo "🕯️ Practice logged:  $PRACTICE_FILE"
+echo "💡 Lesson sync:      $LESSON_FILE"
+```
 
 ---
 

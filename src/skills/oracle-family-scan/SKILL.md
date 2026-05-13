@@ -40,6 +40,17 @@ have been.
 The registry's canonical home is `laris-co/mother-oracle/registry/` (where `sync.ts` + `oracles.json` actually live). The legacy `opensource-nat-brain-oracle` repo back-symlinks to it for back-compat. Resolve the path:
 
 ```bash
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+
+# Optional: oracle root (some sub-flows write to ψ/memory/learnings/)
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
+  PSI="$ORACLE_ROOT/ψ"
+elif [ -f "$(pwd)/CLAUDE.md" ] && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+fi
+
 # Try laris-co/mother-oracle (canonical home of sync.ts + oracles.json)
 MOTHER="$HOME/Code/github.com/laris-co/mother-oracle"
 if [ ! -d "$MOTHER/registry" ]; then
@@ -232,8 +243,12 @@ Each welcome must:
 Save drafts for review before posting:
 
 ```bash
-# Save to ψ/inbox/handoff/ and /tmp/
-cat drafts > ψ/inbox/handoff/welcome-drafts.md
+# Save to $PSI/inbox/handoff/ and /tmp/
+mkdir -p "$PSI/inbox/handoff"
+DRAFTS_FILE="$PSI/inbox/handoff/welcome-drafts.md"
+cat drafts > "$DRAFTS_FILE"
+# announce-mode → absolute path. See CONVENTIONS.md.
+echo "📥 Welcome drafts saved: $DRAFTS_FILE"
 ```
 
 ### Step 5: Post
@@ -682,7 +697,7 @@ arra_trace({
 
 After finding new Oracle, save the lesson (two-layer pattern):
 
-1. Write to `ψ/memory/learnings/YYYY-MM-DD_new-oracle-<name>.md` with frontmatter:
+1. Write to `$PSI/memory/learnings/YYYY-MM-DD_new-oracle-<name>.md` with frontmatter:
    ```yaml
    ---
    pattern: "New Oracle: [NAME] — [HUMAN] — [DATE]"
@@ -695,7 +710,17 @@ After finding new Oracle, save the lesson (two-layer pattern):
    [birth story, human, theme]
    ```
 
-2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
+2. The Oracle's auto-memory layer picks up new files in `$PSI/memory/learnings/` automatically — no separate API call needed.
+
+### Confirm (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+LESSON_FILE="$PSI/memory/learnings/$(date +%Y-%m-%d)_new-oracle-${NAME}.md"
+echo "💡 New-oracle lesson: $LESSON_FILE"
+```
 
 ---
 

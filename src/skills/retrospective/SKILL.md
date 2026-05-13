@@ -10,19 +10,36 @@ Quick retrospective for any Oracle. For the full /rrr experience, install arra-s
 
 ## Steps
 
+### 0. Anchor (date-stamp + root)
+
+```bash
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+
+# Find oracle root — git toplevel that has CLAUDE.md + ψ/
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$ORACLE_ROOT" ] && [ -f "$ORACLE_ROOT/CLAUDE.md" ] && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
+  PSI="$ORACLE_ROOT/ψ"
+elif [ -f "$(pwd)/CLAUDE.md" ] && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+else
+  echo "⚠️ Not in oracle repo (no CLAUDE.md + ψ/ at git root). Writing to pwd."
+  ORACLE_ROOT="$(pwd)"
+  PSI="$ORACLE_ROOT/ψ"
+fi
+```
+
 ### 1. Gather
 
 ```bash
-date "+%H:%M %Z (%A %d %B %Y)"
 git log --oneline -10
 ```
 
 ### 2. Write
 
-Path: `ψ/memory/retrospectives/YYYY-MM/DD/HH.MM_slug.md`
+Path: `$PSI/memory/retrospectives/YYYY-MM/DD/HH.MM_slug.md`
 
 ```bash
-PSI=$(readlink -f ψ 2>/dev/null || echo "ψ")
 mkdir -p "$PSI/memory/retrospectives/$(date +%Y-%m/%d)"
 ```
 
@@ -34,7 +51,7 @@ Include:
 
 ### 3. Sync to Oracle (two-layer pattern)
 
-1. Write to `ψ/memory/learnings/YYYY-MM-DD_<slug>.md` with frontmatter:
+1. Write to `$PSI/memory/learnings/YYYY-MM-DD_<slug>.md` with frontmatter:
    ```yaml
    ---
    pattern: <lesson in one line>
@@ -47,8 +64,20 @@ Include:
    <body>
    ```
 
-2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
+2. The Oracle's auto-memory layer picks up new files in `$PSI/memory/learnings/` automatically — no separate API call needed.
 
 Do NOT git add ψ/ — vault is shared state.
+
+### 4. Confirm (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+RETRO_FILE="$PSI/memory/retrospectives/$(date +%Y-%m/%d)/$(date +%H.%M)_${SLUG}.md"
+LESSON_FILE="$PSI/memory/learnings/$(date +%Y-%m-%d)_${SLUG}.md"
+echo "📝 Retrospective:  $RETRO_FILE"
+echo "💡 Lesson learned: $LESSON_FILE"
+```
 
 ARGUMENTS: $ARGUMENTS

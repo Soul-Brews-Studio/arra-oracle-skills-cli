@@ -17,6 +17,120 @@ import {
 } from './skill-source.js';
 import pkg from '../../package.json' with { type: 'json' };
 
+// ── Codex 0.128.0+ plugin marketplace helpers ────────────────────────────────
+
+/**
+ * Detect if Codex 0.128.0+ plugin marketplace mode is active.
+ * Codex 0.128.0 creates ~/.codex/config.toml; older versions do not.
+ */
+export function isCodexPluginMarketplace(homeDir?: string): boolean {
+  const home = homeDir ?? homedir();
+  return existsSync(join(home, '.codex', 'config.toml'));
+}
+
+/** Return the arra-oracle-skills marketplace bundle directory path. */
+export function getCodexMarketplaceDir(homeDir?: string): string {
+  const home = homeDir ?? homedir();
+  return join(home, '.codex', '.tmp', 'bundled-marketplaces', 'arra-oracle-skills');
+}
+
+/**
+ * Install skills for Codex 0.128.0+ plugin marketplace.
+ *
+ * Creates:
+ *   <marketplaceDir>/manifest.toml
+ *   <marketplaceDir>/plugins/<skill>/plugin.toml
+ *   <marketplaceDir>/plugins/<skill>/prompt.md   (skill body)
+ *
+ * Then updates ~/.codex/config.toml with:
+ *   [marketplaces.arra-oracle-skills]  source_type + source
+ *   [plugins."<skill>@arra-oracle-skills"]  enabled = true
+ */
+export async function installCodexPluginMarketplace(
+  skills: Skill[],
+  version: string,
+  shellMode: ShellMode,
+  opts?: { marketplaceDir?: string; configPath?: string }
+): Promise<void> {
+  const marketplaceDir = opts?.marketplaceDir ?? getCodexMarketplaceDir();
+  const configPath = opts?.configPath ?? join(homedir(), '.codex', 'config.toml');
+
+  // ── 1. Create marketplace bundle directory ─────────────────────────────────
+  await mkdirp(marketplaceDir, shellMode);
+
+  // ── 2. Write marketplace manifest ─────────────────────────────────────────
+  const manifestContent = [
+    `name = "arra-oracle-skills"`,
+    `version = "${version}"`,
+    `description = "Oracle skills for Codex by Soul Brews Studio"`,
+    ``,
+  ].join('\n');
+  await Bun.write(join(marketplaceDir, 'manifest.toml'), manifestContent);
+
+  // ── 3. Per-skill plugin directories ───────────────────────────────────────
+  const pluginsDir = join(marketplaceDir, 'plugins');
+  await mkdirp(pluginsDir, shellMode);
+
+  for (const skill of skills) {
+    const skillPluginDir = join(pluginsDir, skill.name);
+    await mkdirp(skillPluginDir, shellMode);
+
+    // plugin.toml descriptor
+    const escapedDesc = skill.description.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    const pluginToml = [
+      `name = "${skill.name}"`,
+      `description = "${escapedDesc}"`,
+      `version = "${version}"`,
+      `command = "/${skill.name}"`,
+      ``,
+    ].join('\n');
+    await Bun.write(join(skillPluginDir, 'plugin.toml'), pluginToml);
+
+    // prompt.md — skill body for Codex to execute
+    if (isCompiled()) {
+      // VFS mode: write entire skill tree (includes SKILL.md + any extras)
+      await writeSkillToDir(skill.name, skillPluginDir);
+    } else {
+      // Filesystem mode: copy SKILL.md as prompt.md
+      const skillMdPath = join(skill.path, 'SKILL.md');
+      if (existsSync(skillMdPath)) {
+        const content = await Bun.file(skillMdPath).text();
+        await Bun.write(join(skillPluginDir, 'prompt.md'), content);
+      }
+    }
+  }
+
+  // ── 4. Update ~/.codex/config.toml ────────────────────────────────────────
+  let configContent = existsSync(configPath) ? await Bun.file(configPath).text() : '';
+
+  // Add marketplace registration if not already present
+  const marketplaceSection = `[marketplaces.arra-oracle-skills]`;
+  if (!configContent.includes(marketplaceSection)) {
+    configContent += [
+      ``,
+      `${marketplaceSection}`,
+      `source_type = "local"`,
+      `source = "${marketplaceDir}"`,
+      ``,
+    ].join('\n');
+  }
+
+  // Enable each non-hidden skill as a plugin
+  for (const skill of skills) {
+    if (skill.hidden) continue;
+    const pluginKey = `[plugins."${skill.name}@arra-oracle-skills"]`;
+    if (!configContent.includes(pluginKey)) {
+      configContent += [
+        `${pluginKey}`,
+        `enabled = true`,
+        ``,
+      ].join('\n');
+    }
+  }
+
+  await Bun.write(configPath, configContent);
+}
+
 // Re-export discoverSkills from skill-source
 export const discoverSkills = _discoverSkills;
 
@@ -523,6 +637,14 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
         await cp(hookSrc, join(pluginDir, 'arra-oracle-skills.ts'), shellMode);
         p.log.success(`OpenCode plugin: ${pluginDir}/arra-oracle-skills.ts`);
       }
+    }
+
+    // Codex 0.128.0+: install plugin marketplace bundle in addition to skills/+prompts/
+    // The old ~/.codex/skills/ + ~/.codex/prompts/ layout is kept for backward compat
+    // with Codex < 0.128.0, but 0.128.0+ requires the plugin marketplace registration.
+    if (agentName === 'codex' && isCodexPluginMarketplace()) {
+      await installCodexPluginMarketplace(agentSkillsToInstall, pkg.version, shellMode);
+      p.log.success(`Codex plugin marketplace: ${getCodexMarketplaceDir()}`);
     }
 
     p.log.success(`${agent.displayName}: ${targetDir}`);

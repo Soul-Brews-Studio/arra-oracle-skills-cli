@@ -1,10 +1,20 @@
 name: Auto-add to Pulse Inbox
 
+# DISABLED 2026-05-13: runs-on: self-hosted but no self-hosted runner is
+# currently provisioned. Every fire showed as "queued forever / cancelled"
+# in PR check status, polluting the dashboard. Auto-triggers removed;
+# workflow_dispatch retained so it can be re-enabled by anyone bringing
+# back a runner (or re-targeting to ubuntu-latest + porting maw to a
+# GitHub-hosted runner).
+#
+# Original triggers (kept here for revival):
+#   issues:
+#     types: [opened, closed]
+#   pull_request:
+#     types: [opened, closed]
+
 on:
-  issues:
-    types: [opened, closed]
-  pull_request:
-    types: [opened, closed]
+  workflow_dispatch:
 
 jobs:
   add-to-inbox:

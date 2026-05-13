@@ -84,6 +84,16 @@ Do NOT `git add` vault files — they are shared state, not committed to repos.
 - [Important file 2]
 ```
 
+### Confirm handoff write (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+HANDOFF_FILE="$PSI/inbox/handoff/$(date +%Y-%m-%d_%H-%M)_${SLUG}.md"
+echo "📤 Handoff: $HANDOFF_FILE"
+```
+
 ## Then: Create Issues from Pending Items
 
 After writing the handoff file, extract actionable items and offer to create GitHub issues.
@@ -169,6 +179,16 @@ Write to: `$PSI/outbox/YYYY-MM-DD_pending.md`
 - [ ] Item 1 (issue #115)
 - [ ] Item 2 (issue #116)
 - [ ] Item 3 (no issue — skipped: vague)
+```
+
+### Confirm outbox write (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+OUTBOX_FILE="$OUTBOX_DIR/$(date +%Y-%m-%d)_pending.md"
+echo "📋 Outbox: $OUTBOX_FILE"
 ```
 
 ### Silent Failures

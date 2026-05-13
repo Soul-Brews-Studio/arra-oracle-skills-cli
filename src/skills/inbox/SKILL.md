@@ -63,6 +63,8 @@ List all `.md` files in `ψ/inbox/` (excluding `schedule.md` and `handoff/`):
 ls -1t "$INBOX"/*.md 2>/dev/null | grep -v schedule.md | head -10
 ```
 
+`$INBOX` is absolute (set as `$ROOT/ψ/inbox` in Mode 1 Step 0), so `ls` already prints absolute paths — clickable as-is.
+
 For each file, show:
 ```
 📥 20260323 21:12 — fix-auth-bug (from peter)
@@ -118,7 +120,14 @@ oracle_handoff(content, slug)
 
 This syncs to vault for cross-Oracle discovery.
 
-**Confirm**: `📥 Written: ψ/inbox/${TS}_${SLUG}.md`
+### Confirm write (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+echo "📥 Written: $FILE"
+```
 
 ---
 

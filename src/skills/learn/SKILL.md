@@ -296,54 +296,18 @@ WRITE your output to:   [DOCS_DIR]/[TIME]_[filename].md
 
 ## Output Summary
 
-### --fast mode
-```markdown
-## 📚 Quick Learn: [REPO]
+After learning completes, print the hub + generated file paths.
 
-**Mode**: fast (1 agent)
-**Location**: ψ/learn/$OWNER/$REPO/[TODAY]/[TIME]_*.md
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
 
-| File | Description |
-|------|-------------|
-| [REPO].md | Hub (links all sessions) |
-| [TODAY]/[TIME]_OVERVIEW.md | Quick overview |
+```bash
+echo "📚 Hub: $REPO_DIR/$REPO.md"
+echo "📚 Files: $DOCS_DIR/${TIME}_*.md"
+ls "$DOCS_DIR"/${TIME}_*.md
 ```
 
-### Default mode
-```markdown
-## 📚 Learning Complete: [REPO]
-
-**Mode**: default (3 agents)
-**Location**: ψ/learn/$OWNER/$REPO/[TODAY]/[TIME]_*.md
-
-| File | Description |
-|------|-------------|
-| [REPO].md | Hub (links all sessions) |
-| [TODAY]/[TIME]_ARCHITECTURE.md | Structure |
-| [TODAY]/[TIME]_CODE-SNIPPETS.md | Code examples |
-| [TODAY]/[TIME]_QUICK-REFERENCE.md | Usage guide |
-
-**Key Insights**: [2-3 things learned]
-```
-
-### --deep mode
-```markdown
-## 📚 Deep Learning Complete: [REPO]
-
-**Mode**: deep (5 agents)
-**Location**: ψ/learn/$OWNER/$REPO/[TODAY]/[TIME]_*.md
-
-| File | Description |
-|------|-------------|
-| [REPO].md | Hub (links all sessions) |
-| [TODAY]/[TIME]_ARCHITECTURE.md | Structure & design |
-| [TODAY]/[TIME]_CODE-SNIPPETS.md | Code examples |
-| [TODAY]/[TIME]_QUICK-REFERENCE.md | Usage guide |
-| [TODAY]/[TIME]_TESTING.md | Test patterns |
-| [TODAY]/[TIME]_API-SURFACE.md | Public API |
-
-**Key Insights**: [3-5 things learned]
-```
+Files generated depend on mode (`--fast` → 1 overview; default → 3 docs; `--deep` → 5 docs). Add a 2–3 line "Key Insights" summary after the file listing.
 
 ## .gitignore Pattern
 

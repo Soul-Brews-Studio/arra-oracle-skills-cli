@@ -369,6 +369,17 @@ arra_trace({
 
 ---
 
+## Step 7: Confirm trace log path (announce-mode — absolute paths required)
+
+# announce-mode → absolute path (no ψ/, no ~/, no $VAR, no ...).
+# Use:  echo "marker: $RESOLVED_PATH"  — bash substitutes. See CONVENTIONS.md.
+
+```bash
+echo "🔍 Trace logged: $TRACE_FILE"
+```
+
+---
+
 ## Friction Score Reference
 
 ```

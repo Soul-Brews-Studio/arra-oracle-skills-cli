@@ -5,3 +5,6 @@ pre-commit:
       stage_fixed: true
     test:
       run: bun test
+    skill-convention:
+      glob: 'src/skills/**/*.md'
+      run: bash scripts/check_skill_convention.sh

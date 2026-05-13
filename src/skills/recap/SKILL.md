@@ -121,6 +121,7 @@ Script outputs git status + focus state (~0.1s). Then LLM adds:
 2. **No subagents** — everything in main agent
 3. **Ask, don't suggest** — "What next?" not "You should..."
 4. **Verify pending before reporting** — see "Verify Before Reporting" section below. This is NON-NEGOTIABLE.
+5. **Print absolute paths** — when referencing vault files, render the resolved `$ROOT/ψ/...` path (starts with `/`). Bare `ψ/...` is not clickable. See CONVENTIONS.md.
 
 ---
 

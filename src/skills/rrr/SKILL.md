@@ -128,7 +128,7 @@ Then append ONE row:
 
 ### 4. Oracle Sync (two-layer pattern)
 
-1. Write to `ψ/memory/learnings/YYYY-MM-DD_<slug>.md` with frontmatter:
+1. Write to `$PSI/memory/learnings/YYYY-MM-DD_<slug>.md` with frontmatter:
    ```yaml
    ---
    pattern: <lesson learned in one line>
@@ -141,7 +141,7 @@ Then append ONE row:
    <body>
    ```
 
-2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
+2. The Oracle's auto-memory layer picks up new files in `$PSI/memory/learnings/` automatically — no separate API call needed.
 
 ### 4.5. Pattern Check (last 7 rows)
 
@@ -166,6 +166,18 @@ If no theme reaches ≥3 → skip this section silently.
 Retro files are written to vault (wherever `ψ` symlink resolves).
 
 **Do NOT `git add ψ/`** — it may be a symlink to the vault. Vault files are shared state, not committed to repos.
+
+### 6. Print absolute paths back to the human (REQUIRED)
+
+After saving, echo the **absolute** paths of every file you wrote so the human's terminal can click them open. Modern terminals (iTerm2, Ghostty, VS Code, Warp) only make absolute paths click-to-open. Render every variable substituted:
+
+```
+📝 Retrospective: /opt/.../oracle/ψ/memory/retrospectives/2026-05/13/12.20_slug.md
+🪶 Lesson:        /opt/.../oracle/ψ/memory/learnings/2026-05-13_slug.md
+📊 Metrics:       /opt/.../oracle/ψ/memory/learnings/session-metrics.md
+```
+
+NEVER print bare `ψ/...` — that's not clickable.
 
 ---
 

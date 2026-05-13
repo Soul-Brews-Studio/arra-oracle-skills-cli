@@ -369,6 +369,18 @@ arra_trace({
 
 ---
 
+## Step 7: Print Absolute Path Back to Human (REQUIRED)
+
+After the trace log is written, echo the **absolute** path so the human's terminal can click it:
+
+```
+📍 Trace log: /opt/.../oracle/ψ/memory/traces/YYYY-MM-DD/HHMM_query-slug.md
+```
+
+NEVER print bare `ψ/memory/traces/...` — that's not clickable in modern terminals (iTerm2, Ghostty, VS Code, Warp). Substitute `$ROOT` so the path is rendered fully from `/`.
+
+---
+
 ## Friction Score Reference
 
 ```

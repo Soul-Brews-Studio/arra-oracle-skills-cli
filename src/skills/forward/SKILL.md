@@ -61,6 +61,14 @@ Write to: `$PSI/inbox/handoff/YYYY-MM-DD_HH-MM_slug.md`
 This ensures handoffs go to the project's vault (wherever ψ points).
 Do NOT `git add` vault files — they are shared state, not committed to repos.
 
+**After writing**: print the absolute path back to the human so their terminal can click it:
+
+```
+📤 Handoff: /opt/.../oracle/ψ/inbox/handoff/YYYY-MM-DD_HH-MM_slug.md
+```
+
+NEVER print bare `ψ/...` — that's not clickable in modern terminals (iTerm2, Ghostty, VS Code, Warp).
+
 ```markdown
 # Handoff: [Session Focus]
 
@@ -169,6 +177,12 @@ Write to: `$PSI/outbox/YYYY-MM-DD_pending.md`
 - [ ] Item 1 (issue #115)
 - [ ] Item 2 (issue #116)
 - [ ] Item 3 (no issue — skipped: vague)
+```
+
+**After writing**: print the absolute path back to the human:
+
+```
+📋 Outbox: /opt/.../oracle/ψ/outbox/YYYY-MM-DD_pending.md
 ```
 
 ### Silent Failures

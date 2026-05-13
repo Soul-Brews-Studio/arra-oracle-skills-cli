@@ -121,6 +121,7 @@ Script outputs git status + focus state (~0.1s). Then LLM adds:
 2. **No subagents** — everything in main agent
 3. **Ask, don't suggest** — "What next?" not "You should..."
 4. **Verify pending before reporting** — see "Verify Before Reporting" section below. This is NON-NEGOTIABLE.
+5. **Print absolute paths** — when you reference a handoff, retro, trace, or any vault file in your output, print it as an absolute path (starts with `/`). Modern terminals (iTerm2, Ghostty, VS Code, Warp) only make absolute paths click-to-open. Render `$ROOT/ψ/inbox/handoff/...` not bare `ψ/inbox/handoff/...`.
 
 ---
 

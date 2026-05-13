@@ -57,15 +57,17 @@ ROOT="$(pwd)"
 INBOX="$ROOT/ψ/inbox"
 ```
 
-List all `.md` files in `ψ/inbox/` (excluding `schedule.md` and `handoff/`):
+List all `.md` files in `$INBOX/` (excluding `schedule.md` and `handoff/`):
 
 ```bash
 ls -1t "$INBOX"/*.md 2>/dev/null | grep -v schedule.md | head -10
 ```
 
-For each file, show:
+For each file, show the **absolute path** so the terminal can click it:
+
 ```
 📥 20260323 21:12 — fix-auth-bug (from peter)
+   /opt/.../oracle/ψ/inbox/20260323_2112_fix-auth-bug_from_peter.md
    First 2 lines of content...
 ```
 
@@ -118,7 +120,13 @@ oracle_handoff(content, slug)
 
 This syncs to vault for cross-Oracle discovery.
 
-**Confirm**: `📥 Written: ψ/inbox/${TS}_${SLUG}.md`
+**Confirm with absolute path** (so the terminal can click it):
+
+```
+📥 Written: $INBOX/${TS}_${SLUG}_from_${FROM}.md
+```
+
+`$INBOX` was set in Mode 1 above to `$ROOT/ψ/inbox` — an absolute path starting with `/`. NEVER print bare `ψ/inbox/...` — that's not clickable in modern terminals (iTerm2, Ghostty, VS Code, Warp).
 
 ---
 

@@ -296,17 +296,19 @@ WRITE your output to:   [DOCS_DIR]/[TIME]_[filename].md
 
 ## Output Summary
 
+**IMPORTANT — print ABSOLUTE paths, not relative.** Modern terminals (iTerm2, Ghostty, VS Code, Warp, etc.) make absolute file paths click-to-open. Relative paths like `ψ/learn/...` are not clickable. ALWAYS interpolate `$ROOT` (the oracle root captured in Step 0) into every path you print, so the human can ⌘-click straight to the file.
+
 ### --fast mode
 ```markdown
 ## 📚 Quick Learn: [REPO]
 
 **Mode**: fast (1 agent)
-**Location**: ψ/learn/$OWNER/$REPO/[TODAY]/[TIME]_*.md
+**Location**: $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/
 
 | File | Description |
 |------|-------------|
-| [REPO].md | Hub (links all sessions) |
-| [TODAY]/[TIME]_OVERVIEW.md | Quick overview |
+| $ROOT/ψ/learn/$OWNER/$REPO/$REPO.md | Hub (links all sessions) |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_OVERVIEW.md | Quick overview |
 ```
 
 ### Default mode
@@ -314,14 +316,14 @@ WRITE your output to:   [DOCS_DIR]/[TIME]_[filename].md
 ## 📚 Learning Complete: [REPO]
 
 **Mode**: default (3 agents)
-**Location**: ψ/learn/$OWNER/$REPO/[TODAY]/[TIME]_*.md
+**Location**: $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/
 
 | File | Description |
 |------|-------------|
-| [REPO].md | Hub (links all sessions) |
-| [TODAY]/[TIME]_ARCHITECTURE.md | Structure |
-| [TODAY]/[TIME]_CODE-SNIPPETS.md | Code examples |
-| [TODAY]/[TIME]_QUICK-REFERENCE.md | Usage guide |
+| $ROOT/ψ/learn/$OWNER/$REPO/$REPO.md | Hub (links all sessions) |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_ARCHITECTURE.md | Structure |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_CODE-SNIPPETS.md | Code examples |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_QUICK-REFERENCE.md | Usage guide |
 
 **Key Insights**: [2-3 things learned]
 ```
@@ -331,19 +333,27 @@ WRITE your output to:   [DOCS_DIR]/[TIME]_[filename].md
 ## 📚 Deep Learning Complete: [REPO]
 
 **Mode**: deep (5 agents)
-**Location**: ψ/learn/$OWNER/$REPO/[TODAY]/[TIME]_*.md
+**Location**: $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/
 
 | File | Description |
 |------|-------------|
-| [REPO].md | Hub (links all sessions) |
-| [TODAY]/[TIME]_ARCHITECTURE.md | Structure & design |
-| [TODAY]/[TIME]_CODE-SNIPPETS.md | Code examples |
-| [TODAY]/[TIME]_QUICK-REFERENCE.md | Usage guide |
-| [TODAY]/[TIME]_TESTING.md | Test patterns |
-| [TODAY]/[TIME]_API-SURFACE.md | Public API |
+| $ROOT/ψ/learn/$OWNER/$REPO/$REPO.md | Hub (links all sessions) |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_ARCHITECTURE.md | Structure & design |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_CODE-SNIPPETS.md | Code examples |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_QUICK-REFERENCE.md | Usage guide |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_TESTING.md | Test patterns |
+| $ROOT/ψ/learn/$OWNER/$REPO/$TODAY/${TIME}_API-SURFACE.md | Public API |
 
 **Key Insights**: [3-5 things learned]
 ```
+
+**Rendering**: substitute the actual captured values when you print. The rendered output should look like:
+
+```
+/opt/Code/github.com/owner/my-oracle/ψ/learn/acme-corp/cool-library/2026-05-13/1418_ARCHITECTURE.md
+```
+
+— a full path the human can click to open instantly.
 
 ## .gitignore Pattern
 

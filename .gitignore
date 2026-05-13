@@ -29,3 +29,6 @@ phukhao-oracle/
 .claude/skills/
 .claude/settings.local.json
 src/commands/
+
+# build artifact
+var/

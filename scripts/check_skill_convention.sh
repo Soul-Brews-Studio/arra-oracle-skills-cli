@@ -23,11 +23,11 @@ for f in src/skills/*/SKILL.md; do
   [ -e "$f" ] || continue
   stripped=$(awk 'BEGIN{f=0} /^```/{f=!f; next} !f' "$f")
   patterns=(
-    '(📍|📥|📤|📝|📊|🔬|✅|🪶)[^\n]*:[[:space:]]*\$[A-Z_]'    # unsubstituted $VAR
-    '(📍|📥|📤|📝|📊|🔬|✅|🪶)[^\n]*:[[:space:]]*~/'           # tilde
-    '(📍|📥|📤|📝|📊|🔬|✅|🪶)[^\n]*:[[:space:]]*ψ/'           # bare ψ/
-    '(📍|📥|📤|📝|📊|🔬|✅|🪶)[^\n]*:[[:space:]]*[^/\n]*\.{3}' # ellipsis
-    '(📍|📥|📤|📝|📊|🔬|✅|🪶)[^\n]*:[[:space:]]*\[[A-Z_]+\]'  # [PLACEHOLDER]
+    '(📍|📥|📤|📝|📊|🔬|✅|🪶).*:[[:space:]]*\$[A-Z_]'    # unsubstituted $VAR
+    '(📍|📥|📤|📝|📊|🔬|✅|🪶).*:[[:space:]]*~/'           # tilde
+    '(📍|📥|📤|📝|📊|🔬|✅|🪶).*:[[:space:]]*ψ/'           # bare ψ/
+    '(📍|📥|📤|📝|📊|🔬|✅|🪶).*:[[:space:]]*.*\.{3}'      # ellipsis
+    '(📍|📥|📤|📝|📊|🔬|✅|🪶).*:[[:space:]]*\[[A-Z_]+\]'  # [PLACEHOLDER]
   )
   for p in "${patterns[@]}"; do
     if echo "$stripped" | grep -E -n "$p" >/dev/null; then

@@ -31,18 +31,17 @@ describe("integration: OpenCode global install", () => {
 
     expect(skillDirs.length).toBeGreaterThan(0);
 
-    // Check rrr skill exists
-    expect(skillDirs).toContain("retrospective");
+    // Check trace skill exists (in minimal + standard + full profiles)
+    expect(skillDirs).toContain("trace");
 
     // Check SKILL.md has full content
-    const rrrPath = join(GLOBAL_OPENCODE_SKILLS, "retrospective", "SKILL.md");
-    expect(existsSync(rrrPath)).toBe(true);
+    const tracePath = join(GLOBAL_OPENCODE_SKILLS, "trace", "SKILL.md");
+    expect(existsSync(tracePath)).toBe(true);
 
-    const content = await readFile(rrrPath, "utf-8");
+    const content = await readFile(tracePath, "utf-8");
     expect(content).toContain("G-SKLL");
     expect(content).toContain("installer: arra-oracle-skills-cli");
-    expect(content).toContain("# /rrr");
-    expect(content).toContain("## /rrr (Default)");
+    expect(content).toContain("# /trace");
     expect(content.length).toBeGreaterThan(100);
   });
 
@@ -62,14 +61,14 @@ describe("integration: OpenCode global install", () => {
 
     expect(cmdFiles.length).toBeGreaterThan(0);
 
-    // Check retrospective.md exists
-    expect(cmdFiles).toContain("retrospective.md");
+    // Check trace.md exists (in minimal + standard + full profiles)
+    expect(cmdFiles).toContain("trace.md");
   });
 
   it("command stub should have correct format", async () => {
-    const cmdPath = join(GLOBAL_OPENCODE_COMMANDS, "retrospective.md");
+    const cmdPath = join(GLOBAL_OPENCODE_COMMANDS, "trace.md");
     if (!existsSync(cmdPath)) {
-      console.log("Skipping: retrospective.md not installed");
+      console.log("Skipping: trace.md not installed");
       return;
     }
 
@@ -86,10 +85,10 @@ describe("integration: OpenCode global install", () => {
 
     // Should point to skill file
     expect(content).toContain("skill file");
-    expect(content).toContain(".config/opencode/skills/retrospective/SKILL.md");
+    expect(content).toContain(".config/opencode/skills/trace/SKILL.md");
 
     // Should tell AI to execute
-    expect(content).toContain("Execute the `rrr` skill");
+    expect(content).toContain("Execute the `trace` skill");
     expect(content).toContain("$ARGUMENTS");
 
     // Should NOT have full content
@@ -98,9 +97,9 @@ describe("integration: OpenCode global install", () => {
   });
 
   it("command stub should point to correct skill path", async () => {
-    const cmdPath = join(GLOBAL_OPENCODE_COMMANDS, "retrospective.md");
+    const cmdPath = join(GLOBAL_OPENCODE_COMMANDS, "rrr.md");
     if (!existsSync(cmdPath)) {
-      console.log("Skipping: retrospective.md not installed");
+      console.log("Skipping: rrr.md not installed");
       return;
     }
 
@@ -124,7 +123,7 @@ describe("integration: OpenCode global install", () => {
     const cmdFiles = commands.filter(c => c.endsWith('.md')).map(c => c.replace('.md', ''));
 
     // Only arra-managed, non-hidden skills require command stubs
-    // Hidden skills (e.g. auto-retrospective) are installed without command stubs by design
+    // Hidden skills (e.g. auto-rrr) are installed without command stubs by design
     for (const skill of skillDirs) {
       const skillMdPath = join(GLOBAL_OPENCODE_SKILLS, skill, "SKILL.md");
       if (!existsSync(skillMdPath)) continue;
@@ -148,11 +147,11 @@ describe("integration: compiled stubs", () => {
 
     const stubs = await readdir(COMMANDS_DIR);
     expect(stubs.length).toBeGreaterThan(0);
-    expect(stubs).toContain("retrospective.md");
+    expect(stubs).toContain("rrr.md");
   });
 
   it("compiled stub should have instruction format", async () => {
-    const stubPath = join(COMMANDS_DIR, "retrospective.md");
+    const stubPath = join(COMMANDS_DIR, "rrr.md");
     const content = await readFile(stubPath, "utf-8");
 
     // Should have version

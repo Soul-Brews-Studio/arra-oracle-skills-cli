@@ -1,14 +1,15 @@
 /**
  * Tests for thClaws as a 4th install target (federation request from thclaws@m5).
  *
- * Invariants:
+ * Invariants (post-#330 — federated opt-in):
  *   1. thClaws agent entry exists in agents map
  *   2. thClawsAvailable() returns true when binary present, false when absent
  *   3. globalSkillsDir routes to ~/.config/thclaws/skills/
- *   4. Auto-detection: when binary present, thclaws is included in default agents
+ *   4. thclaws is marked federated: true (not auto-included in default agents)
  *   5. install --thclaws-only writes ONLY to thClaws path (skips Claude/Codex/etc.)
- *   6. install --no-thclaws skips thClaws path even when binary present (handled in
- *      the install command layer, not the installer core — tested via filter math)
+ *   6. install --with-thclaws (or -a thclaws) adds thClaws to the install set —
+ *      federated agents require explicit opt-in (handled in install command layer,
+ *      tested via filter math here).
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'bun:test';
@@ -72,13 +73,17 @@ describe('thClaws: agent entry shape', () => {
   });
 });
 
-describe('thClaws: default-agent membership', () => {
-  it('thclaws is listed in defaultAgentNames', () => {
-    expect(defaultAgentNames).toContain('thclaws');
+describe('thClaws: default-agent membership (post-#330 — federated opt-in)', () => {
+  it('thclaws is NOT in defaultAgentNames (federated agents are opt-in)', () => {
+    expect(defaultAgentNames).not.toContain('thclaws');
   });
 
-  it('defaultAgentNames keeps the canonical 3-target order', () => {
-    expect(defaultAgentNames).toEqual(['claude-code', 'codex', 'thclaws']);
+  it('defaultAgentNames is now the 2-target host-only set', () => {
+    expect(defaultAgentNames).toEqual(['claude-code', 'codex']);
+  });
+
+  it('thclaws is marked federated in agents map', () => {
+    expect(agents.thclaws.federated).toBe(true);
   });
 });
 
@@ -109,13 +114,25 @@ describe('thClaws: install writes SKILL.md to thClaws path', () => {
   });
 });
 
-describe('thClaws: --no-thclaws filter math', () => {
-  it('filtering thclaws out of a target list yields targets without thclaws', () => {
-    const allTargets = ['claude-code', 'codex', 'thclaws'];
-    const filtered = allTargets.filter((a) => a !== 'thclaws');
-    expect(filtered).not.toContain('thclaws');
-    expect(filtered).toContain('claude-code');
-    expect(filtered).toContain('codex');
+describe('thClaws: --with-thclaws opt-in math (#330)', () => {
+  it('default auto-set excludes thclaws — federated agents are opt-in', () => {
+    // getDefaultAgents filters federated out. Simulate the math:
+    const installed = ['claude-code', 'codex', 'thclaws'];
+    const nonFederated = installed.filter((a) => !agents[a as keyof typeof agents]?.federated);
+    expect(nonFederated).not.toContain('thclaws');
+    expect(nonFederated).toContain('claude-code');
+    expect(nonFederated).toContain('codex');
+  });
+
+  it('--with-thclaws adds thclaws back to the auto set when binary detected', () => {
+    // Simulate the install.ts layer: detected + opt-in flag
+    const detected = ['claude-code', 'codex'];
+    const withThclaws = thClawsAvailable() ? [...detected, 'thclaws'] : detected;
+    if (thClawsAvailable()) {
+      expect(withThclaws).toContain('thclaws');
+    } else {
+      expect(withThclaws).not.toContain('thclaws');
+    }
   });
 });
 

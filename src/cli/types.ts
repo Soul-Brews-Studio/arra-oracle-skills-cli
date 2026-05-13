@@ -8,6 +8,11 @@ export interface AgentConfig {
   useFlatFiles?: boolean; // Use skillname.md instead of skillname/SKILL.md (OpenCode commands)
   commandsOptIn?: boolean; // Only install commands with --commands flag (default: false = always install)
   commandFormat?: 'md' | 'toml'; // Command stub format (default: 'md')
+  // #330: federated agents are third-party (thClaws, opencode, copilot, openclaw),
+  // not the host. Excluded from auto-detect default set; require explicit -a or
+  // --with-<name> flag to opt in. Host agents (Anthropic — claude-code, codex)
+  // remain auto-detected. See also: getDefaultAgents() in agents.ts.
+  federated?: boolean;
   detectInstalled: () => boolean;
 }
 
@@ -53,6 +58,8 @@ export interface InstallOptions {
   commands?: boolean; // Also install command stubs (for agents with commandsOptIn)
   forceGlobal?: boolean; // #230 Override local-skill-precedence check and install global anyway
   shellMode?: ShellMode;
-  noThclaws?: boolean; // thClaws target — opt out of auto-detected thClaws install
   thclawsOnly?: boolean; // thClaws target — write ONLY to thClaws paths (testing)
+  // #330: opt-in flags for federated agents (replaces noThclaws semantics)
+  withThclaws?: boolean; // include thClaws if binary detected (federated agents are opt-in)
+  allDetected?: boolean; // escape hatch: install to all detected agents incl. federated (for CI)
 }

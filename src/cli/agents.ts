@@ -24,6 +24,7 @@ export const agents: Record<AgentType, AgentConfig> = {
     commandsDir: '.opencode/commands', // commands/<name>.md (slash commands)
     globalCommandsDir: join(home, '.config/opencode/commands'),
     useFlatFiles: true, // Commands use flat <name>.md files
+    federated: true, // #330: third-party — explicit -a opencode or --all-detected
     detectInstalled: () => existsSync(join(home, '.config/opencode')),
   },
   'claude-code': {
@@ -105,6 +106,7 @@ export const agents: Record<AgentType, AgentConfig> = {
     displayName: 'GitHub Copilot',
     skillsDir: '.github/skills',
     globalSkillsDir: join(home, '.copilot/skills'),
+    federated: true, // #330: third-party — explicit -a copilot or --all-detected
     detectInstalled: () => existsSync(join(home, '.copilot')),
   },
   openclaw: {
@@ -112,6 +114,7 @@ export const agents: Record<AgentType, AgentConfig> = {
     displayName: 'OpenClaw',
     skillsDir: 'skills',
     globalSkillsDir: join(home, '.openclaw/skills'),
+    federated: true, // #330: third-party — explicit -a openclaw or --all-detected
     detectInstalled: () => existsSync(join(home, '.openclaw')),
   },
   droid: {
@@ -165,6 +168,7 @@ export const agents: Record<AgentType, AgentConfig> = {
     // unless someone passes -g (which is the documented usage).
     skillsDir: '.thclaws/skills',
     globalSkillsDir: join(home, '.config/thclaws/skills'),
+    federated: true, // #330: third-party — explicit -a thclaws, --with-thclaws, or --all-detected
     // Detect by binary presence rather than config-dir presence: thClaws may
     // exist on PATH before the user has ever created ~/.config/thclaws.
     detectInstalled: () => thClawsAvailable(),
@@ -174,11 +178,14 @@ export const agents: Record<AgentType, AgentConfig> = {
 /**
  * Default agents to install to (unless --agent overrides).
  *
- * thclaws is included here so when the binary is detected it joins the
- * auto-default set alongside claude-code + codex (federation request from
- * thclaws@m5 — auto-detection, no explicit flag needed).
+ * #330: federated agents (thclaws, opencode, copilot, openclaw) are NOT here —
+ * they require explicit opt-in via `-a <name>`, `--with-thclaws`, or
+ * `--all-detected`. Only host Anthropic agents auto-install.
+ *
+ * Original federation contract (#324) shipped thclaws in this list; #330
+ * inverts that to make federation install deliberate rather than implicit.
  */
-export const defaultAgentNames = ['claude-code', 'codex', 'thclaws'];
+export const defaultAgentNames = ['claude-code', 'codex'];
 
 export function detectInstalledAgents(): string[] {
   return Object.entries(agents)
@@ -186,11 +193,20 @@ export function detectInstalledAgents(): string[] {
     .map(([name]) => name);
 }
 
-/** Get default agents (installed subset of defaultAgentNames, fallback to all) */
+/**
+ * Get default agents to auto-install to.
+ *
+ * #330: filters federated agents OUT of the auto-detect set. They remain
+ * available via explicit `-a <name>` or `--with-<name>` / `--all-detected`.
+ */
 export function getDefaultAgents(): string[] {
   const installed = detectInstalledAgents();
-  const defaults = defaultAgentNames.filter((a) => installed.includes(a));
-  return defaults.length > 0 ? defaults : installed;
+  // Exclude federated agents — they're opt-in only
+  const nonFederated = installed.filter(
+    (a) => !agents[a as AgentType]?.federated
+  );
+  const defaults = defaultAgentNames.filter((a) => nonFederated.includes(a));
+  return defaults.length > 0 ? defaults : nonFederated;
 }
 
 export function getAgentNames(): string[] {

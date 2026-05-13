@@ -26,13 +26,36 @@ npx arra-oracle-skills@26.5.13-alpha.1929 install -g -y --agent gemini-cli --wit
 # Multiple agents
 npx arra-oracle-skills@26.5.13-alpha.1929 install -g -y --agent claude-code codex opencode
 
-# thClaws (auto-detected if thclaws binary is in PATH)
-bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g
-# Skills install to ~/.config/thclaws/skills/ AND ~/.claude/skills/
+# thClaws (federated agent — explicit opt-in)
+bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --with-thclaws
+# OR target thclaws directly:
+bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g -a thclaws
+# Skills install to ~/.config/thclaws/skills/ when --with-thclaws is passed
 
-# Opt out of thClaws target
-bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --no-thclaws
+# Install to ALL detected agents incl. federated (CI escape hatch)
+bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --all-detected
 ```
+
+> **#330 note**: as of v26.5.14+, federated agents (thClaws, OpenCode, GitHub Copilot, OpenClaw) are NOT auto-installed by default — they require explicit `-a <name>`, `--with-<name>`, or `--all-detected`. Host Anthropic agents (Claude Code, Codex) continue to auto-detect.
+
+### Local project install
+
+By default (no `-g` flag), skills install to the current project's `.claude/skills/` instead of `~/.claude/skills/`:
+
+```bash
+# Local install (current project)
+npx arra-oracle-skills@26.5.13-alpha.1929 install -a claude-code -s trace -y
+
+# Same with explicit -l flag (symmetric to -g)
+npx arra-oracle-skills@26.5.13-alpha.1929 install -l -a claude-code -s trace -y
+```
+
+Use when:
+- Testing skill changes before global rollout
+- Different repos want different skill versions
+- Committing project-specific skills to `.claude/skills/` in version control
+
+The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed skills from globally-installed ones (which get `G-SKLL`).
 
 19 agents: Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Amp, Kilo Code, Roo Code, Goose, Antigravity, GitHub Copilot, OpenClaw, Droid, Windsurf, Cline, Aider, Continue, Zed, thClaws
 

@@ -11,10 +11,11 @@ export function registerUninstall(program: Command, version: string) {
     .command('uninstall')
     .description('Remove installed Oracle skills')
     .option('-g, --global', 'Uninstall from user directory')
+    // #331: explicit-local symmetric to -g. No flag still defaults to local.
+    .option('-l, --local', 'Uninstall from project .claude/skills/ (explicit form of the default)')
     .option('-a, --agent <agents...>', 'Target specific agents')
     .option('-s, --skill <skills...>', 'Remove specific skills only')
     .option('-y, --yes', 'Skip confirmation prompts')
-    .option('--no-thclaws', 'Skip thClaws target during uninstall')
     .option('--thclaws-only', 'Uninstall ONLY from thClaws paths')
     .option('--shell', 'Force Bun.$ shell commands')
     .option('--no-shell', 'Force Node.js fs operations')
@@ -22,6 +23,12 @@ export function registerUninstall(program: Command, version: string) {
       p.intro(`🔮 Oracle Skills Uninstaller v${version}`);
 
       try {
+        // #331: -g + -l is a contradiction; fail fast.
+        if (options.global && options.local) {
+          p.log.error('Cannot pass both --global (-g) and --local (-l) — pick one or omit both (default is local).');
+          process.exit(1);
+        }
+
         let targetAgents: string[] = options.agent ? [...options.agent] : [];
 
         if (options.thclawsOnly) {
@@ -34,11 +41,6 @@ export function registerUninstall(program: Command, version: string) {
             p.log.info(`Detected agents: ${detected.map((a) => agents[a as keyof typeof agents]?.displayName).join(', ')}`);
             targetAgents = detected;
           }
-        }
-
-        // --no-thclaws → strip thclaws from the target set
-        if (options.thclaws === false && !options.thclawsOnly) {
-          targetAgents = targetAgents.filter((a) => a !== 'thclaws');
         }
 
         if (targetAgents.length === 0) {
@@ -63,8 +65,7 @@ export function registerUninstall(program: Command, version: string) {
           } else {
             let reason = 'not selected';
             if (name === 'thclaws') {
-              if (options.thclaws === false) reason = '--no-thclaws';
-              else if (!thClawsAvailable()) reason = 'no binary detected — skipping';
+              if (!thClawsAvailable()) reason = 'no binary detected — skipping';
             }
             reportLines.push(`  ✗ ${agent.displayName.padEnd(12)} (${reason})`);
           }

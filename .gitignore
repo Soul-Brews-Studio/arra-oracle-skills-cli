@@ -9,6 +9,10 @@ src/cli/generated/
 ψ
 ψ/
 
+# Exception: test fixtures use a literal ψ/ tree that must be committed
+!__tests__/rrr-evals/fixtures/ψ
+!__tests__/rrr-evals/fixtures/ψ/**
+
 # Claude-mem generated
 **/CLAUDE.md
 

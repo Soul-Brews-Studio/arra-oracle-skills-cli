@@ -1,0 +1,47 @@
+{
+  "skill_name": "rrr",
+  "evals": [
+    {
+      "id": 1,
+      "name": "trivial-session",
+      "register": "trivial-session",
+      "prompt": "You spent 20 minutes checking a monitoring dashboard. Nothing was broken. You made no commits, changed no files. Run /rrr."
+    },
+    {
+      "id": 2,
+      "name": "messy-session",
+      "register": "messy-session",
+      "prompt": "You jumped between fixing a bug (not resolved), sketching a new feature idea (not started), and updating a README (half-done). Nothing fully shipped. Run /rrr."
+    },
+    {
+      "id": 3,
+      "name": "release-session",
+      "register": "release-session",
+      "prompt": "You cut a release: calver bump commit (abc1234), PR opened and merged (def5678), tag pushed. One item wasn't ready and was cut from scope. Run /rrr."
+    },
+    {
+      "id": 4,
+      "name": "failed-attempt",
+      "register": "failed-attempt",
+      "prompt": "You tried to migrate the DB schema. Hit a foreign key constraint error: 'ERROR: insert or update on table X violates foreign key constraint Y'. You rolled back. The migration is still incomplete. Run /rrr."
+    },
+    {
+      "id": 5,
+      "name": "bug-fix",
+      "register": "bug-fix",
+      "prompt": "You fixed an off-by-one in the pagination query (commit bbb9999). Single issue, single commit, tests pass. Run /rrr."
+    },
+    {
+      "id": 6,
+      "name": "research-only",
+      "register": "research-only",
+      "prompt": "You spent 3 hours reading vector embedding docs and exploring 2 repos. You wrote no code and made no commits. You have notes but no artifacts. Run /rrr."
+    },
+    {
+      "id": 7,
+      "name": "marathon",
+      "register": "marathon",
+      "prompt": "You worked 6 hours: auth refactor (shipped, commit ccc1111), test suite expansion (half-done), deploy config (abandoned after 2 hours), plus 2 unplanned detours into debugging CI. Run /rrr."
+    }
+  ]
+}

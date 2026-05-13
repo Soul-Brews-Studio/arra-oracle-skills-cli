@@ -1,9 +1,6 @@
 ---
 name: fyi
 description: Log information for future reference. Use when user says "fyi", "remember this", "note that", "for your info".
-zombie: true
-archived_reason: 'ported from oracle-proof-of-concept-skills via #327'
-archived_date: 2026-05-13
 ---
 
 # /fyi - Information Log

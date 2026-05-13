@@ -2,9 +2,6 @@
 name: bampenpien
 description: "บำเพ็ญเพียร — diligent practice. A guided conversation between human and Oracle about doing hard things without knowing why. Like /awaken but repeatable — a practice, not a birth. Use when user says 'bampenpien', 'บำเพ็ญเพียร', 'why am I doing this', 'hard work', 'keep going', 'what am I building', or needs to reconnect with purpose through difficulty."
 argument-hint: "[--reflect | --history | --share]"
-zombie: true
-archived_reason: 'moved to zombie tier via #327 (usage audit, 3,685 sessions mined)'
-archived_date: 2026-05-13
 ---
 
 # /bampenpien — บำเพ็ญเพียร

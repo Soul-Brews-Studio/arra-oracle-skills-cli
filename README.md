@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-31 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+36 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -41,7 +41,7 @@ bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>31 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>36 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -55,29 +55,34 @@ bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install 
 | 7 | **schedule** | skill + code | Query schedule via Oracle API (Drizzle DB) |
 | - |  |  |  |
 | 8 | **awaken** | skill | "Guided Oracle birth and awakening ritual |
-| 9 | **bud** | skill | 'Create a new oracle via maw bud |
-| 10 | **calver** | skill | Show or bump CalVer version |
-| 11 | **contacts** | skill | Manage Oracle contacts |
-| 12 | **create-shortcut** | skill | Create local skills as shortcuts |
-| 13 | **dig** | skill | Mine Claude Code sessions |
-| 14 | **forward** | skill | Create handoff + enter plan mode for next |
-| 15 | **forward-lite** | skill | Quick handoff to next session |
-| 16 | **go** | skill | Switch skill profiles (standard/full/lab) |
-| 17 | **inbox** | skill | Read and write to Oracle inbox |
-| 18 | **incubate** | skill | Clone or create repos for active development |
-| 19 | **mailbox** | skill | 'Persistent agent mailbox |
-| 20 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 21 | **recap-lite** | skill | Quick session orientation |
-| 22 | **rrr-lite** | skill | Quick session retrospective |
-| 23 | **standup** | skill | Daily standup check |
-| 24 | **talk-to** | skill | Talk to another Oracle agent |
-| 25 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 26 | **trace** | skill | Find projects, code |
-| 27 | **watch** | skill | 'Extract YouTube video transcripts |
-| 28 | **where-we-are** | skill | Session awareness |
-| 29 | **who-are-you** | skill | Know ourselves |
-| 30 | **worktree** | skill | 'Work in an isolated git worktree |
-| 31 | **xray** | skill | X-ray deep scan |
+| 9 | **bampenpien** | skill | "บำเพ็ญเพียร |
+| 10 | **bud** | skill | 'Create a new oracle via maw bud |
+| 11 | **calver** | skill | Show or bump CalVer version |
+| 12 | **contacts** | skill | Manage Oracle contacts |
+| 13 | **create-shortcut** | skill | Create local skills as shortcuts |
+| 14 | **dig** | skill | Mine Claude Code sessions |
+| 15 | **feel** | skill | "Capture how the system feels |
+| 16 | **forward** | skill | Create handoff + enter plan mode for next |
+| 17 | **forward-lite** | skill | Quick handoff to next session |
+| 18 | **fyi** | skill | Log information for future reference |
+| 19 | **go** | skill | Switch skill profiles (standard/full/lab) |
+| 20 | **inbox** | skill | Read and write to Oracle inbox |
+| 21 | **incubate** | skill | Clone or create repos for active development |
+| 22 | **mailbox** | skill | 'Persistent agent mailbox |
+| 23 | **morpheus** | skill | 'Speculative dreaming |
+| 24 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 25 | **recap-lite** | skill | Quick session orientation |
+| 26 | **resonance** | skill | Capture a resonance moment |
+| 27 | **rrr-lite** | skill | Quick session retrospective |
+| 28 | **standup** | skill | Daily standup check |
+| 29 | **talk-to** | skill | Talk to another Oracle agent |
+| 30 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 31 | **trace** | skill | Find projects, code |
+| 32 | **watch** | skill | 'Extract YouTube video transcripts |
+| 33 | **where-we-are** | skill | Session awareness |
+| 34 | **who-are-you** | skill | Know ourselves |
+| 35 | **worktree** | skill | 'Work in an isolated git worktree |
+| 36 | **xray** | skill | X-ray deep scan |
 
 </details>
 
@@ -90,9 +95,9 @@ bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install 
 | Profile | Count | Skills |
 |---------|-------|--------|
 | **minimal** | 7 | `about-oracle`, `forward-lite`, `go`, `oracle-soul-sync-update`, `recap-lite`, `rrr-lite`, `trace` |
-| **standard** | 12 | `awaken`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace`, `xray` |
-| **full** | 31 | all |
-| **lab** | 31 | all |
+| **standard** | 13 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace`, `xray` |
+| **full** | 36 | all |
+| **lab** | 36 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

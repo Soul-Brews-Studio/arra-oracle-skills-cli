@@ -23,13 +23,14 @@ export const MINIMAL_SKILLS = [
 
 /** Standard profile — daily driver skills (always installed) */
 export const STANDARD_SKILLS = [
-  'awaken', 'bud', 'dig', 'forward', 'go',
+  'awaken', 'bampenpien', 'bud', 'dig', 'forward', 'go',
   'learn', 'recap', 'rrr', 'talk-to', 'team-agents', 'trace', 'xray',
 ] as const;
 
 /** Lab-only skills — experimental, not in standard or full */
 export const LAB_SKILLS = [
-  'contacts', 'inbox', 'mailbox', 'schedule', 'watch', 'worktree',
+  'contacts', 'feel', 'fyi', 'inbox', 'mailbox', 'morpheus',
+  'schedule', 'watch', 'worktree',
 ] as const;
 
 /** Minimal-only skills — token-optimized lite variants that replace the full
@@ -53,13 +54,13 @@ export const ZOMBIE_SKILLS = [
   'alpha-feature', 'birth', 'deep-research', 'gemini', 'handover',
   'list-issues-pr-pulse', 'mine', 'new-issue', 'oracle-manage',
   'speak', 'what-we-done', 'whats-next', 'workon',
-  // 2026-05-13 cull (#327): 18 zombies based on usage audit (3,685 sessions)
-  'feel', 'i-believed', 'resonance', 'work-with', 'morpheus', 'dream',
+  // 2026-05-13 cull (#327): 13 zombies based on usage audit (3,685 sessions).
+  // Kept active by explicit user request: bampenpien (standard), feel + morpheus (lab),
+  // fyi (lab, imported from oracle-proof-of-concept-skills), resonance (implicit-full).
+  'i-believed', 'work-with', 'dream',
   'retrospective', 'auto-retrospective', 'skills-list',
-  'fleet', 'machines', 'warp', 'bampenpien', 'release',
+  'fleet', 'machines', 'warp', 'release',
   'philosophy', 'wormhole', 'harden', 'vault',
-  // 2026-05-13 import (#327): /fyi from oracle-proof-of-concept-skills
-  'fyi',
 ] as const;
 
 /** Return the source directory for a skill by name — `.archive/` for zombies,

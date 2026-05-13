@@ -2,9 +2,6 @@
 name: morpheus
 description: 'Speculative dreaming — background thinking, pre-computation, cross-repo patterns, and prediction. The evolved /dream. Use when user says "morpheus", "speculate", "think ahead", "predict", "what if", "dream deeper", or wants the Oracle to dream between sessions.'
 argument-hint: "[--pain | --plan | --gain | --all | --speculate | --between]"
-zombie: true
-archived_reason: 'moved to zombie tier via #327 (usage audit, 3,685 sessions mined)'
-archived_date: 2026-05-13
 ---
 
 # /morpheus — Speculative Dreaming

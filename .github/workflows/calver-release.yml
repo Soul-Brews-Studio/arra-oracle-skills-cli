@@ -2,10 +2,13 @@ name: CalVer Release
 
 # Unified tag + release + npm publish pipeline for CalVer versions.
 #
-# Triggered when package.json is modified on main. All steps run in ONE job
-# so there is no workflow-cascade gap (GITHUB_TOKEN-created tags/releases
+# Triggered when package.json is modified on main OR alpha. All steps run in
+# ONE job so there is no workflow-cascade gap (GITHUB_TOKEN-created tags/releases
 # deliberately don't trigger downstream workflows; doing it inline sidesteps
 # that rule entirely).
+#
+# alpha is the soak channel — bumps land there first, then alpha → main for
+# stable. Matches the maw-js canonical (#287 surfaced the parity gap).
 #
 # Secret required: NPM_TOKEN
 # Everything else uses the repo's built-in GITHUB_TOKEN with write perms.
@@ -14,7 +17,7 @@ name: CalVer Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, alpha]
     paths:
       - package.json
 

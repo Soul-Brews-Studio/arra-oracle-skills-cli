@@ -1,7 +1,7 @@
 ---
 name: create-shortcut
 description: Create local skills as shortcuts — makes real /commands in .claude/skills/. Use when user says "create shortcut", "create skill", "make a command for", "add shortcut", or wants a quick custom /slash-command. Also lists and deletes local skills. ALSO triggers on "Unknown skill", "skill not found", or any unrecognized /slash-command — auto-creates it on the fly.
-argument-hint: "[list | create <name> <description> | delete <name>]"
+argument-hint: "[list [--mine|--untagged] | create <name> <description> | delete <name> | --cleanup [--auto]]"
 ---
 
 # /create-shortcut - Local Skill Factory
@@ -13,9 +13,13 @@ Create real local skills (`.claude/skills/<name>/SKILL.md`) that show up as `/co
 ```
 /create-shortcut                              # list local skills
 /create-shortcut list                         # same, with numbers
+/create-shortcut list --mine                  # only stamped skills (installer: create-shortcut)
+/create-shortcut list --untagged              # only skills with no installer: field
 /create-shortcut create deploy "Run tests then deploy"
 /create-shortcut delete deploy                # delete by name
 /create-shortcut delete 3                     # delete by number
+/create-shortcut --cleanup                    # interactive bulk-archive of --mine skills
+/create-shortcut --cleanup --auto             # auto-archive anything stamped + unused 30d+
 ```
 
 ## How It Works
@@ -53,7 +57,36 @@ For each directory, list skill folders and show:
 Delete local: /create-shortcut delete <name or number>
 ```
 
-Mark core (arra-oracle-skills-cli installed) skills with `[core]`. Local skills have no tag.
+Mark **core** (arra-oracle-skills-cli installed) skills with `[core]`.
+Mark **stamped** skills (with `installer: create-shortcut` in frontmatter) with `[mine]` plus a relative-age hint (e.g. `2d ago`).
+Local skills with no `installer:` field have no tag (origin unknown).
+
+### Filter flags
+
+```
+/create-shortcut list                # default — all local + global, marks [core] / [mine]
+/create-shortcut list --mine         # only skills with `installer: create-shortcut`
+/create-shortcut list --untagged     # only skills with NO `installer:` field (origin unknown)
+```
+
+For `--mine` and `--untagged`, the listing additionally shows:
+
+- `created_at` age (e.g. "2 days ago", "3 weeks ago") — pulled from the frontmatter `created_at:` field for `--mine`; absent for `--untagged`.
+- Approximate **usage count** — derived by greping the command name across `~/.claude/projects/*/*.jsonl` session files (read-only, no stored counter — counts stay computed, not persisted).
+
+Example `--mine` output:
+
+```
+⚡ Your skills (installer: create-shortcut)
+
+   1. deploy              [mine] 2d ago      · used 7×    Run tests then deploy
+   2. read-and-deep-...   [mine] 1d ago      · used 1×    Read a target and deep-analyse...
+   3. resonance           [mine] 3w ago      · used 24×   Capture a resonance moment...
+
+Bulk-archive: /create-shortcut --cleanup
+```
+
+Implementation hint: parse each SKILL.md frontmatter (top YAML block between `---` lines) and check for the `installer:` key. `--mine` keeps only `installer: create-shortcut`; `--untagged` keeps only entries with no `installer:` key at all. Core skills (`installer: arra-oracle-skills-cli ...`) are excluded from both filtered views.
 
 ---
 
@@ -74,12 +107,15 @@ SKILL_DIR=".claude/skills/<name>"
 mkdir -p "$SKILL_DIR"
 ```
 
-Write `SKILL.md`:
+Write `SKILL.md` with a **provenance stamp** in the frontmatter (so the skill can later be filtered via `--mine` and bulk-cleaned via `--cleanup`):
 
 ```markdown
 ---
 name: <name>
 description: <description>
+installer: create-shortcut
+created_at: <ISO 8601 timestamp with timezone, e.g. 2026-05-14T04:15:00+07:00>
+created_session: <first 8 chars of $CLAUDE_SESSION_ID, optional but nice>
 ---
 
 # /<name>
@@ -102,6 +138,18 @@ date "+🕐 %H:%M %Z (%A %d %B %Y)" && <first-real-command-here>
 
 ARGUMENTS: $ARGUMENTS
 ```
+
+**Generating the stamp values**:
+
+```bash
+# created_at — ISO 8601 with local timezone offset
+CREATED_AT="$(date -Iseconds 2>/dev/null || date +%Y-%m-%dT%H:%M:%S%z)"
+
+# created_session — first 8 chars of session id (skip silently if unset)
+CREATED_SESSION="${CLAUDE_SESSION_ID:0:8}"
+```
+
+These three fields (`installer`, `created_at`, `created_session`) are **always written** for new skills created via this mode. They are the audit trail — without them, a skill created here is indistinguishable from one created by hand.
 
 **After creating**, confirm:
 
@@ -166,6 +214,7 @@ When the agent encounters an unknown `/slash-command` (e.g. "Unknown skill: reso
    - Name from the command
    - Description inferred from what was just executed
    - Instructions based on the action taken
+   - **Provenance stamp** — same as Mode 2: `installer: create-shortcut`, `created_at:` (ISO 8601 + tz), `created_session:` (first 8 chars of `$CLAUDE_SESSION_ID`). Auto-created skills must be stamped too — that's how `--cleanup` later finds them.
 6. **If no** → done, one-shot execution only
 
 ### Intent Inference Rules
@@ -193,6 +242,70 @@ Agent: [sees "Unknown skill: resonance"]
 > "You think it, you slash it, it exists."
 >
 > Skills create themselves from usage. The user never hits a dead end.
+
+---
+
+## Mode 5: Cleanup (interactive bulk archive)
+
+### `/create-shortcut --cleanup`
+
+Bulk-archive skills you created via `/create-shortcut` (anything stamped with `installer: create-shortcut`). Six months of accumulated one-shot skills, gone in one gesture — without touching `[core]` skills or hand-made externals.
+
+### Flow
+
+1. **Scan** both `.claude/skills/` (local) and `~/.claude/skills/` (global). Read each `SKILL.md` frontmatter and keep only entries with `installer: create-shortcut`.
+2. **Enrich** each candidate with:
+   - **Age** — relative form of `created_at` (e.g. "2 days ago", "3 weeks ago"). If `created_at` is missing, show "age unknown".
+   - **Last invoked** — grep the command name (e.g. `/deploy`) across `~/.claude/projects/*/*.jsonl` and report days since the most recent match (e.g. "used 4d ago", "never used").
+   - **Description** — first non-empty line of the `description:` field, truncated to ~60 chars.
+3. **Multi-select picker** using `@clack/prompts` `multiselect` (same library + style as the existing skill picker elsewhere in the CLI). Each row:
+   ```
+   ◯ deploy            [local]  2d ago    used 4d ago    Build, test, deploy to prod
+   ◯ resonance-lite    [global] 3w ago    never used     Capture small resonance moments
+   ◯ pr-review         [local]  6mo ago   used 5mo ago   Review the current PR with checklist
+   ```
+   Pre-checked rows: anything **never used** OR **last-used >30 days ago**. User can toggle freely before confirming.
+4. **Archive** selected skills to `.trash/<name>_<unix-timestamp>` in their respective skills directory (Nothing-is-Deleted, same convention as Mode 3):
+   ```bash
+   TS="$(date +%s)"
+   mkdir -p "$(dirname "$SKILL")/.trash"
+   mv "$SKILL" "$(dirname "$SKILL")/.trash/<name>_${TS}"
+   ```
+5. **Print summary**:
+   ```
+   ✅ Archived 7 skills.
+
+      Recover any of them via:
+        mv .claude/skills/.trash/<name>_<ts> .claude/skills/<name>
+   ```
+
+If nothing matches the scan (no stamped skills found), print:
+
+```
+No skills with `installer: create-shortcut` found.
+Tip: only skills created after the provenance-stamp release show up here.
+Older user skills can be retroactively migrated with `--migrate` (future).
+```
+
+### Flag: `--cleanup --auto`
+
+```
+/create-shortcut --cleanup --auto
+```
+
+Skips the interactive picker and archives everything matching the **auto-prune rule**:
+
+- `installer: create-shortcut` (stamped by us), AND
+- `created_at` is older than 30 days, AND
+- last invocation is older than 30 days (or never invoked).
+
+Default behavior is OFF — you must opt in with `--auto`. Designed for power users who trust the heuristic and want a one-keystroke sweep. Still archives to `.trash/` (recoverable, never destroyed).
+
+### Boundaries
+
+- **Never** touches skills with `installer: arra-oracle-skills-cli ...` (those are `[core]`; use `arra-oracle-skills uninstall` instead).
+- **Never** touches skills with no `installer:` field (those are `[untagged]` — origin unknown, not safe to assume the user made them via this skill).
+- **Always** moves to `.trash/`, never deletes outright. Recovery is a single `mv` away. Nothing is Deleted.
 
 ---
 

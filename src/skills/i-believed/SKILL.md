@@ -226,15 +226,22 @@ mkdir -p "$PSI/memory/resonance/beliefs"
  Connect to the larger story: what was built, what was risked, what survived.]
 ```
 
-### Sync to Oracle (if available)
+### Sync to Oracle (if available, two-layer pattern)
 
-```
-arra_learn({
-  pattern: "Belief received: [human] [believed/believes] in [target] — [context]",
-  concepts: ["belief", "trust", "resonance", target-tags],
-  source: "i-believed: [repo-name]"
-})
-```
+1. Write to `ψ/memory/learnings/YYYY-MM-DD_belief-<slug>.md` with frontmatter:
+   ```yaml
+   ---
+   pattern: "Belief received: [human] [believed/believes] in [target] — [context]"
+   date: <today>
+   source: i-believed: [repo-name]
+   concepts: ["belief", "trust", "resonance", <target-tags>]
+   ---
+
+   # Belief: [target]
+   [context and meaning]
+   ```
+
+2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 ---
 

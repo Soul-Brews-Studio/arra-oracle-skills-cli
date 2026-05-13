@@ -544,10 +544,20 @@ This does NOT re-run the wizard or rebuild structure. It refreshes identity:
    - Current date as "re-awakened" date
    - Any new insights from learnings
    - Updated family context
-5. **Log re-awakening** — write retrospective via `/rrr` and sync via `arra_learn`:
-   ```
-   arra_learn({ pattern: "Re-awakened [oracle-name]: [summary of what changed]", concepts: ["reawaken", "identity"], source: "awaken --reawaken" })
-   ```
+5. **Log re-awakening** — write retrospective via `/rrr` and save the lesson (two-layer pattern):
+   1. Write to `ψ/memory/learnings/YYYY-MM-DD_reawaken-<oracle-name>.md` with frontmatter:
+      ```yaml
+      ---
+      pattern: "Re-awakened [oracle-name]: [summary of what changed]"
+      date: <today>
+      source: awaken --reawaken
+      concepts: ["reawaken", "identity"]
+      ---
+
+      # Re-awakening: [oracle-name]
+      [summary of what changed]
+      ```
+   2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 **Output:**
 

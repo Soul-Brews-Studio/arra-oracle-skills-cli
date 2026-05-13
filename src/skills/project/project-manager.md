@@ -122,7 +122,7 @@ laris-co/arra-oracle-v3: ~/Code/github.com/laris-co/arra-oracle-v3
 2. **Score** → Rank files by type (retrospectives=10, docs=5, CLAUDE.md=0)
 3. **Filter** → Skip i18n, CLAUDE.md, low-value files
 4. **Extract** → Get key content from high-value files
-5. **Learn** → Call `arra_learn` with source attribution
+5. **Learn** → Write to `ψ/memory/learnings/` (two-layer pattern: learning file + auto-memory)
 
 ## Offload Pattern
 

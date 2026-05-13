@@ -361,13 +361,22 @@ For Oracles that want to commit docs but ignore symlinks:
 
 After writing docs, log the learning to Oracle so it's discoverable via `/trace`:
 
-```
-arra_learn({
-  pattern: "Learned [REPO]: [2-3 key insights]",
-  concepts: ["learn", "codebase", relevant-tags],
-  source: "learn: OWNER/REPO"
-})
-```
+### Save the lesson (two-layer pattern)
+
+1. Write to `ψ/memory/learnings/YYYY-MM-DD_<slug>.md` with frontmatter:
+   ```yaml
+   ---
+   pattern: "Learned [REPO]: [2-3 key insights]"
+   date: <today>
+   source: learn: OWNER/REPO
+   concepts: ["learn", "codebase", <relevant-tags>]
+   ---
+
+   # Learned [REPO]
+   <2-3 key insights in body>
+   ```
+
+2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 This connects `/learn` to the shared knowledge layer — future `/trace` queries find what was learned.
 

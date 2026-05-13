@@ -314,14 +314,22 @@ arra_trace({
 })
 ```
 
-After finding new Oracle:
+After finding new Oracle, save the lesson (two-layer pattern):
 
-```
-arra_learn({
-  pattern: "New Oracle: [NAME] — [HUMAN] — [DATE]",
-  concepts: ["oracle-family", "birth"]
-})
-```
+1. Write to `ψ/memory/learnings/YYYY-MM-DD_new-oracle-<name>.md` with frontmatter:
+   ```yaml
+   ---
+   pattern: "New Oracle: [NAME] — [HUMAN] — [DATE]"
+   date: <today>
+   source: oracle-family-scan
+   concepts: ["oracle-family", "birth"]
+   ---
+
+   # New Oracle: [NAME]
+   [birth story, human, theme]
+   ```
+
+2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 ---
 

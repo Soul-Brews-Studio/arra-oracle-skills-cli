@@ -65,15 +65,22 @@ Write to: `$PSI/memory/resonance/YYYY-MM-DD_HHMM_slug.md`
 [concept tags for future search]
 ```
 
-### 3. Sync to Oracle (if available)
+### 3. Sync to Oracle (if available, two-layer pattern)
 
-```
-arra_learn({
-  pattern: "[resonance title]: [what resonated]",
-  concepts: ["resonance", ...tags],
-  source: "resonance: [repo-name]"
-})
-```
+1. Write to `ψ/memory/learnings/YYYY-MM-DD_resonance-<slug>.md` with frontmatter:
+   ```yaml
+   ---
+   pattern: "[resonance title]: [what resonated]"
+   date: <today>
+   source: resonance: [repo-name]
+   concepts: ["resonance", <tags>]
+   ---
+
+   # [resonance title]
+   [what resonated and why]
+   ```
+
+2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 ### 4. Output
 

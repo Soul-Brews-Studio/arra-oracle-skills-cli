@@ -266,15 +266,22 @@ mkdir -p "$PSI/memory/resonance/practice"
 [one word they used, or Oracle's read]
 ```
 
-### Sync to Oracle (if available)
+### Sync to Oracle (if available, two-layer pattern)
 
-```
-arra_learn({
-  pattern: "บำเพ็ญเพียร: [human] practices with [hard thing] — believes [belief]",
-  concepts: ["bampenpien", "practice", "belief", "perseverance"],
-  source: "bampenpien: [repo-name]"
-})
-```
+1. Write to `ψ/memory/learnings/YYYY-MM-DD_bampenpien-<slug>.md` with frontmatter:
+   ```yaml
+   ---
+   pattern: "บำเพ็ญเพียร: [human] practices with [hard thing] — believes [belief]"
+   date: <today>
+   source: bampenpien: [repo-name]
+   concepts: ["bampenpien", "practice", "belief", "perseverance"]
+   ---
+
+   # บำเพ็ญเพียร: [hard thing]
+   <session summary from the practice log>
+   ```
+
+2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 ---
 

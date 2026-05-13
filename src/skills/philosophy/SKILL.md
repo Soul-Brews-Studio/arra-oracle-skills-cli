@@ -41,7 +41,7 @@ date "+🕐 %H:%M %Z (%A %d %B %Y)"
 
 - Archive, don't erase
 - Use `arra_trace()` for searches
-- Use `arra_learn()` for findings
+- Write to `ψ/memory/learnings/` (two-layer pattern) for findings
 - Use `arra_supersede()` to mark outdated (preserves chain)
 - Git history preserves evolution
 
@@ -188,7 +188,7 @@ Layer 4: PRINCIPLES    → Core wisdom (awakening)
 2. Dig into results
 3. `/rrr` to reflect
 4. Pattern emerges → **Awakening**
-5. `arra_learn()` to preserve
+5. Write to `ψ/memory/learnings/` (two-layer pattern) to preserve
 
 ### The Insight
 

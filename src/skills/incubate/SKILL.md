@@ -577,13 +577,22 @@ The pattern is auto-added to `.gitignore` on first `/incubate` run (#250). If yo
 
 After incubation work, log to Oracle so it's discoverable via `/trace`:
 
-```
-arra_learn({
-  pattern: "Incubated [REPO]: [what was done — PR#, branch, outcome]",
-  concepts: ["incubate", "development", relevant-tags],
-  source: "incubate: OWNER/REPO"
-})
-```
+### Save the lesson (two-layer pattern)
+
+1. Write to `ψ/memory/learnings/YYYY-MM-DD_incubate-<slug>.md` with frontmatter:
+   ```yaml
+   ---
+   pattern: "Incubated [REPO]: [what was done — PR#, branch, outcome]"
+   date: <today>
+   source: incubate: OWNER/REPO
+   concepts: ["incubate", "development", <relevant-tags>]
+   ---
+
+   # Incubated [REPO]
+   <body: what was done, PR#, branch, outcome>
+   ```
+
+2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 This connects `/incubate` to the shared knowledge layer.
 

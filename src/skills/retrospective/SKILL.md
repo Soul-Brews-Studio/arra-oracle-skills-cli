@@ -32,11 +32,22 @@ Include:
 - Lessons Learned
 - Next Steps
 
-### 3. Sync to Oracle
+### 3. Sync to Oracle (two-layer pattern)
 
-```
-arra_learn({ pattern: [lesson], concepts: [tags], source: "retrospective: REPO" })
-```
+1. Write to `ψ/memory/learnings/YYYY-MM-DD_<slug>.md` with frontmatter:
+   ```yaml
+   ---
+   pattern: <lesson in one line>
+   date: <today>
+   source: retrospective: REPO
+   concepts: [<tags>]
+   ---
+
+   # <lesson title>
+   <body>
+   ```
+
+2. The Oracle's auto-memory layer picks up new files in `ψ/memory/learnings/` automatically — no separate API call needed.
 
 Do NOT git add ψ/ — vault is shared state.
 

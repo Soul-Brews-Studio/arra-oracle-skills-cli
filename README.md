@@ -33,6 +33,9 @@ npx arra-oracle-skills@26.5.13-alpha.1626 install -g -y --agent claude-code code
 
 <!-- skills:start -->
 
+<details>
+<summary>📚 <strong>62 skills installed</strong> — click to expand</summary>
+
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
 | 1 | **about-oracle** | skill + subagent | What is Oracle |
@@ -99,6 +102,8 @@ npx arra-oracle-skills@26.5.13-alpha.1626 install -g -y --agent claude-code code
 | 60 | **worktree** | skill | 'Work in an isolated git worktree |
 | 61 | **wormhole** | skill | 'Federated query proxy |
 | 62 | **xray** | skill | X-ray deep scan |
+
+</details>
 
 <!-- skills:end -->
 

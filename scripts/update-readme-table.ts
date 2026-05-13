@@ -42,10 +42,22 @@ async function updateReadmeTable() {
   const before = readme.substring(0, skillsStart + '<!-- skills:start -->'.length);
   const after = readme.substring(skillsEnd);
 
-  readme = `${before}\n\n${table}\n\n${after}`;
-
-  // --- Count total skills for profile table ---
+  // --- Count total skills (used in both summary + profile table) ---
   const skillCount = (table.match(/^\| \d+/gm) || []).length;
+
+  // Wrap the long skills table in <details> so it collapses by default.
+  // GitHub Markdown requires a blank line between <summary> and the table
+  // for the table to render correctly inside the collapsed block.
+  const collapsibleTable = [
+    '<details>',
+    `<summary>📚 <strong>${skillCount} skills installed</strong> — click to expand</summary>`,
+    '',
+    table,
+    '',
+    '</details>',
+  ].join('\n');
+
+  readme = `${before}\n\n${collapsibleTable}\n\n${after}`;
 
   // --- Update profiles section ---
   const profileStart = readme.indexOf('<!-- profiles:start -->');

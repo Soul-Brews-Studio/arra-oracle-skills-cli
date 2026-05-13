@@ -65,9 +65,11 @@ echo "Track: $TRACK → comparing against $LATEST"
 
 ---
 
-## Step 3: Compare Versions — date-drift, not semver-drift (#265)
+## Step 3: Compare Versions — date-drift, not semver-drift (#265, #276)
 
 CalVer tags encode the release date directly (`v26.4.18` = 2026-04-18). Staleness is more useful as "N days behind" than as a semver gap. Legacy SemVer tags (`v3.x.x`) are flagged for migration.
+
+For same-day comparisons, we compare GitHub release **publish timestamps** instead of version strings (#276). This is because semver orders `v26.4.18-alpha.22` BEFORE `v26.4.18` (pre-release < stable), but the alpha was actually cut LATER on the same day. Timestamp comparison fixes the false "alpha is stale, downgrade to stable" suggestion.
 
 ```bash
 # Helpers — parse tag → YYYY-MM-DD, diff in days
@@ -77,13 +79,21 @@ tag_era() {  # "calver" | "semver" | "unknown"
   [ "$first" -ge 25 ] 2>/dev/null && echo calver || echo semver
 }
 tag_to_date() {  # v26.4.18 → 2026-04-18
-  local core=$(echo "$1" | sed 's/^v//; s/-alpha.*$//')
+  local core=$(echo "$1" | sed 's/^v//; s/-(alpha|beta).*$//' -E)
   local yy=$(echo "$core" | cut -d. -f1)
   local m=$(echo "$core" | cut -d. -f2)
   local d=$(echo "$core" | cut -d. -f3)
   printf "%04d-%02d-%02d" "$((2000 + yy))" "$m" "$d"
 }
-alpha_hour() { echo "$1" | grep -oE 'alpha\.[0-9]+' | cut -d. -f2; }
+# Get GitHub release publish timestamp as epoch seconds (#276)
+tag_publish_epoch() {
+  local tag=$1
+  [ "${tag:0:1}" != "v" ] && tag="v$tag"
+  local iso=$(gh release view "$tag" --repo Soul-Brews-Studio/arra-oracle-skills-cli --json publishedAt --jq '.publishedAt' 2>/dev/null)
+  [ -z "$iso" ] && return 1
+  # macOS + GNU date compatibility
+  date -u -d "$iso" +%s 2>/dev/null || date -juf "%Y-%m-%dT%H:%M:%SZ" "$iso" +%s 2>/dev/null
+}
 
 CUR_ERA=$(tag_era "$CURRENT")
 LAT_ERA=$(tag_era "$LATEST")
@@ -95,16 +105,27 @@ elif [ "$CUR_ERA" = "semver" ] && [ "$LAT_ERA" = "calver" ]; then
 else
   CUR_DATE=$(tag_to_date "$CURRENT")
   LAT_DATE=$(tag_to_date "$LATEST")
-  DAYS=$(( ( $(date -d "$LAT_DATE" +%s) - $(date -d "$CUR_DATE" +%s) ) / 86400 ))
+  DAYS=$(( ( $(date -d "$LAT_DATE" +%s 2>/dev/null || date -juf "%Y-%m-%d" "$LAT_DATE" +%s) - \
+            $(date -d "$CUR_DATE" +%s 2>/dev/null || date -juf "%Y-%m-%d" "$CUR_DATE" +%s) ) / 86400 ))
   if [ "$DAYS" -eq 0 ]; then
-    CUR_H=$(alpha_hour "$CURRENT")
-    LAT_H=$(alpha_hour "$LATEST")
-    if [ -n "$CUR_H" ] || [ -n "$LAT_H" ]; then
-      HOURS=$(( ${LAT_H:-0} - ${CUR_H:-0} ))
-      [ "$HOURS" -lt 0 ] && HOURS=$(( -HOURS ))
-      echo "⚠️ ${HOURS}h stale: $CURRENT → $LATEST ($CUR_DATE, same day)"
+    # Same calendar day — use release publish timestamps (#276 fix)
+    # Semver says alpha < stable, but on the same day alpha may be cut LATER.
+    # Always trust the GitHub publish_at timestamp as ground truth.
+    CUR_TS=$(tag_publish_epoch "$CURRENT")
+    LAT_TS=$(tag_publish_epoch "$LATEST")
+    if [ -n "$CUR_TS" ] && [ -n "$LAT_TS" ]; then
+      if [ "$CUR_TS" -ge "$LAT_TS" ]; then
+        echo "✅ Local ($CURRENT) was published at-or-after latest tag ($LATEST) — no update needed"
+        echo "   (semver would say 'alpha < stable' but timestamps say otherwise; trusting timestamps)"
+      else
+        SECS=$(( LAT_TS - CUR_TS ))
+        HOURS=$(( SECS / 3600 ))
+        MINS=$(( (SECS % 3600) / 60 ))
+        echo "⚠️ ${HOURS}h${MINS}m stale: $CURRENT → $LATEST ($CUR_DATE, same day)"
+      fi
     else
-      echo "⚠️ Same day, different tag: $CURRENT → $LATEST"
+      # Fallback if GitHub API unreachable: report same-day, no decision
+      echo "⚠️ Same day, different tag: $CURRENT → $LATEST (timestamp lookup failed; verify manually)"
     fi
   else
     echo "Current installed: $CURRENT   ($CUR_DATE)"

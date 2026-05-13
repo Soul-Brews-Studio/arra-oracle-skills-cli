@@ -88,6 +88,50 @@ Exit code 2 from any hook = reject action + send feedback to agent.
 **Rule**: 2 independent agents → subagents. Coordinated work → team-agents.
 **Sizing**: 3-5 teammates, 5-6 tasks each. Tokens scale linearly per teammate.
 
+### Spawn Fallback Order
+
+When the user asks for `/team-agents`, try in this order. Stop at the first tier whose preflight passes — don't skip ahead.
+
+#### Tier 1 — tmux + team-agents framework (preferred)
+
+**Preflight** — verify all four before `TeamCreate`:
+
+```bash
+[ -n "$TMUX" ] || tmux info >/dev/null 2>&1                       # 1. inside tmux?
+[ "$CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS" = "1" ]                  # 2. env var set?
+# 3. TeamCreate tool loaded? (deferred — ToolSearch select:TeamCreate,TaskCreate,SendMessage,TaskUpdate,TaskList,TeamDelete)
+# 4. claude --version >= 2.1.32
+```
+
+All four pass → real team. Teammates spawn into **split tmux panes** with isolated heartbeats, SendMessage each other, get persistent mailboxes, can claim per-agent worktrees.
+
+#### Tier 2 — in-process team-agents (env + tools, but no tmux)
+
+env var + tools present but `$TMUX` empty → set `teammateMode: "in-process"` (per-session: `claude --teammate-mode in-process`) and proceed with TeamCreate. All teammates run in the main terminal — cycle with `Shift+Down`, view with `Enter`. Same coordination machinery, less visual separation.
+
+#### Tier 3 — parallel subagents (Agent tool, graceful fallback)
+
+env var missing, tools didn't load, version too old, or task is read-only multi-lens analysis → fall back to plain `Agent` tool calls.
+
+- Spawn N parallel `Agent` calls in a **single message** — same role prompts, no SendMessage/TaskUpdate
+- Each agent returns its report as the tool result
+- Lead synthesises in the same turn
+
+| Pros | Cons |
+|---|---|
+| Works everywhere — no env var, no tmux, no extra tools | No inter-agent messaging (only lead sees all reports) |
+| Cheaper — no heartbeats, no mailbox archiving | No task dependencies (all spawn at once, parallel only) |
+| Simpler for read-only analysis | No per-agent worktree (agents share main repo state) |
+
+**Best for**: read-only multi-lens analysis (≤5 lenses, no shared-file writes). Downstream skills that wrap parallel reads should target Tier 3 by default and only escalate to Tier 1/2 when peer coordination or per-agent writes are actually needed.
+
+#### Decision rule
+
+> Framework (Tier 1/2) when **coordination matters** — sequencing, file writes, peer messaging, worktrees.
+> Subagents (Tier 3) when **angles don't need to talk to each other**.
+
+If unsure, run the preflight. If Tier 1 passes, use it — the cost is per-teammate tokens, which the user opted into by saying `/team-agents`.
+
 ### Subagent Definitions
 
 Reference `.claude/agents/` definitions when spawning: honors `tools` + `model`. Team tools (SendMessage, TaskUpdate) always available. `skills`/`mcpServers` frontmatter NOT applied to teammates.

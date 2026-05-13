@@ -2,7 +2,7 @@
 // fleet-scan.ts - My Oracle fleet status via gh CLI
 // Usage: bun fleet-scan.ts
 //
-// Part 1: Oracle births from arra-oracle-v3 issues (single API call)
+// Part 1: Oracle births from arra-oracle-v3 issues (paginated — no limit cap)
 // Part 2: Open issues across orgs
 // Part 3: Recently pushed Oracle repos
 
@@ -15,7 +15,10 @@ const BIRTH_PATTERN = /awaken|born|birth|enter.*chat|hello|สวัสดี|ar
 // --- Part 1: Oracle Births from arra-oracle-v3 ---
 type Birth = { number: number; title: string; date: string; author: string };
 
-const birthIssuesRaw = await $`gh issue list --repo ${ORACLE_REPO} --state all --limit 300 --json number,title,createdAt,author --jq '.[] | "\(.number)|\(.title)|\(.createdAt | split("T")[0])|\(.author.login)"'`.text();
+// Use gh api --paginate to fetch ALL issues (no 300-cap). GitHub /issues endpoint
+// includes PRs too, but BIRTH_PATTERN naturally excludes them — PRs don't match
+// "awaken|born|birth|..." title patterns.
+const birthIssuesRaw = await $`gh api --paginate "repos/${ORACLE_REPO}/issues?state=all&per_page=100" --jq '.[] | "\(.number)|\(.title)|\(.created_at[:10])|\(.user.login)"'`.text();
 
 const allBirths: Birth[] = birthIssuesRaw.trim().split("\n").filter(Boolean)
   .map(line => {

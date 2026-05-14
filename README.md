@@ -84,7 +84,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 12 | **contacts** | skill | Manage Oracle contacts |
 | 13 | **create-shortcut** | skill | Create local skills as shortcuts |
 | 14 | **dig** | skill | Mine Claude Code sessions |
-| 15 | **dream** | skill | "Cross-repo pattern discovery |
+| 15 | **dream** | skill | 'Speculative dreaming |
 | 16 | **feel** | skill | "Capture how the system feels |
 | 17 | **forward** | skill | Create handoff + enter plan mode for next |
 | 18 | **forward-lite** | skill | Quick handoff to next session |
@@ -143,7 +143,7 @@ about                   # version + status
 Secret skills are excluded from all profiles. Install by name:
 
 ```bash
-npx arra-oracle-skills@26.5.14-alpha.336 install -g -y -s watch harden wormhole fleet release warp morpheus mailbox
+npx arra-oracle-skills@26.5.14-alpha.336 install -g -y -s watch harden wormhole fleet release warp mailbox
 ```
 
 | Skill | What |
@@ -154,7 +154,7 @@ npx arra-oracle-skills@26.5.14-alpha.336 install -g -y -s watch harden wormhole 
 | `/fleet` | Deep fleet census across nodes |
 | `/release` | Automated release flow |
 | `/warp` | SSH+tmux teleport to remote nodes |
-| `/morpheus` | Speculative dreaming (evolved /dream) |
+| `/morpheus` | Archived in #333 — same content as active /dream (back-compat alias) |
 | `/mailbox` | Persistent agent memory in ψ/ |
 
 ## Team Agent Scripts

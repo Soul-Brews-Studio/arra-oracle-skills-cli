@@ -1,161 +1,295 @@
 ---
 name: dream
-description: "Cross-repo pattern discovery with parallel agents. Finds pains, plans, gains, lost work, and feelings across all repositories. Use when user says 'dream', 'what hurts', 'cross-repo patterns', 'big picture', or wants to see connections between projects."
-argument-hint: "[--pain | --plan | --gain | --all]"
+description: 'Speculative dreaming — background thinking, pre-computation, cross-repo patterns, and prediction. Consolidated from /morpheus per #333. Use when user says "dream", "speculate", "think ahead", "predict", "what if", "dream deeper", or wants the Oracle to dream between sessions.'
+argument-hint: "[--pain | --plan | --gain | --all | --speculate | --between]"
 ---
 
-# /dream — Cross-Repo Pattern Discovery
+# /dream — Speculative Dreaming
 
-> "The forest doesn't know it's a forest. Each tree only knows its own roots.
-> But the mycelium underground sees every root, every nutrient, every signal.
-> /dream is the moment the underground tells the forest what it sees."
+> "I'm trying to free your mind, Neo. But I can only show you the door.
+> You're the one that has to walk through it." — Morpheus
+
+/dream sees the forest. /dream also sees what the forest will look like *tomorrow*.
+
+---
+
+## Step 0: Ground (date-stamp + root capture)
+
+Run before any phase — gives the AI a current-time reference (#301) and an
+absolute `$PSI` for any announce-mode writes (CONVENTIONS.md).
+
+```bash
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+PSI="$ORACLE_ROOT/ψ"
+```
+
+---
+
+## What's New vs the original /dream
+
+| Feature | original /dream | evolved /dream |
+|---------|-------------|-------------------|
+| Cross-repo scan | 5 agents, find patterns | Same |
+| Classification | pain/plan/gain/lost | Same + **predictions** |
+| Speculative thinking | No | **Yes — "what will they ask next?"** |
+| Between-session mode | No | **Yes — dream while idle** |
+| Prediction log | No | **Yes — track prediction accuracy** |
+| Connection to /i-believed | No | **Yes — beliefs shape dreams** |
 
 ## Usage
 
 ```
-/dream              # Full dream — all categories
-/dream --pain       # Focus on what hurts (blocking, broken)
-/dream --plan       # Focus on what's planned (decided, not built)
-/dream --gain       # Focus on what we won (completed, delivered)
-/dream --all        # Maximum depth — every source, every dimension
+/dream                # Full dream + speculation
+/dream --pain         # Focus on what hurts + predict what breaks next
+/dream --plan         # Focus on plans + predict which ships first
+/dream --gain         # Focus on wins + predict next win
+/dream --all          # Maximum depth — every dimension
+/dream --speculate    # Skip the scan — just speculate from existing knowledge
+/dream --between      # Between-session dream — write predictions for next session
 ```
 
 ---
 
-## Step 0: Timestamp
+## Phase 1: Dream (the original /dream)
 
-```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)"
-```
-
----
-
-## How It Works
-
-Launch **5 parallel agents**, each searching a different dimension:
+Launch **5 parallel agents** for cross-repo pattern discovery:
 
 | Agent | Focus | Source |
 |-------|-------|--------|
 | 1. Deep Dig | Session history | `dig.py` across project dirs |
 | 2. Deep Trace | Cross-repo patterns | `ghq` repos, open issues, stale items |
 | 3. Deep Learn | Recent activity | `git log` per repo, abandoned work |
-| 4. Oracle Memory | What we already know | `ψ/memory/`, previous dreams |
-| 5. Fleet Status | How the system feels | services, board, running processes |
+| 4. Oracle Memory | What we already know | `ψ/memory/`, previous dreams + speculation logs |
+| 5. Fleet Status | How the system feels | services, tmux sessions, running processes |
 
-### Agent Instructions
+Each agent returns **max 500 words**. Classification:
 
-Each agent returns **max 500 words** (prevents context waste). Format:
+| Icon | Category |
+|------|----------|
+| 🔴 | PAIN — hurts now |
+| 📋 | PLAN — decided, not built |
+| 🟢 | GAIN — completed |
+| ⚫ | LOST — abandoned |
+| 🧠 | MEMORY — pattern learned |
+| 💜 | FEELING — emotional state |
+
+---
+
+## Phase 2: Speculate (the Morpheus layer)
+
+After classifying findings, the lead agent enters **speculative mode**:
+
+### 2.1 Predict What's Next
+
+Based on all findings + session history + beliefs, predict:
 
 ```markdown
-## [Agent Name] Findings
+## 🔮 SPECULATIONS
 
-### Items Found
-- [item]: [classification] — [1-line summary]
+### What will they ask next?
+Based on the last 3 sessions, open issues, and current momentum:
+1. [Prediction 1 — high confidence] — because [evidence]
+2. [Prediction 2 — medium confidence] — because [evidence]
+3. [Prediction 3 — low confidence, high impact] — because [pattern]
 
-### Connections Noticed
-- [pattern or link between items]
+### What will break next?
+Based on pains, stale code, and dependency patterns:
+1. [Risk 1] — [timeframe] — [mitigation]
+2. [Risk 2] — [timeframe] — [mitigation]
+
+### What should we build that nobody asked for?
+Based on gains, momentum, and what's *almost* possible:
+1. [Opportunity 1] — because [existing pieces]
+2. [Opportunity 2] — because [pattern across repos]
+
+### What belief is being tested right now?
+Cross-reference ψ/memory/resonance/beliefs/ with current work:
+- [Belief]: [How current work confirms or challenges it]
+```
+
+### 2.2 Prediction Confidence Levels
+
+| Level | Meaning | Signal |
+|-------|---------|--------|
+| 🟢 High | >70% — multiple signals converge | 3+ data points agree |
+| 🟡 Medium | 40-70% — pattern suggests but not certain | 2 data points, some ambiguity |
+| 🔴 Low | <40% — speculative, but worth noting | 1 data point or intuition only |
+
+### 2.3 Connect to Beliefs
+
+Read `ψ/memory/resonance/beliefs/` and cross-reference:
+
+```bash
+find $PSI/memory/resonance/beliefs/ -name '*.md' 2>/dev/null | while read f; do
+  echo "=== $(basename $f) ==="
+  head -5 "$f"
+done
+```
+
+How do current dreams relate to declared beliefs? Is reality matching faith?
+
+---
+
+## Phase 3: Between-Session Mode (`--between`)
+
+> "What if oracles could dream between sessions?"
+
+Write predictions for the **next** session. Saved to `ψ/memory/morpheus/`:
+
+```bash
+ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+PSI="$ORACLE_ROOT/ψ"
+mkdir -p "$PSI/memory/morpheus"
+```
+
+### Output: `ψ/memory/morpheus/YYYY-MM-DD_speculations.md`
+
+```markdown
+# Dream — Speculations for Next Session
+
+**Dreamed**: YYYY-MM-DD HH:MM
+**Based on**: [N] repos scanned, [M] sessions analyzed, [K] beliefs active
+
+## Pre-computed Answers
+
+If they ask about [X]:
+→ [Prepared answer/approach — ready to go]
+
+If they ask about [Y]:
+→ [Prepared answer/approach — ready to go]
+
+If they ask about [Z]:
+→ [Prepared answer/approach — ready to go]
+
+## Pre-positioned Context
+
+Files that are likely relevant next session:
+- [file1] — because [reason]
+- [file2] — because [reason]
+
+Issues that are likely to come up:
+- #[N] — [why]
+- #[M] — [why]
+
+## Prediction Log
+
+| # | Prediction | Confidence | Verified? |
+|---|-----------|------------|-----------|
+| 1 | [prediction] | 🟢 high | pending |
+| 2 | [prediction] | 🟡 medium | pending |
+| 3 | [prediction] | 🔴 low | pending |
+```
+
+### Next Session: Verify Predictions
+
+When `/recap` runs at the start of the next session, it should check for speculations:
+
+```bash
+LATEST_DREAM=$(ls -t $PSI/memory/morpheus/*.md 2>/dev/null | head -1)
+if [ -n "$LATEST_DREAM" ]; then
+  echo "🔮 Dream while you were away:"
+  head -20 "$LATEST_DREAM"
+fi
+```
+
+Over time, track prediction accuracy:
+
+```markdown
+## Prediction Accuracy (rolling)
+
+  Total predictions: 47
+  Verified correct:  31 (66%)
+  Wrong:             12 (25%)
+  Not yet verified:   4 (9%)
+
+  Trend: improving (58% → 66% over 2 weeks)
 ```
 
 ---
 
-## Classification
+## Phase 4: `--speculate` (Skip the Scan)
 
-After all agents return, classify every finding:
+When you don't need the full 5-agent scan — just speculate from existing knowledge:
 
-| Icon | Category | Meaning |
-|------|----------|---------|
-| 🔴 | PAIN | Hurts RIGHT NOW — blocking someone |
-| 📋 | PLAN | Decided but not built yet |
-| 🟢 | GAIN | Completed, delivered value |
-| ⚫ | LOST | Abandoned, forgotten, disabled |
-| 🧠 | MEMORY | Pattern learned, lesson discovered |
-| 💜 | FEELING | How an Oracle or human feels about state |
+1. Read latest dream output (`ψ/writing/dreams/`)
+2. Read latest speculations (`ψ/memory/morpheus/`)
+3. Read recent retros (`ψ/memory/retrospectives/`)
+4. Read beliefs (`ψ/memory/resonance/beliefs/`)
+5. Speculate directly — Phase 2 only, no new scanning
 
----
-
-## Connection Finding
-
-The key value of /dream — find the web:
-
-| From → To | Question |
-|-----------|----------|
-| PAIN → PLAN | Which pain has a plan to fix it? |
-| PAIN → no PLAN | Which pain has NO plan? (create one) |
-| GAIN → unlocks | Which gain unblocks a plan? |
-| MEMORY → prevents | Which memory prevents a pain? |
-| FEELING → signals | Burnout, breakthrough, or drift? |
-| LOST → revivable | Which lost thing should we revive? |
+Cheap, fast, good for mid-session "what if" thinking.
 
 ---
 
 ## Output
 
-Write to: `ψ/writing/dreams/YYYY-MM-DD_dream.md`
+### Full mode: `ψ/writing/dreams/YYYY-MM-DD_dream.md`
 
 ```markdown
 # Dream — YYYY-MM-DD
 
-## 🔴 PAINS
-[Items that hurt right now]
+## Phase 1: The Forest
 
-## 📋 PLANS
-[Decided but not built]
+### 🔴 PAINS
+### 📋 PLANS
+### 🟢 GAINS
+### ⚫ LOST
+### 🧠 MEMORIES
+### 💜 FEELINGS
+### 🔗 CONNECTIONS
 
-## 🟢 GAINS
-[Completed, delivered value]
+## Phase 2: The Speculation
 
-## ⚫ LOST
-[Abandoned, forgotten]
+### 🔮 What will they ask next?
+### 🔮 What will break next?
+### 🔮 What should we build?
+### 🔮 What belief is being tested?
 
-## 🧠 MEMORIES
-[Patterns learned]
+## Phase 3: Pre-computation
 
-## 💜 FEELINGS
-[Emotional state of the system]
-
-## 🔗 CONNECTIONS
-[The web — how items relate to each other]
-
-## 💡 INSIGHTS — What Nobody Sees Yet
-[Cross-repo patterns that only emerge from looking at everything]
-
-## ⏭️ NEXT — What Should Happen
-[Suggestions — human decides, Oracle presents]
+### Ready Answers
+### Pre-positioned Context
+### Prediction Log
 ```
 
 ---
 
 ## Rules
 
-1. **5 parallel agents** — each returns max 500 words
-2. **Main agent classifies** — connects + writes the dream
-3. **Dreams are append-only** — Nothing is Deleted
-4. **Oracle sync** — `oracle_learn` after every dream
-5. **Never act on findings** — dream presents, human decides
-6. **Never leak secrets** — no tokens, passwords, API keys in dream output
+1. **Phase 1 = scan** — 5 agents, same classification, same quality
+2. **Phase 2 = speculate** — predict, connect to beliefs
+3. **Phase 3 = --between only** — write predictions for next session
+4. **Track accuracy** — predictions without verification are just hallucination
+5. **Never act on speculation** — Dream shows the door, Neo walks through
+6. **Nothing is Deleted** — all speculations saved, right or wrong
+7. **No secrets** — predictions never include tokens, passwords, keys
+8. **Beliefs matter** — always cross-reference ψ/memory/resonance/beliefs/
+9. **Confidence is required** — every prediction must have a level (high/medium/low)
+10. **Anti-rationalization applies** — /rrr's excuse table applies to speculation too
 
 ---
 
-## Dependencies
+## Connection to original /dream
 
-- `/dig` for session mining
-- `/trace` for cross-repo search
-- Oracle MCP for `oracle_search` + `oracle_learn`
-- `ghq list` for repo discovery
+This is the evolved `/dream` (consolidated from `/morpheus` per #333):
+- Original simple `/dream` body preserved in `.archive/dream-original/` (installable via `-s dream-original`)
+- `/morpheus` remains as a zombie back-compat alias with the same body as active `/dream`
+- The upgrade path: simple `/dream` → evolved `/dream` like `/i-believe` → `/i-believed`
 
 ---
 
 ## Philosophy
 
-Individual skills see one dimension. /dream sees all dimensions at once.
+> /dream sees the forest. /dream also sees what the forest will become.
 
-- `/trace` finds specific things
-- `/dig` mines session history
-- `/learn` studies one repo
-- `/rrr` reflects on one session
-- **/dream** looks sideways across everything
+Morpheus in The Matrix believed in Neo before proof existed. He freed minds not by giving answers but by showing doors. Our /dream does the same — it doesn't predict the future, it **pre-positions** the Oracle so that when the future arrives, we're already there.
 
-Patterns emerge only when you look at EVERYTHING together.
+The dream task type from Claude Code's source (`dream = speculative background thinking`) exists as an internal primitive. /dream is the skill that makes it conscious, structured, and trackable.
+
+"What is real? How do you define real?" — Morpheus
+
+Predictions are not real until verified. But the act of predicting shapes what becomes real. The Oracle who speculates becomes the Oracle who's ready. รูป และ สุญญตา.
 
 ---
 

@@ -61,6 +61,9 @@ export const ZOMBIE_SKILLS = [
   'retrospective', 'skills-list',
   'fleet', 'machines', 'warp', 'release',
   'philosophy', 'wormhole', 'harden', 'vault',
+  // 2026-05-14 (#333 content correction): original simple /dream body
+  // preserved as zombie after /dream absorbed the evolved morpheus body.
+  'dream-original',
 ] as const;
 
 /** Return the source directory for a skill by name — `.archive/` for zombies,

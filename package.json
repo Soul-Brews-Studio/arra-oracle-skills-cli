@@ -40,9 +40,9 @@
     "url": "git+https://github.com/Soul-Brews-Studio/arra-oracle-skills-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/Soul-Brews-Studio/oracle-skills-cli/issues"
+    "url": "https://github.com/Soul-Brews-Studio/arra-oracle-skills-cli/issues"
   },
-  "homepage": "https://github.com/Soul-Brews-Studio/oracle-skills-cli#readme",
+  "homepage": "https://github.com/Soul-Brews-Studio/arra-oracle-skills-cli#readme",
   "engines": {
     "node": ">=18"
   },

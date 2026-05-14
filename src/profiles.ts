@@ -1,8 +1,8 @@
 /**
  * Skill profiles — 3 tiers, single source of truth.
  *
- * minimal: newcomer essentials — 7 skills (lifecycle + trace + update + upgrade)
- * standard: daily driver — 13 essential skills (data-driven, session 8+9)
+ * minimal: newcomer essentials — 6 skills (lifecycle + trace + update + upgrade)
+ * standard: daily driver — 12 essential skills (data-driven, session 8+9)
  * full: all stable skills (excludes lab-only experiments AND minimal-only lite variants)
  * lab: everything including experimental / bleeding edge (still excludes minimal-only lite variants)
  *
@@ -55,7 +55,7 @@ export const ZOMBIE_SKILLS = [
   'list-issues-pr-pulse', 'mine', 'new-issue', 'oracle-manage',
   'speak', 'what-we-done', 'whats-next', 'workon',
   // 2026-05-13 cull (#327): 13 zombies based on usage audit (3,685 sessions).
-  // Kept active by explicit user request: bampenpien (standard), feel + morpheus (lab),
+  // Kept active by explicit user request: bampenpien (standard), feel (lab),
   // fyi (lab, imported from oracle-proof-of-concept-skills), resonance (implicit-full).
   'i-believed', 'work-with', 'morpheus',
   'retrospective', 'skills-list',

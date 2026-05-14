@@ -74,9 +74,13 @@ describe("profiles", () => {
   it("no overlap between ZOMBIE_SKILLS and other tiers", () => {
     const standardSet = new Set(STANDARD_SKILLS);
     const labSet = new Set(LAB_SKILLS);
+    const minimalSet = new Set<string>(MINIMAL_SKILLS);
+    const minimalOnlySet = new Set<string>(MINIMAL_ONLY_SKILLS);
     for (const skill of ZOMBIE_SKILLS) {
       expect(standardSet.has(skill)).toBe(false);
       expect(labSet.has(skill)).toBe(false);
+      expect(minimalSet.has(skill)).toBe(false);
+      expect(minimalOnlySet.has(skill)).toBe(false);
     }
   });
 

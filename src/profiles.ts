@@ -24,13 +24,13 @@ export const MINIMAL_SKILLS = [
 /** Standard profile — daily driver skills (always installed) */
 export const STANDARD_SKILLS = [
   'awaken', 'bampenpien', 'bud', 'dig', 'forward', 'go',
-  'learn', 'recap', 'rrr', 'talk-to', 'team-agents', 'trace', 'xray',
+  'learn', 'recap', 'rrr', 'talk-to', 'team-agents', 'trace',
 ] as const;
 
 /** Lab-only skills — experimental, not in standard or full */
 export const LAB_SKILLS = [
-  'contacts', 'dream', 'feel', 'fyi', 'inbox', 'mailbox',
-  'schedule', 'watch', 'worktree',
+  'contacts', 'dream', 'feel', 'fyi', 'hey', 'inbox', 'mailbox',
+  'schedule', 'watch', 'worktree', 'xray',
 ] as const;
 
 /** Minimal-only skills — token-optimized lite variants that replace the full

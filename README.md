@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-36 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+37 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -64,7 +64,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>36 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>37 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -90,22 +90,23 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 18 | **forward-lite** | skill | Quick handoff to next session |
 | 19 | **fyi** | skill | Log information for future reference |
 | 20 | **go** | skill | Switch skill profiles (standard/full/lab) |
-| 21 | **inbox** | skill | Read and write to Oracle inbox |
-| 22 | **incubate** | skill | Clone or create repos for active development |
-| 23 | **mailbox** | skill | 'Persistent agent mailbox |
-| 24 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 25 | **recap-lite** | skill | Quick session orientation |
-| 26 | **resonance** | skill | Capture a resonance moment |
-| 27 | **rrr-lite** | skill | Quick session retrospective |
-| 28 | **standup** | skill | Daily standup check |
-| 29 | **talk-to** | skill | Talk to another Oracle agent |
-| 30 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 31 | **trace** | skill | Find projects, code |
-| 32 | **watch** | skill | 'Extract YouTube video transcripts |
-| 33 | **where-we-are** | skill | Session awareness |
-| 34 | **who-are-you** | skill | Know ourselves |
-| 35 | **worktree** | skill | 'Work in an isolated git worktree |
-| 36 | **xray** | skill | X-ray deep scan |
+| 21 | **hey** | skill | Talk to another oracle via maw federation |
+| 22 | **inbox** | skill | Read and write to Oracle inbox |
+| 23 | **incubate** | skill | Clone or create repos for active development |
+| 24 | **mailbox** | skill | 'Persistent agent mailbox |
+| 25 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
+| 26 | **recap-lite** | skill | Quick session orientation |
+| 27 | **resonance** | skill | Capture a resonance moment |
+| 28 | **rrr-lite** | skill | Quick session retrospective |
+| 29 | **standup** | skill | Daily standup check |
+| 30 | **talk-to** | skill | Talk to another Oracle agent |
+| 31 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 32 | **trace** | skill | Find projects, code |
+| 33 | **watch** | skill | 'Extract YouTube video transcripts |
+| 34 | **where-we-are** | skill | Session awareness |
+| 35 | **who-are-you** | skill | Know ourselves |
+| 36 | **worktree** | skill | 'Work in an isolated git worktree |
+| 37 | **xray** | skill | X-ray deep scan |
 
 </details>
 
@@ -118,9 +119,9 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | Profile | Count | Skills |
 |---------|-------|--------|
 | **minimal** | 7 | `about-oracle`, `forward-lite`, `go`, `oracle-soul-sync-update`, `recap-lite`, `rrr-lite`, `trace` |
-| **standard** | 13 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace`, `xray` |
-| **full** | 36 | all |
-| **lab** | 36 | all |
+| **standard** | 12 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace` |
+| **full** | 37 | all |
+| **lab** | 37 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

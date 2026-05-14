@@ -25,9 +25,9 @@ describe("profiles", () => {
     expect(MINIMAL_SKILLS).toContain("go");
   });
 
-  it("standard has 13 skills", () => {
-    expect(STANDARD_SKILLS).toHaveLength(13);
-    expect(profiles.standard.include).toHaveLength(13);
+  it("standard has 12 skills", () => {
+    expect(STANDARD_SKILLS).toHaveLength(12);
+    expect(profiles.standard.include).toHaveLength(12);
   });
 
   it("full excludes lab-only AND minimal-only skills (post-#285)", () => {
@@ -52,8 +52,8 @@ describe("profiles", () => {
     expect([...STANDARD_SKILLS]).not.toContain("feel");
   });
 
-  it("LAB_SKILLS has 9 experimental skills (post-#327 cull)", () => {
-    expect(LAB_SKILLS).toHaveLength(9);
+  it("LAB_SKILLS has 11 experimental skills (9 post-#327 + xray from standard + hey new)", () => {
+    expect(LAB_SKILLS).toHaveLength(11);
   });
 
   it("ZOMBIE_SKILLS has 27 archived candidates (13 original + 12 culled in #327 + 1 added in #333 + 1 dream-original in #333 content correction)", () => {
@@ -120,9 +120,9 @@ describe("resolveProfile", () => {
     expect(result).toHaveLength(7);
   });
 
-  it("standard returns 13 skills", () => {
+  it("standard returns 12 skills", () => {
     const result = resolveProfile("standard", ALL_SKILLS);
-    expect(result).toHaveLength(13);
+    expect(result).toHaveLength(12);
   });
 
   it("full returns all minus lab-only, minimal-only, and zombies", () => {

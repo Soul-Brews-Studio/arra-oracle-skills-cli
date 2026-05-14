@@ -89,14 +89,65 @@ done
 python3 ~/.claude/skills/dig/scripts/dig.py 0 --deep
 ```
 
-Extract session ID from the dig output or from the most recent .jsonl:
+Extract session ID + mine REAL message timestamps from the .jsonl:
 ```bash
 LATEST_JSONL=$(ls -t "$PROJECT_BASE"/*.jsonl 2>/dev/null | head -1)
 if [ -n "$LATEST_JSONL" ]; then
   SESSION_ID=$(basename "$LATEST_JSONL" .jsonl)
   echo "SESSION: ${SESSION_ID:0:8}"
 fi
+
+# REQUIRED: extract real timestamps for the Timeline section.
+# Pull every real user message + its timestamp from the session file.
+# Dig gives session-level data only — for sub-session timestamps we read the jsonl directly.
+python3 - <<'PYEOF'
+import json, os
+from datetime import datetime, timezone, timedelta
+tz = timezone(timedelta(hours=7))
+jsonl = os.environ.get('LATEST_JSONL', '')
+if not jsonl or not os.path.exists(jsonl): exit(0)
+with open(jsonl) as f:
+    for line in f:
+        try:
+            m = json.loads(line)
+            if m.get('type') != 'user' or 'message' not in m: continue
+            content = m['message'].get('content', '')
+            if isinstance(content, list):
+                for c in content:
+                    if isinstance(c, dict) and c.get('type') == 'text':
+                        content = c.get('text', ''); break
+            if not isinstance(content, str): continue
+            ts = m.get('timestamp', '')
+            # Skip tool-result / system messages
+            if not ts or '<command-name>' in content[:200] or content.startswith('<bash-'): continue
+            dt = datetime.fromisoformat(ts.replace('Z', '+00:00')).astimezone(tz)
+            snippet = content[:100].replace(chr(10), ' ')
+            print(f"{dt.strftime('%Y-%m-%d %H:%M')} | {snippet}")
+        except: pass
+PYEOF
 ```
+
+**RULES for the Timeline section**:
+
+1. **REAL timestamps only** — pulled from this jsonl extraction, never "approx" or memory-guesses. If extraction is empty (no session file), say so explicitly in the timeline rather than inventing times.
+
+2. **Date once in a header, time-only in rows** — when all entries are same-day, format like this:
+
+   ```markdown
+   ## Timeline
+
+   **Date**: 2026-05-14 (GMT+7) · all times same-day
+
+   | Time | What |
+   |---|---|
+   | 20:14 | User: "..." |
+   | 20:21 | PR #379 merged |
+   | 21:13 | User: "..." |
+   ```
+
+   Do NOT repeat `2026-05-14 20:14` on every row. The date belongs in the header.
+
+3. **Multi-day session** — if entries span more than one day, group by day with a `### YYYY-MM-DD` subheader for each day, then `HH:MM` rows under it.
 
 Include in retrospective header:
 ```
@@ -112,9 +163,9 @@ If dig or session detection fails, skip silently and continue with git-only cont
 mkdir -p "$PSI/memory/retrospectives/$(date +%Y-%m/%d)"
 ```
 
-Write immediately, no prompts. Use the dig session data to build the Timeline section with real timestamps. Include:
+Write immediately, no prompts. Build the Timeline section from the .jsonl extraction above — every row must have a real `YYYY-MM-DD HH:MM` timestamp. Never use "approx", "around", or memory-guessed times. Include:
 - Session Summary
-- Timeline (from dig data — real timestamps, duration, topic per session segment)
+- Timeline (real timestamps from .jsonl mining — `YYYY-MM-DD HH:MM | what`)
 - Files Modified
 - AI Diary (150+ words, first-person; must contain one line labeled `[→ AGENT DECISION]` naming a choice YOU made wrong — overconfidence, repeated wrong proposal, misread requirement; tool failures and env issues belong in friction, not here)
 - Honest Feedback (100+ words, 3 friction points; **session-specific only** — what dragged in THIS session; if something generalizes beyond this session, it belongs in Lessons, not here)

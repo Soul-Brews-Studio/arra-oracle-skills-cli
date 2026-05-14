@@ -175,12 +175,26 @@ Instructions:
      message: "[findings, max 500 words]"
    })
 
-HEARTBEAT (mandatory):
-- Every 5 min: SendMessage PROGRESS: <what you did>
-- Blocked: SendMessage STUCK: <what you need>
-- Done: SendMessage DONE: <branch if worktree> <summary>
-- Failed: SendMessage ABORT: <reason>
-- NEVER go idle without reporting.
+HEARTBEAT — strict Bash:SendMessage alternation (1:1 ratio):
+
+After EVERY Bash tool call (whether success or failure), your VERY NEXT tool
+call MUST be SendMessage to team-lead. Pattern:
+
+  Bash(...) → tool_result → SendMessage(to: team-lead, summary: "...",
+  message: "<1-2 lines: what you did + what you saw>") → next Bash → ...
+
+This is not optional. If you call two Bash in a row without a SendMessage
+between them, the protocol is broken — self-ABORT with reason "skipped
+heartbeat" and stop.
+
+Special triggers (still subject to per-Bash heartbeat):
+- STUCK: <what blocks you>  (when blocked, before any diagnostic Bash)
+- DONE: <final summary>     (only after TaskUpdate marks task completed)
+- ABORT: <reason>           (if you cannot proceed)
+
+Avoid long shell loops inside a single Bash — prefer one Bash per iteration
+step with mandatory heartbeat between. The lead counts your Bash:SendMessage
+ratio. Silence = bug.
 
 Rules:
 - ALWAYS SendMessage BEFORE finishing

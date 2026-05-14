@@ -357,29 +357,27 @@ export async function installSkills(
     }
   }
 
-  // Auto-remove minimal-only lite variants when cherry-picking their full counterparts.
+  // Auto-remove minimal-only lite variants whenever their full counterpart is present.
   // forward-lite is redundant when forward is installed, same for recap-lite/rrr-lite.
-  // Only triggers on -s (cherry-pick) without --profile — profile alignment handles the rest.
+  // Runs on ALL install paths: -s cherry-pick, --profile, bare install, /go update.
   const liteToFull: Record<string, string> = {
     'forward-lite': 'forward',
     'recap-lite': 'recap',
     'rrr-lite': 'rrr',
   };
-  const isCherryPick = options.skills && options.skills.length > 0 && !options.profileExplicit;
-  if (isCherryPick) {
+  {
     const installing = new Set(skillsToInstall.map((s) => s.name));
     for (const agentName of targetAgents) {
       const agent = agents[agentName as keyof typeof agents];
       if (!agent) continue;
       const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
       for (const [lite, full] of Object.entries(liteToFull)) {
-        // Remove lite only if: 1) its full version is being installed or already exists, 2) lite is not being installed
-        const fullInstalling = installing.has(full) || existsSync(join(skillsDir, full));
-        const liteInstalling = installing.has(lite);
-        if (fullInstalling && !liteInstalling && existsSync(join(skillsDir, lite))) {
+        const fullPresent = installing.has(full) || existsSync(join(skillsDir, full));
+        const liteBeingInstalled = installing.has(lite);
+        if (fullPresent && !liteBeingInstalled && existsSync(join(skillsDir, lite))) {
           if (await isOurSkill(join(skillsDir, lite))) {
             await rm(join(skillsDir, lite), { recursive: true, force: true });
-            p.log.info(`Auto-removed ${lite} (${full} is installed — lite variant redundant)`);
+            p.log.info(`Auto-removed ${lite} (${full} is present — lite variant redundant)`);
           }
         }
       }

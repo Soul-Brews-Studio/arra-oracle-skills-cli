@@ -57,19 +57,38 @@ Parse the user's `/go` arguments and run the matching `$ARRA` command.
 
 ### `/go` or `/go list` — show all skills with profile + installed status + type
 
-Run ONE bash call to build the full picture:
+Write this script to `/tmp/go-list.sh` and run it with `bash /tmp/go-list.sh`. The script auto-discovers profile membership from the CLI — zero hardcoded skill names.
 
 ```bash
+#!/bin/bash
 SKILLS_DIR="$HOME/.claude/skills"
+ARRA="$HOME/.bun/bin/arra-oracle-skills"
 VERSION=$($ARRA --version 2>/dev/null || echo "?")
 
-# All arra profile skills
-STANDARD="awaken bampenpien bud dig forward go learn recap rrr talk-to team-agents trace"
-LAB="contacts dream feel fyi hey inbox mailbox schedule watch worktree xray"
-MINIMAL_ONLY="forward-lite recap-lite rrr-lite"
+# Auto-get skill lists from CLI (no hardcoding)
+get_profile_skills() {
+  $ARRA profiles "$1" 2>/dev/null | grep "Skills:" | sed 's/.*Skills: //' | tr ',' '\n' | sed 's/^ *//' | tr '\n' ' '
+}
+
+STANDARD=$(get_profile_skills standard)
+FULL=$(get_profile_skills full)
+LAB_RAW=$(get_profile_skills lab)
+
+# Lab-only = in lab but not in full
+LAB=""
+for s in $LAB_RAW; do
+  echo " $FULL " | grep -q " $s " || LAB="$LAB $s"
+done
+
+# Minimal-only = in minimal but not in standard
+MINIMAL=$(get_profile_skills minimal)
+MINIMAL_ONLY=""
+for s in $MINIMAL; do
+  echo " $STANDARD " | grep -q " $s " || MINIMAL_ONLY="$MINIMAL_ONLY $s"
+done
+
 ALL_ARRA="$STANDARD $LAB $MINIMAL_ONLY"
 
-# Detect skill type: [code], [agent], [code+agent], or blank
 detect_type() {
   local dir="$SKILLS_DIR/$1"
   [ -d "$dir" ] || return
@@ -82,17 +101,31 @@ detect_type() {
   fi
 }
 
+get_desc() {
+  local f="$SKILLS_DIR/$1/SKILL.md"
+  [ -f "$f" ] || return
+  awk '/^---$/{n++; next} n==1{print} n>=2{exit}' "$f" \
+    | grep -E '^description:' | head -1 \
+    | sed "s/description: *//; s/['\"]//g; s/\[core\].*G-SKLL | //" \
+    | cut -c1-40
+}
+
 echo "Oracle Skills v$VERSION"
 echo ""
 
 NUM=0; INSTALLED=0
+std_count=$(echo $STANDARD | wc -w | tr -d ' ')
+lab_count=$(echo $LAB | wc -w | tr -d ' ')
+min_count=$(echo $MINIMAL_ONLY | wc -w | tr -d ' ')
+
 for tier in STANDARD LAB MINIMAL_ONLY; do
   case $tier in
-    STANDARD) skills="$STANDARD"; label="standard"; count=12 ;;
-    LAB) skills="$LAB"; label="lab"; count=11 ;;
-    MINIMAL_ONLY) skills="$MINIMAL_ONLY"; label="minimal-only"; count=3 ;;
+    STANDARD) skills="$STANDARD"; label="standard"; count=$std_count ;;
+    LAB) skills="$LAB"; label="lab"; count=$lab_count ;;
+    MINIMAL_ONLY) skills="$MINIMAL_ONLY"; label="minimal-only"; count=$min_count ;;
   esac
-  printf " ─── %s (%d) " "$label" "$count"
+  [ -z "$(echo $skills | tr -d ' ')" ] && continue
+  printf " ─── %s (%s) " "$label" "$count"
   printf '─%.0s' $(seq 1 $((52 - ${#label}))); echo ""
   for name in $skills; do
     NUM=$((NUM+1))
@@ -102,7 +135,12 @@ for tier in STANDARD LAB MINIMAL_ONLY; do
       mark="✗"
     fi
     tag=$(detect_type "$name")
-    printf " %2d  %s  %-30s %s\n" "$NUM" "$mark" "$name" "$tag"
+    desc=$(get_desc "$name")
+    if [ -n "$desc" ]; then
+      printf " %2d  %s  %-24s %-14s %s\n" "$NUM" "$mark" "$name" "$tag" "$desc"
+    else
+      printf " %2d  %s  %-24s %s\n" "$NUM" "$mark" "$name" "$tag"
+    fi
   done
   echo ""
 done
@@ -114,7 +152,7 @@ for dir in "$SKILLS_DIR"/*/; do
   name=$(basename "$dir"); [ "$name" = ".trash" ] && continue
   is_arra=false
   for a in $ALL_ARRA; do [ "$name" = "$a" ] && is_arra=true && break; done
-  $is_arra || { EXT=$((EXT+1)); EXT_NAMES="$EXT_NAMES $name"; }
+  [ "$is_arra" = "false" ] && { EXT=$((EXT+1)); EXT_NAMES="$EXT_NAMES $name"; }
 done
 if [ "$EXT" -gt 0 ]; then
   printf " ─── external (%d) " "$EXT"
@@ -122,23 +160,28 @@ if [ "$EXT" -gt 0 ]; then
   for name in $EXT_NAMES; do
     NUM=$((NUM+1)); INSTALLED=$((INSTALLED+1))
     tag=$(detect_type "$name")
-    printf " %2d  ✓  %-30s %s\n" "$NUM" "$name" "$tag"
+    desc=$(get_desc "$name")
+    if [ -n "$desc" ]; then
+      printf " %2d  ✓  %-24s %-14s %s\n" "$NUM" "$name" "$tag" "$desc"
+    else
+      printf " %2d  ✓  %-24s %s\n" "$NUM" "$name" "$tag"
+    fi
   done
   echo ""
 fi
 
-echo " $INSTALLED/$NUM installed  ·  27 zombies hidden (--zombies to show)"
+echo " $INSTALLED/$NUM installed  ·  zombies hidden (--zombies to show)"
 echo " Cherry-pick:  arra-oracle-skills install -g -s <name> -y"
 echo " Switch:       /go standard | /go lab"
 ```
 
-**Type tags** (right-aligned, detected at runtime from installed skill):
-- `[code]` — has `scripts/` directory (runtime code)
-- `[agent]` — references Agent/TeamCreate/SendMessage (orchestrates subagents)
-- `[code+agent]` — both (e.g. team-agents, dig, trace)
-- *(blank)* — pure instruction skill
+**Auto-detected columns:**
+- **Profile tier**: from `arra-oracle-skills profiles <name>` CLI output (zero hardcoded names)
+- **Type tags**: runtime detection from installed SKILL.md — `[code]` (scripts/), `[agent]` (Agent patterns), `[code+agent]` (both)
+- **Description**: parsed from installed SKILL.md frontmatter, truncated to 40 chars
+- **Installed**: checks `$HOME/.claude/skills/<name>/` exists
 
-**`--zombies` flag**: append the 27 zombie skills section (from ZOMBIE_SKILLS). Only shown when explicitly requested.
+**`--zombies` flag**: append zombie skills section. Only shown when explicitly requested.
 
 ### `/go <profile>` — switch profile
 

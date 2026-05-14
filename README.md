@@ -89,7 +89,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 17 | **forward** | skill | Create handoff + enter plan mode for next |
 | 18 | **forward-lite** | skill | Quick handoff to next session |
 | 19 | **fyi** | skill | Log information for future reference |
-| 20 | **go** | skill | Switch skill profiles (standard/full/lab) |
+| 20 | **go** | skill | Manage Oracle skills |
 | 21 | **hey** | skill | Talk to another oracle via maw federation |
 | 22 | **inbox** | skill | Read and write to Oracle inbox |
 | 23 | **incubate** | skill | Clone or create repos for active development |

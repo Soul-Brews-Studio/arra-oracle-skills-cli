@@ -1,7 +1,7 @@
 ---
 name: go
-description: Switch skill profiles (standard/full/lab), fresh install, or enable/disable specific skills via arra-oracle-skills CLI. Destructive — modifies globally installed skills.
-argument-hint: "[list] | <standard|full|lab|cleanup|update> | enable|disable <skill...>"
+description: Manage Oracle skills — list, install, remove, find, switch profiles, update. Use when user says "go", "install skill", "remove skill", "find skill", "switch profile", "go list", "go update", "go install", "go find". Single entry point for all skill management.
+argument-hint: "[list] | <standard|full|lab|cleanup|update> | install|remove|find <skill...>"
 disable-model-invocation: true
 ---
 
@@ -20,8 +20,9 @@ disable-model-invocation: true
 /go lab                 # everything including experimental
 /go cleanup             # remove ALL skills → fetch latest → fresh install
 /go update              # check for new version + upgrade in-place
-/go enable trace dig    # enable specific skills
-/go disable watch       # disable specific skills
+/go install team-agents # cherry-pick install specific skills
+/go remove watch        # uninstall specific skills
+/go find feel           # search all available skills by name
 ```
 
 > ⚠ NEW (#285): `/go <profile>` now ALIGNS your installed skills to the target profile.
@@ -367,21 +368,35 @@ If already current: "Already on latest ($CURRENT). Nothing to do."
 - Does NOT change your profile — only bumps the version of currently installed skills
 - Safe to run anytime — idempotent
 
-### `/go enable <skill...>` — enable specific skills
+### `/go install <skill...>` — cherry-pick specific skills
 
 ```bash
 $ARRA install -g -s <skill...> -y
 ```
 
-- `/go enable trace dig` → `$ARRA install -g -s trace dig -y`
+- `/go install team-agents` → `$ARRA install -g -s team-agents -y`
+- `/go install dig hey xray` → `$ARRA install -g -s dig hey xray -y`
 
-### `/go disable <skill...>` — disable specific skills
+Works for ANY skill — standard, lab, or even zombie. Does not change your profile; just adds the named skills on top of whatever you have.
+
+### `/go remove <skill...>` — uninstall specific skills
 
 ```bash
 $ARRA uninstall -g -s <skill...> -y
 ```
 
-- `/go disable watch` → `$ARRA uninstall -g -s watch -y`
+- `/go remove watch` → `$ARRA uninstall -g -s watch -y`
+
+### `/go find <query>` — search available skills
+
+```bash
+$ARRA profiles lab 2>/dev/null
+```
+
+Show all skills from the lab profile (the superset) and highlight any matching the query. If the user says `/go find feel`, search the profile output for "feel" and show where it lives (which tier, installed or not).
+
+- `/go find feel` → show feel is in lab tier, not installed, description
+- `/go find team` → show team-agents in standard tier, installed
 
 ---
 

@@ -5,7 +5,7 @@ on:
       - 'src/skills/**/*.md'
       - 'scripts/check_skill_convention.sh'
   push:
-    branches: [main, alpha]
+    branches: [main, alpha, beta]
     paths:
       - 'src/skills/**/*.md'
       - 'scripts/check_skill_convention.sh'

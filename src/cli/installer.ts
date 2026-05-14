@@ -35,6 +35,44 @@ export function getCodexMarketplaceDir(homeDir?: string): string {
 }
 
 /**
+ * Detect the installed Codex CLI version by shelling out to `codex --version`.
+ * Returns the semver string (e.g. "0.130.0") or null if codex is not on PATH
+ * or the output cannot be parsed.
+ */
+export async function detectCodexVersion(): Promise<string | null> {
+  try {
+    const proc = Bun.spawn(['codex', '--version'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const out = await new Response(proc.stdout).text();
+    await proc.exited;
+    if (proc.exitCode !== 0) return null;
+    const match = out.match(/(\d+)\.(\d+)\.(\d+)/);
+    return match ? match[0] : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns true if the given Codex version uses the V2 plugin format
+ * (>= 0.130.0: per-plugin plugin.json + skills/<name>/SKILL.md).
+ *
+ * When version is null (codex binary missing), defaults to true so newly
+ * shipped Codex versions still get a working install.
+ */
+export function isCodexV2Format(version: string | null): boolean {
+  if (version === null) return true;
+  const match = version.match(/^(\d+)\.(\d+)\.(\d+)/);
+  if (!match) return true;
+  const major = parseInt(match[1], 10);
+  const minor = parseInt(match[2], 10);
+  if (major > 0) return true;
+  return minor >= 130;
+}
+
+/**
  * Install skills for Codex 0.128.0+ plugin marketplace.
  *
  * Creates:
@@ -50,22 +88,26 @@ export async function installCodexPluginMarketplace(
   skills: Skill[],
   version: string,
   shellMode: ShellMode,
-  opts?: { marketplaceDir?: string; configPath?: string }
+  opts?: { marketplaceDir?: string; configPath?: string; codexVersion?: string | null }
 ): Promise<void> {
   const marketplaceDir = opts?.marketplaceDir ?? getCodexMarketplaceDir();
   const configPath = opts?.configPath ?? join(homedir(), '.codex', 'config.toml');
+  const codexVersion = opts?.codexVersion === undefined ? await detectCodexVersion() : opts.codexVersion;
+  const v2 = isCodexV2Format(codexVersion);
 
   // ── 1. Create marketplace bundle directory ─────────────────────────────────
   await mkdirp(marketplaceDir, shellMode);
 
-  // ── 2. Write marketplace manifest ─────────────────────────────────────────
-  const manifestContent = [
-    `name = "arra-oracle-skills"`,
-    `version = "${version}"`,
-    `description = "Oracle skills for Codex by Soul Brews Studio"`,
-    ``,
-  ].join('\n');
-  await Bun.write(join(marketplaceDir, 'manifest.toml'), manifestContent);
+  // ── 2. Write marketplace manifest (V1 only — Codex 0.130+ ignores it) ─────
+  if (!v2) {
+    const manifestContent = [
+      `name = "arra-oracle-skills"`,
+      `version = "${version}"`,
+      `description = "Oracle skills for Codex by Soul Brews Studio"`,
+      ``,
+    ].join('\n');
+    await Bun.write(join(marketplaceDir, 'manifest.toml'), manifestContent);
+  }
 
   // ── 3. Per-skill plugin directories ───────────────────────────────────────
   const pluginsDir = join(marketplaceDir, 'plugins');
@@ -75,27 +117,55 @@ export async function installCodexPluginMarketplace(
     const skillPluginDir = join(pluginsDir, skill.name);
     await mkdirp(skillPluginDir, shellMode);
 
-    // plugin.toml descriptor
-    const escapedDesc = skill.description.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-    const pluginToml = [
-      `name = "${skill.name}"`,
-      `description = "${escapedDesc}"`,
-      `version = "${version}"`,
-      `command = "/${skill.name}"`,
-      ``,
-    ].join('\n');
-    await Bun.write(join(skillPluginDir, 'plugin.toml'), pluginToml);
+    if (v2) {
+      // Codex 0.130+ format: .codex-plugin/plugin.json + skills/<name>/SKILL.md
+      const pluginMetaDir = join(skillPluginDir, '.codex-plugin');
+      await mkdirp(pluginMetaDir, shellMode);
+      const pluginJson = {
+        name: skill.name,
+        version,
+        description: skill.description,
+        skills: './skills/',
+        interface: {
+          displayName: skill.name,
+          shortDescription: skill.description,
+          category: 'AI Assistant',
+          capabilities: ['Interactive', 'Read'],
+        },
+      };
+      await Bun.write(join(pluginMetaDir, 'plugin.json'), JSON.stringify(pluginJson, null, 2) + '\n');
 
-    // prompt.md — skill body for Codex to execute
-    if (isCompiled()) {
-      // VFS mode: write entire skill tree (includes SKILL.md + any extras)
-      await writeSkillToDir(skill.name, skillPluginDir);
+      const skillBodyDir = join(skillPluginDir, 'skills', skill.name);
+      await mkdirp(skillBodyDir, shellMode);
+      if (isCompiled()) {
+        await writeSkillToDir(skill.name, skillBodyDir);
+      } else {
+        const skillMdPath = join(skill.path, 'SKILL.md');
+        if (existsSync(skillMdPath)) {
+          const content = await Bun.file(skillMdPath).text();
+          await Bun.write(join(skillBodyDir, 'SKILL.md'), content);
+        }
+      }
     } else {
-      // Filesystem mode: copy SKILL.md as prompt.md
-      const skillMdPath = join(skill.path, 'SKILL.md');
-      if (existsSync(skillMdPath)) {
-        const content = await Bun.file(skillMdPath).text();
-        await Bun.write(join(skillPluginDir, 'prompt.md'), content);
+      // Codex < 0.130 format: plugin.toml + prompt.md
+      const escapedDesc = skill.description.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const pluginToml = [
+        `name = "${skill.name}"`,
+        `description = "${escapedDesc}"`,
+        `version = "${version}"`,
+        `command = "/${skill.name}"`,
+        ``,
+      ].join('\n');
+      await Bun.write(join(skillPluginDir, 'plugin.toml'), pluginToml);
+
+      if (isCompiled()) {
+        await writeSkillToDir(skill.name, skillPluginDir);
+      } else {
+        const skillMdPath = join(skill.path, 'SKILL.md');
+        if (existsSync(skillMdPath)) {
+          const content = await Bun.file(skillMdPath).text();
+          await Bun.write(join(skillPluginDir, 'prompt.md'), content);
+        }
       }
     }
   }
@@ -675,9 +745,12 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
     // Codex 0.128.0+: install plugin marketplace bundle in addition to skills/+prompts/
     // The old ~/.codex/skills/ + ~/.codex/prompts/ layout is kept for backward compat
     // with Codex < 0.128.0, but 0.128.0+ requires the plugin marketplace registration.
+    // Codex 0.130+ uses a different per-plugin layout (.codex-plugin/plugin.json + skills/).
     if (agentName === 'codex' && isCodexPluginMarketplace()) {
-      await installCodexPluginMarketplace(agentSkillsToInstall, pkg.version, shellMode);
-      p.log.success(`Codex plugin marketplace: ${getCodexMarketplaceDir()}`);
+      const codexVersion = await detectCodexVersion();
+      await installCodexPluginMarketplace(agentSkillsToInstall, pkg.version, shellMode, { codexVersion });
+      const fmt = isCodexV2Format(codexVersion) ? '0.130+' : '0.128';
+      p.log.success(`Codex plugin marketplace (${fmt}): ${getCodexMarketplaceDir()}`);
     }
 
     p.log.success(`${agent.displayName}: ${targetDir}`);

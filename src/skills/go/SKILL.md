@@ -1,7 +1,7 @@
 ---
 name: go
 description: Switch skill profiles (standard/full/lab), fresh install, or enable/disable specific skills via arra-oracle-skills CLI. Destructive — modifies globally installed skills.
-argument-hint: "<standard|full|lab|cleanup> | enable|disable <skill...>"
+argument-hint: "<standard|full|lab|cleanup|update> | enable|disable <skill...>"
 disable-model-invocation: true
 ---
 
@@ -18,6 +18,7 @@ disable-model-invocation: true
 /go full                # all stable (excludes lab-only experiments)
 /go lab                 # everything including experimental
 /go cleanup             # remove ALL skills → fetch latest → fresh install
+/go update              # check for new version + upgrade in-place
 /go enable trace dig    # enable specific skills
 /go disable watch       # disable specific skills
 ```
@@ -220,6 +221,28 @@ LATEST=$(curl -s https://api.github.com/repos/Soul-Brews-Studio/arra-oracle-skil
 - `[hidden]` flags persisting after unhide
 - Version mismatch (some v3.6.1, some v3.7.0)
 - Want a clean slate without losing personal skills
+
+### `/go update` — check for new version + upgrade in-place
+
+```bash
+CURRENT=$($ARRA --version 2>/dev/null || echo "unknown")
+LATEST=$(curl -s https://api.github.com/repos/Soul-Brews-Studio/arra-oracle-skills-cli/tags | grep -m1 '"name"' | cut -d'"' -f4)
+echo "  Installed: $CURRENT"
+echo "  Latest:    $LATEST"
+```
+
+If versions differ:
+
+```bash
+$ARRA install -g -y
+```
+
+If already current: "Already on latest ($CURRENT). Nothing to do."
+
+- `/go update` → check + upgrade to latest tag
+- Equivalent to `/oracle-soul-sync-update` but discoverable under `/go`
+- Does NOT change your profile — only bumps the version of currently installed skills
+- Safe to run anytime — idempotent
 
 ### `/go enable <skill...>` — enable specific skills
 

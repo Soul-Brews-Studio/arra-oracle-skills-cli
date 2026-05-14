@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-37 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+36 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -64,7 +64,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>37 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>36 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -94,19 +94,18 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 22 | **inbox** | skill | Read and write to Oracle inbox |
 | 23 | **incubate** | skill | Clone or create repos for active development |
 | 24 | **mailbox** | skill | 'Persistent agent mailbox |
-| 25 | **oracle-soul-sync-update** | skill | Sync Oracle instruments with the family |
-| 26 | **recap-lite** | skill | Quick session orientation |
-| 27 | **resonance** | skill | Capture a resonance moment |
-| 28 | **rrr-lite** | skill | Quick session retrospective |
-| 29 | **standup** | skill | Daily standup check |
-| 30 | **talk-to** | skill | Talk to another Oracle agent |
-| 31 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 32 | **trace** | skill | Find projects, code |
-| 33 | **watch** | skill | 'Extract YouTube video transcripts |
-| 34 | **where-we-are** | skill | Session awareness |
-| 35 | **who-are-you** | skill | Know ourselves |
-| 36 | **worktree** | skill | 'Work in an isolated git worktree |
-| 37 | **xray** | skill | X-ray deep scan |
+| 25 | **recap-lite** | skill | Quick session orientation |
+| 26 | **resonance** | skill | Capture a resonance moment |
+| 27 | **rrr-lite** | skill | Quick session retrospective |
+| 28 | **standup** | skill | Daily standup check |
+| 29 | **talk-to** | skill | Talk to another Oracle agent |
+| 30 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 31 | **trace** | skill | Find projects, code |
+| 32 | **watch** | skill | 'Extract YouTube video transcripts |
+| 33 | **where-we-are** | skill | Session awareness |
+| 34 | **who-are-you** | skill | Know ourselves |
+| 35 | **worktree** | skill | 'Work in an isolated git worktree |
+| 36 | **xray** | skill | X-ray deep scan |
 
 </details>
 
@@ -118,10 +117,10 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 
 | Profile | Count | Skills |
 |---------|-------|--------|
-| **minimal** | 7 | `about-oracle`, `forward-lite`, `go`, `oracle-soul-sync-update`, `recap-lite`, `rrr-lite`, `trace` |
+| **minimal** | 6 | `about-oracle`, `forward-lite`, `go`, `recap-lite`, `rrr-lite`, `trace` |
 | **standard** | 12 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace` |
-| **full** | 37 | all |
-| **lab** | 37 | all |
+| **full** | 36 | all |
+| **lab** | 36 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 
@@ -143,7 +142,7 @@ about                   # version + status
 
 ## Zombie Skills
 
-27 skills excluded from all profiles. Install by name:
+28 skills excluded from all profiles. Install by name:
 
 ```bash
 npx arra-oracle-skills install -g -y -s <name>
@@ -178,6 +177,7 @@ npx arra-oracle-skills install -g -y -s <name>
 | `/harden` | Audit Oracle configuration for safety, governance, and ha... |
 | `/vault` | Connect external knowledge bases (Obsidian, Logseq, markd... |
 | `/dream-original` | Cross-repo pattern discovery with parallel agents. Finds ... |
+| `/oracle-soul-sync-update` | Sync Oracle instruments with the family. Check and update... |
 <!-- secret-skills:end -->
 
 ## Team Agent Scripts

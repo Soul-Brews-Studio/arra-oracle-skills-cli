@@ -16,9 +16,9 @@
  * elsewhere they duplicate functionality of forward/recap/rrr. Excluded from full+lab.
  */
 
-/** Minimal profile — lite lifecycle + trace + update + upgrade (token-optimized) */
+/** Minimal profile — lite lifecycle + trace (token-optimized) */
 export const MINIMAL_SKILLS = [
-  'about-oracle', 'forward-lite', 'go', 'oracle-soul-sync-update', 'recap-lite', 'rrr-lite', 'trace',
+  'about-oracle', 'forward-lite', 'go', 'recap-lite', 'rrr-lite', 'trace',
 ] as const;
 
 /** Standard profile — daily driver skills (always installed) */
@@ -64,6 +64,8 @@ export const ZOMBIE_SKILLS = [
   // 2026-05-14 (#333 content correction): original simple /dream body
   // preserved as zombie after /dream absorbed the evolved morpheus body.
   'dream-original',
+  // 2026-05-14: replaced by /go update verb — no longer needs its own skill slot.
+  'oracle-soul-sync-update',
 ] as const;
 
 /** Return the source directory for a skill by name — `.archive/` for zombies,

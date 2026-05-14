@@ -9,16 +9,16 @@ const ALL_SKILLS = [
   ...MINIMAL_ONLY_SKILLS,
   // Full/other skills (not standard, not lab-only, not minimal-only, not zombie)
   "about-oracle", "create-shortcut", "incubate",
-  "oracle-family-scan", "oracle-soul-sync-update", "project",
+  "oracle-family-scan", "project",
   "standup", "where-we-are", "who-are-you",
 ].sort();
 
 const ZOMBIE_LIST = [...ZOMBIE_SKILLS] as string[];
 
 describe("profiles", () => {
-  it("minimal has 7 skills", () => {
-    expect(MINIMAL_SKILLS).toHaveLength(7);
-    expect(profiles.minimal.include).toHaveLength(7);
+  it("minimal has 6 skills", () => {
+    expect(MINIMAL_SKILLS).toHaveLength(6);
+    expect(profiles.minimal.include).toHaveLength(6);
   });
 
   it("minimal includes go for upgrade path", () => {
@@ -56,8 +56,8 @@ describe("profiles", () => {
     expect(LAB_SKILLS).toHaveLength(11);
   });
 
-  it("ZOMBIE_SKILLS has 27 archived candidates (13 original + 12 culled in #327 + 1 added in #333 + 1 dream-original in #333 content correction)", () => {
-    expect(ZOMBIE_SKILLS).toHaveLength(27);
+  it("ZOMBIE_SKILLS has 28 archived candidates (27 prior + oracle-soul-sync-update replaced by /go update)", () => {
+    expect(ZOMBIE_SKILLS).toHaveLength(28);
   });
 
   it("labOnly matches LAB_SKILLS", () => {
@@ -117,7 +117,7 @@ describe("profiles", () => {
 describe("resolveProfile", () => {
   it("minimal returns 6 skills", () => {
     const result = resolveProfile("minimal", ALL_SKILLS);
-    expect(result).toHaveLength(7);
+    expect(result).toHaveLength(6);
   });
 
   it("standard returns 12 skills", () => {

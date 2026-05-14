@@ -21,7 +21,7 @@ import {
   isCodexPluginMarketplace,
   getCodexMarketplaceDir,
   installCodexPluginMarketplace,
-  isCodexV2Format,
+  codexUsesJsonFormat,
 } from "../src/cli/installer";
 import { discoverSkills } from "../src/cli/installer";
 import type { Skill } from "../src/cli/types";
@@ -106,13 +106,13 @@ describe("getCodexMarketplaceDir", () => {
 
 // ── installCodexPluginMarketplace ─────────────────────────────────────────────
 
-describe("installCodexPluginMarketplace (V1 — Codex < 0.130)", () => {
-  // Run the installer once and test the results — pin to V1 (TOML) format
+describe("installCodexPluginMarketplace", () => {
+  // Run the installer once and test the results
   beforeAll(async () => {
     await installCodexPluginMarketplace(MOCK_SKILLS, "26.5.0-test", "no-shell", {
       marketplaceDir: MARKETPLACE_DIR,
       configPath: CONFIG_PATH,
-      codexVersion: "0.128.0",
+      useJson: false, // force TOML format (legacy Codex 0.128)
     });
   });
 
@@ -183,7 +183,6 @@ describe("installCodexPluginMarketplace (V1 — Codex < 0.130)", () => {
     await installCodexPluginMarketplace(MOCK_SKILLS, "26.5.0-test", "no-shell", {
       marketplaceDir: MARKETPLACE_DIR,
       configPath: CONFIG_PATH,
-      codexVersion: "0.128.0",
     });
 
     const content = await readFile(CONFIG_PATH, "utf-8");
@@ -195,97 +194,6 @@ describe("installCodexPluginMarketplace (V1 — Codex < 0.130)", () => {
     // Count occurrences of the rrr plugin section header
     const rrrPluginCount = (content.match(/\[plugins\."rrr@arra-oracle-skills"\]/g) || []).length;
     expect(rrrPluginCount).toBe(1);
-  });
-});
-
-// ── V2 format (Codex 0.130+) ──────────────────────────────────────────────────
-
-describe("installCodexPluginMarketplace (V2 — Codex 0.130+)", () => {
-  const V2_MARKETPLACE_DIR = join(TEST_HOME, "v2-marketplace");
-  const V2_CONFIG_PATH = join(TEST_HOME, "v2-config.toml");
-
-  beforeAll(async () => {
-    await writeFile(V2_CONFIG_PATH, `[marketplaces.openai-bundled]\nsource_type = "bundled"\n`);
-    await installCodexPluginMarketplace(MOCK_SKILLS, "26.5.0-v2", "no-shell", {
-      marketplaceDir: V2_MARKETPLACE_DIR,
-      configPath: V2_CONFIG_PATH,
-      codexVersion: "0.130.0",
-    });
-  });
-
-  it("does NOT create manifest.toml (V2 ignores it)", () => {
-    expect(existsSync(join(V2_MARKETPLACE_DIR, "manifest.toml"))).toBe(false);
-  });
-
-  it("does NOT create plugin.toml per skill (V2 uses plugin.json)", () => {
-    for (const skill of MOCK_SKILLS) {
-      const tomlPath = join(V2_MARKETPLACE_DIR, "plugins", skill.name, "plugin.toml");
-      expect(existsSync(tomlPath)).toBe(false);
-    }
-  });
-
-  it("creates .codex-plugin/plugin.json per skill with correct shape", async () => {
-    for (const skill of MOCK_SKILLS) {
-      const jsonPath = join(V2_MARKETPLACE_DIR, "plugins", skill.name, ".codex-plugin", "plugin.json");
-      expect(existsSync(jsonPath)).toBe(true);
-
-      const parsed = JSON.parse(await readFile(jsonPath, "utf-8"));
-      expect(parsed.name).toBe(skill.name);
-      expect(parsed.version).toBe("26.5.0-v2");
-      expect(parsed.description).toBe(skill.description);
-      expect(parsed.skills).toBe("./skills/");
-      expect(parsed.interface.displayName).toBe(skill.name);
-      expect(parsed.interface.shortDescription).toBe(skill.description);
-      expect(parsed.interface.category).toBe("AI Assistant");
-      expect(parsed.interface.capabilities).toEqual(["Interactive", "Read"]);
-    }
-  });
-
-  it("creates skills/<name>/ subdirectory per skill (SKILL.md location)", () => {
-    for (const skill of MOCK_SKILLS) {
-      const skillsDir = join(V2_MARKETPLACE_DIR, "plugins", skill.name, "skills", skill.name);
-      expect(existsSync(skillsDir)).toBe(true);
-    }
-  });
-
-  it("still registers skills in config.toml (V2 keeps registration step)", async () => {
-    const content = await readFile(V2_CONFIG_PATH, "utf-8");
-    expect(content).toContain(`[marketplaces.arra-oracle-skills]`);
-    expect(content).toContain(`[plugins."rrr@arra-oracle-skills"]`);
-    expect(content).toContain(`[plugins."recap@arra-oracle-skills"]`);
-    expect(content).not.toContain(`[plugins."secret-internal@arra-oracle-skills"]`);
-  });
-});
-
-// ── Version detection ─────────────────────────────────────────────────────────
-
-describe("isCodexV2Format", () => {
-  it("returns true for 0.130.0", () => {
-    expect(isCodexV2Format("0.130.0")).toBe(true);
-  });
-
-  it("returns true for 0.131.5", () => {
-    expect(isCodexV2Format("0.131.5")).toBe(true);
-  });
-
-  it("returns true for 1.0.0", () => {
-    expect(isCodexV2Format("1.0.0")).toBe(true);
-  });
-
-  it("returns false for 0.128.0", () => {
-    expect(isCodexV2Format("0.128.0")).toBe(false);
-  });
-
-  it("returns false for 0.129.99", () => {
-    expect(isCodexV2Format("0.129.99")).toBe(false);
-  });
-
-  it("defaults to V2 when version is null (codex binary missing)", () => {
-    expect(isCodexV2Format(null)).toBe(true);
-  });
-
-  it("defaults to V2 for unparseable version strings", () => {
-    expect(isCodexV2Format("not-a-version")).toBe(true);
   });
 });
 
@@ -309,7 +217,7 @@ describe("installCodexPluginMarketplace (real skills)", () => {
       skills.slice(0, 3), // Use first 3 skills to keep the test fast
       "26.5.0-integ",
       "no-shell",
-      { marketplaceDir: REAL_MARKETPLACE_DIR, configPath: REAL_CONFIG_PATH, codexVersion: "0.128.0" }
+      { marketplaceDir: REAL_MARKETPLACE_DIR, configPath: REAL_CONFIG_PATH, useJson: false }
     );
   });
 
@@ -336,5 +244,211 @@ describe("installCodexPluginMarketplace (real skills)", () => {
       if (skill.hidden) continue;
       expect(config).toContain(`[plugins."${skill.name}@arra-oracle-skills"]`);
     }
+  });
+});
+
+// ── codexUsesJsonFormat ───────────────────────────────────────────────────────
+
+describe("codexUsesJsonFormat", () => {
+  it("returns false when version is null (codex not detected)", () => {
+    expect(codexUsesJsonFormat(null)).toBe(false);
+  });
+
+  it("returns false for 0.128.0 (TOML era)", () => {
+    expect(codexUsesJsonFormat("0.128.0")).toBe(false);
+  });
+
+  it("returns false for 0.129.5 (still TOML)", () => {
+    expect(codexUsesJsonFormat("0.129.5")).toBe(false);
+  });
+
+  it("returns true for 0.130.0 (JSON format introduced)", () => {
+    expect(codexUsesJsonFormat("0.130.0")).toBe(true);
+  });
+
+  it("returns true for 0.131.0", () => {
+    expect(codexUsesJsonFormat("0.131.0")).toBe(true);
+  });
+
+  it("returns true for 1.0.0+", () => {
+    expect(codexUsesJsonFormat("1.0.0")).toBe(true);
+  });
+});
+
+// ── installCodexPluginMarketplace (JSON format — Codex 0.130+) ────────────────
+
+describe("installCodexPluginMarketplace — JSON format (Codex 0.130+)", () => {
+  const JSON_TEST_HOME = join(tmpdir(), `arra-codex-plugin-json-${Date.now()}`);
+  const JSON_CONFIG_PATH = join(JSON_TEST_HOME, ".codex", "config.toml");
+  const JSON_MARKETPLACE_DIR = join(
+    JSON_TEST_HOME,
+    ".codex",
+    ".tmp",
+    "bundled-marketplaces",
+    "arra-oracle-skills"
+  );
+  const JSON_PLUGIN_CACHE_DIR = join(
+    JSON_TEST_HOME,
+    ".codex",
+    "plugins",
+    "cache",
+    "arra-oracle-skills"
+  );
+
+  beforeAll(async () => {
+    await mkdir(join(JSON_TEST_HOME, ".codex"), { recursive: true });
+    await writeFile(
+      JSON_CONFIG_PATH,
+      `[marketplaces.openai-bundled]\nsource_type = "bundled"\n`
+    );
+    await installCodexPluginMarketplace(MOCK_SKILLS, "26.5.15-test", "no-shell", {
+      marketplaceDir: JSON_MARKETPLACE_DIR,
+      configPath: JSON_CONFIG_PATH,
+      useJson: true,
+      pluginCacheDir: JSON_PLUGIN_CACHE_DIR,
+    });
+  });
+
+  afterAll(async () => {
+    if (existsSync(JSON_TEST_HOME)) await rm(JSON_TEST_HOME, { recursive: true });
+  });
+
+  it("does NOT write manifest.toml at marketplace root", () => {
+    expect(existsSync(join(JSON_MARKETPLACE_DIR, "manifest.toml"))).toBe(false);
+  });
+
+  it("creates .agents/plugins/marketplace.json (required by Codex 0.130 marketplace add)", async () => {
+    const path = join(JSON_MARKETPLACE_DIR, ".agents", "plugins", "marketplace.json");
+    expect(existsSync(path)).toBe(true);
+    const parsed = JSON.parse(await readFile(path, "utf-8"));
+    expect(parsed.name).toBe("arra-oracle-skills");
+    expect(parsed.interface.displayName).toBe("Arra Oracle Skills");
+    // Hidden skills must NOT appear in the marketplace plugin list
+    const names = parsed.plugins.map((p: { name: string }) => p.name);
+    expect(names).toContain("rrr");
+    expect(names).toContain("recap");
+    expect(names).not.toContain("secret-internal");
+    // Each entry must have local source + AVAILABLE policy
+    for (const p of parsed.plugins) {
+      expect(p.source.source).toBe("local");
+      expect(p.source.path).toBe(`./plugins/${p.name}`);
+      expect(p.policy.installation).toBe("AVAILABLE");
+    }
+  });
+
+  it("populates plugin cache at <cache>/<plugin>/<version>/ (Codex looks here, not at marketplace bundle)", () => {
+    for (const skill of MOCK_SKILLS) {
+      const cachedPluginJson = join(
+        JSON_PLUGIN_CACHE_DIR,
+        skill.name,
+        "26.5.15-test",
+        ".codex-plugin",
+        "plugin.json"
+      );
+      expect(existsSync(cachedPluginJson)).toBe(true);
+    }
+  });
+
+  it("creates .codex-plugin/plugin.json for each skill", () => {
+    for (const skill of MOCK_SKILLS) {
+      const pluginJsonPath = join(
+        JSON_MARKETPLACE_DIR,
+        "plugins",
+        skill.name,
+        ".codex-plugin",
+        "plugin.json"
+      );
+      expect(existsSync(pluginJsonPath)).toBe(true);
+    }
+  });
+
+  it("plugin.json contains required fields (name, version, description, skills, interface)", async () => {
+    const pluginJsonPath = join(
+      JSON_MARKETPLACE_DIR,
+      "plugins",
+      "rrr",
+      ".codex-plugin",
+      "plugin.json"
+    );
+    const parsed = JSON.parse(await readFile(pluginJsonPath, "utf-8"));
+    expect(parsed.name).toBe("rrr");
+    expect(parsed.version).toBe("26.5.15-test");
+    expect(parsed.description).toBe("Session retrospective with AI diary");
+    expect(parsed.skills).toBe("./skills/");
+    expect(parsed.interface).toBeDefined();
+    expect(parsed.interface.displayName).toBe("rrr");
+    expect(parsed.interface.shortDescription).toContain("Session");
+  });
+
+  it("plugin.json shortDescription truncates long descriptions", async () => {
+    const longDescSkill: Skill = {
+      name: "long-desc",
+      description: "x".repeat(150),
+      path: join(JSON_TEST_HOME, "skills", "long-desc"),
+    };
+    const dir = join(tmpdir(), `arra-codex-trunc-${Date.now()}`);
+    await mkdir(join(dir, ".codex"), { recursive: true });
+    const cfg = join(dir, ".codex", "config.toml");
+    const market = join(dir, ".codex", ".tmp", "bundled-marketplaces", "arra-oracle-skills");
+    await writeFile(cfg, "");
+    await installCodexPluginMarketplace([longDescSkill], "test", "no-shell", {
+      marketplaceDir: market,
+      configPath: cfg,
+      useJson: true,
+    });
+    const parsed = JSON.parse(
+      await readFile(join(market, "plugins", "long-desc", ".codex-plugin", "plugin.json"), "utf-8")
+    );
+    expect(parsed.interface.shortDescription.length).toBe(100);
+    expect(parsed.interface.shortDescription.endsWith("...")).toBe(true);
+    await rm(dir, { recursive: true });
+  });
+
+  it("does NOT write plugin.toml or prompt.md in JSON mode", () => {
+    for (const skill of MOCK_SKILLS) {
+      expect(existsSync(join(JSON_MARKETPLACE_DIR, "plugins", skill.name, "plugin.toml"))).toBe(false);
+      expect(existsSync(join(JSON_MARKETPLACE_DIR, "plugins", skill.name, "prompt.md"))).toBe(false);
+    }
+  });
+
+  it("registers marketplace + plugins in config.toml (same as TOML mode)", async () => {
+    const config = await readFile(JSON_CONFIG_PATH, "utf-8");
+    expect(config).toContain(`[marketplaces.arra-oracle-skills]`);
+    expect(config).toContain(`source = "${JSON_MARKETPLACE_DIR}"`);
+    expect(config).toContain(`[plugins."rrr@arra-oracle-skills"]`);
+    expect(config).toContain(`[plugins."recap@arra-oracle-skills"]`);
+    // Hidden skill must not be registered
+    expect(config).not.toContain(`[plugins."secret-internal@arra-oracle-skills"]`);
+  });
+
+  it("cleans up stale TOML files when re-installing in JSON mode", async () => {
+    // Simulate a prior TOML install
+    const upgradeHome = join(tmpdir(), `arra-codex-upgrade-${Date.now()}`);
+    const upgradeMarket = join(upgradeHome, "marketplace");
+    const upgradeCfg = join(upgradeHome, "config.toml");
+    await mkdir(upgradeHome, { recursive: true });
+    await writeFile(upgradeCfg, "");
+
+    // Step 1: TOML install (simulates user on Codex 0.128)
+    await installCodexPluginMarketplace(MOCK_SKILLS.slice(0, 1), "26.5.0-test", "no-shell", {
+      marketplaceDir: upgradeMarket,
+      configPath: upgradeCfg,
+      useJson: false,
+    });
+    expect(existsSync(join(upgradeMarket, "manifest.toml"))).toBe(true);
+    expect(existsSync(join(upgradeMarket, "plugins", "rrr", "plugin.toml"))).toBe(true);
+
+    // Step 2: JSON install (simulates Codex auto-upgrade to 0.130)
+    await installCodexPluginMarketplace(MOCK_SKILLS.slice(0, 1), "26.5.15-test", "no-shell", {
+      marketplaceDir: upgradeMarket,
+      configPath: upgradeCfg,
+      useJson: true,
+    });
+
+    expect(existsSync(join(upgradeMarket, "manifest.toml"))).toBe(false);
+    expect(existsSync(join(upgradeMarket, "plugins", "rrr", "plugin.toml"))).toBe(false);
+    expect(existsSync(join(upgradeMarket, "plugins", "rrr", ".codex-plugin", "plugin.json"))).toBe(true);
+
+    await rm(upgradeHome, { recursive: true });
   });
 });

@@ -138,24 +138,46 @@ agents                  # list 18 supported agents
 about                   # version + status
 ```
 
-## Secret Skills
+<!-- secret-skills:start -->
 
-Secret skills are excluded from all profiles. Install by name:
+## Zombie Skills
+
+27 skills excluded from all profiles. Install by name:
 
 ```bash
-npx arra-oracle-skills@26.5.14-alpha.721 install -g -y -s watch harden wormhole fleet release warp mailbox
+npx arra-oracle-skills install -g -y -s <name>
 ```
 
 | Skill | What |
 |-------|------|
-| `/watch` | YouTube CC extraction via yt-dlp |
-| `/harden` | Oracle governance audit |
-| `/wormhole` | Federated query proxy (data sovereign) |
-| `/fleet` | Deep fleet census across nodes |
-| `/release` | Automated release flow |
-| `/warp` | SSH+tmux teleport to remote nodes |
-| `/morpheus` | Archived in #333 — same content as active /dream (back-compat alias) |
-| `/mailbox` | Persistent agent memory in ψ/ |
+| `/alpha-feature` | Full skill development pipeline — create, compile, test, ... |
+| `/birth` | Prepare Oracle birth props for a new repo — Issue #1, MCP... |
+| `/deep-research` | Deep Research via Gemini — opens new tab, selects Deep Re... |
+| `/gemini` | Control Gemini browser tab via MQTT WebSocket — chat, tra... |
+| `/handover` | Transfer work to another Oracle — forward + wake + tell i... |
+| `/list-issues-pr-pulse` | Open issues, PRs, and Pulse board in one view. Use when u... |
+| `/mine` | Extract a specific topic from a single session JSONL file... |
+| `/new-issue` | Quick GitHub issue creation. Use when user says "new issu... |
+| `/oracle-manage` | Skill and profile management — prepare tools, switch prof... |
+| `/speak` | Text-to-speech using edge-tts neural voices with macOS sa... |
+| `/what-we-done` | Facts-only progress report — commits, PRs merged, issues ... |
+| `/whats-next` | Smart action suggestions — scan context, rank priorities,... |
+| `/workon` | Work on a GitHub issue with worktree isolation, or resume... |
+| `/i-believed` | Declare belief — looking back or leaping forward. 'I beli... |
+| `/work-with` | Persistent cross-oracle collaboration with synchronic sco... |
+| `/morpheus` | Speculative dreaming — background thinking, pre-computati... |
+| `/retrospective` | Quick session retrospective — summary, lessons, next step... |
+| `/skills-list` | List all Oracle skills with profile tier, type, and scrip... |
+| `/fleet` | Deep fleet census — discover all oracles across all nodes... |
+| `/machines` | Fleet machines — discover nodes from contacts, ping to pr... |
+| `/warp` | Teleport to a remote oracle node via SSH+tmux. Interactiv... |
+| `/release` | Automated release flow — bump version, changelog, tag, pu... |
+| `/philosophy` | Display Oracle philosophy — the 5 Principles + Rule 6. Us... |
+| `/wormhole` | Federated query proxy — ask questions across oracle nodes... |
+| `/harden` | Audit Oracle configuration for safety, governance, and ha... |
+| `/vault` | Connect external knowledge bases (Obsidian, Logseq, markd... |
+| `/dream-original` | Cross-repo pattern discovery with parallel agents. Finds ... |
+<!-- secret-skills:end -->
 
 ## Team Agent Scripts
 

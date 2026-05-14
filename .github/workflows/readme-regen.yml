@@ -1,0 +1,37 @@
+name: Regenerate README
+
+on:
+  push:
+    branches: [alpha]
+    paths:
+      - 'src/skills/**/SKILL.md'
+      - 'src/skills/.archive/**/SKILL.md'
+      - 'src/profiles.ts'
+      - 'scripts/update-readme-table.ts'
+      - 'scripts/generate-table.ts'
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun scripts/update-readme-table.ts
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet README.md; then
+            echo "README is up to date"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add README.md
+          git commit -m "chore(readme): regenerate skill table [skip ci]"
+          git push

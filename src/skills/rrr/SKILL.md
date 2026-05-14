@@ -86,7 +86,7 @@ for base in "$PROJECT_BASE" "$PARENT_BASE"; do
   done
 done
 
-python3 ~/.claude/skills/dig/scripts/dig.py 1
+python3 ~/.claude/skills/dig/scripts/dig.py 0 --deep
 ```
 
 Extract session ID from the dig output or from the most recent .jsonl:

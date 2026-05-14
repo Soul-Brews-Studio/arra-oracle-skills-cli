@@ -55,7 +55,7 @@ Use `$ARRA` for all commands below.
 
 Parse the user's `/go` arguments and run the matching `$ARRA` command.
 
-### `/go` or `/go list` — show all skills with profile + installed status
+### `/go` or `/go list` — show all skills with profile + installed status + type
 
 Run ONE bash call to build the full picture:
 
@@ -63,23 +63,37 @@ Run ONE bash call to build the full picture:
 SKILLS_DIR="$HOME/.claude/skills"
 VERSION=$($ARRA --version 2>/dev/null || echo "?")
 
-# All arra profile skills (read from profiles.ts constants via the CLI)
+# All arra profile skills
 STANDARD="awaken bampenpien bud dig forward go learn recap rrr talk-to team-agents trace"
 LAB="contacts dream feel fyi hey inbox mailbox schedule watch worktree xray"
 MINIMAL_ONLY="forward-lite recap-lite rrr-lite"
 ALL_ARRA="$STANDARD $LAB $MINIMAL_ONLY"
 
-echo "📋 Oracle Skills v$VERSION"
+# Detect skill type: [code], [agent], [code+agent], or blank
+detect_type() {
+  local dir="$SKILLS_DIR/$1"
+  [ -d "$dir" ] || return
+  local has_code=false has_agent=false
+  [ -d "$dir/scripts" ] && has_code=true
+  grep -qlE 'Agent\(|subagent|TeamCreate|SendMessage' "$dir/SKILL.md" 2>/dev/null && has_agent=true
+  if $has_code && $has_agent; then echo "[code+agent]"
+  elif $has_code; then echo "[code]"
+  elif $has_agent; then echo "[agent]"
+  fi
+}
+
+echo "Oracle Skills v$VERSION"
 echo ""
 
 NUM=0; INSTALLED=0
 for tier in STANDARD LAB MINIMAL_ONLY; do
   case $tier in
-    STANDARD) skills="$STANDARD"; label="standard" ;;
-    LAB) skills="$LAB"; label="lab" ;;
-    MINIMAL_ONLY) skills="$MINIMAL_ONLY"; label="minimal-only" ;;
+    STANDARD) skills="$STANDARD"; label="standard"; count=12 ;;
+    LAB) skills="$LAB"; label="lab"; count=11 ;;
+    MINIMAL_ONLY) skills="$MINIMAL_ONLY"; label="minimal-only"; count=3 ;;
   esac
-  echo "  ─── $label ───"
+  printf " ─── %s (%d) " "$label" "$count"
+  printf '─%.0s' $(seq 1 $((52 - ${#label}))); echo ""
   for name in $skills; do
     NUM=$((NUM+1))
     if [ -d "$SKILLS_DIR/$name" ]; then
@@ -87,32 +101,44 @@ for tier in STANDARD LAB MINIMAL_ONLY; do
     else
       mark="✗"
     fi
-    printf "  %2d. %-28s %s\n" "$NUM" "$name" "$mark"
+    tag=$(detect_type "$name")
+    printf " %2d  %s  %-30s %s\n" "$NUM" "$mark" "$name" "$tag"
   done
   echo ""
 done
 
-# Count external (non-arra) skills
+# External (non-arra) skills
 EXT=0; EXT_NAMES=""
 for dir in "$SKILLS_DIR"/*/; do
   [ -d "$dir" ] || continue
   name=$(basename "$dir"); [ "$name" = ".trash" ] && continue
   is_arra=false
   for a in $ALL_ARRA; do [ "$name" = "$a" ] && is_arra=true && break; done
-  if [ "$is_arra" = "false" ]; then
-    EXT=$((EXT+1)); EXT_NAMES="$EXT_NAMES $name"
-  fi
+  $is_arra || { EXT=$((EXT+1)); EXT_NAMES="$EXT_NAMES $name"; }
 done
-[ "$EXT" -gt 0 ] && echo "  ─── external ($EXT) ───" && for name in $EXT_NAMES; do
-  NUM=$((NUM+1)); INSTALLED=$((INSTALLED+1))
-  printf "  %2d. %-28s ✓\n" "$NUM" "$name"
-done && echo ""
+if [ "$EXT" -gt 0 ]; then
+  printf " ─── external (%d) " "$EXT"
+  printf '─%.0s' $(seq 1 44); echo ""
+  for name in $EXT_NAMES; do
+    NUM=$((NUM+1)); INSTALLED=$((INSTALLED+1))
+    tag=$(detect_type "$name")
+    printf " %2d  ✓  %-30s %s\n" "$NUM" "$name" "$tag"
+  done
+  echo ""
+fi
 
-echo "  $INSTALLED/$NUM installed"
-echo ""
-echo "  Cherry-pick:  arra-oracle-skills install -g -s <name> -y"
-echo "  Switch:       /go standard | /go lab"
+echo " $INSTALLED/$NUM installed  ·  27 zombies hidden (--zombies to show)"
+echo " Cherry-pick:  arra-oracle-skills install -g -s <name> -y"
+echo " Switch:       /go standard | /go lab"
 ```
+
+**Type tags** (right-aligned, detected at runtime from installed skill):
+- `[code]` — has `scripts/` directory (runtime code)
+- `[agent]` — references Agent/TeamCreate/SendMessage (orchestrates subagents)
+- `[code+agent]` — both (e.g. team-agents, dig, trace)
+- *(blank)* — pure instruction skill
+
+**`--zombies` flag**: append the 27 zombie skills section (from ZOMBIE_SKILLS). Only shown when explicitly requested.
 
 ### `/go <profile>` — switch profile
 

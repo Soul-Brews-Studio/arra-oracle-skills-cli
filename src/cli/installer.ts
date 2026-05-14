@@ -6,7 +6,7 @@ import * as p from '@clack/prompts';
 import { agents } from './agents.js';
 import type { Skill, InstallOptions } from './types.js';
 import { mkdirp, rmrf, cpr, mv, rmf, cp, type ShellMode } from './fs-utils.js';
-import { resolveProfile } from '../profiles.js';
+import { resolveProfile, STANDARD_SKILLS, LAB_SKILLS, MINIMAL_SKILLS, MINIMAL_ONLY_SKILLS, ZOMBIE_SKILLS } from '../profiles.js';
 import {
   discoverSkills as _discoverSkills,
   readSkillFile,
@@ -438,11 +438,15 @@ export async function installSkills(
             );
             // Prepend version AND scope to description (G=Global, L=Local, SKILL for other agents)
             const scopeChar = scope === 'Global' ? 'G' : 'L';
-            const skillTagPrefix = pkg.skillTag ? pkg.skillTag + ' ' : '';
+            const tierTag = (STANDARD_SKILLS as readonly string[]).includes(skill.name) ? '[standard]'
+              : (LAB_SKILLS as readonly string[]).includes(skill.name) ? '[lab]'
+              : (MINIMAL_ONLY_SKILLS as readonly string[]).includes(skill.name) ? '[minimal]'
+              : (ZOMBIE_SKILLS as readonly string[]).includes(skill.name) ? '[zombie]'
+              : '[core]';
             content = content.replace(
               /^(description:\s*)'?(.+?)'?(\n)/m,
               (_, p1, p2, p3) => {
-                const desc = `${skillTagPrefix}v${pkg.version} ${scopeChar}-SKLL | ${p2}`;
+                const desc = `${tierTag} v${pkg.version} ${scopeChar}-SKLL | ${p2}`;
                 return `${p1}${yamlQuote(desc)}${p3}`;
               }
             );

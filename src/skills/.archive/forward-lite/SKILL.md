@@ -1,6 +1,7 @@
 ---
 name: forward-lite
-description: Quick handoff to next session — save context for tomorrow. Lite version for minimal profile. Use when user says "forward", "handoff", "wrap up". For full version with plan mode, issue creation, and outbox, upgrade to standard (/go standard → /forward).
+description: "[DEPRECATED] Lite variant killed 2026-05-14. Use /forward instead."
+zombie: true
 ---
 
 # /forward-lite

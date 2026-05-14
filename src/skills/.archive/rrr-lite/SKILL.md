@@ -1,6 +1,7 @@
 ---
 name: rrr-lite
-description: Quick session retrospective — what we did, what we learned. Lite version for minimal profile. Use when user says "rrr", "retrospective", "wrap up". For full version with AI diary and anti-rationalization guard, upgrade to standard (/go standard → /rrr).
+description: "[DEPRECATED] Lite variant killed 2026-05-14. Use /rrr instead."
+zombie: true
 ---
 
 # /rrr-lite

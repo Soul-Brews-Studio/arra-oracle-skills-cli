@@ -8,7 +8,8 @@ import { installSkills, uninstallSkills, discoverSkills } from "../src/cli/insta
 import type { AgentConfig } from "../src/cli/types";
 
 // Lites auto-removed when their full counterpart is also installed (post-install cleanup)
-const AUTO_REMOVED_LITES = new Set(['forward-lite', 'recap-lite', 'rrr-lite']);
+// Migration removes deprecated lites (forward-lite, recap-lite, rrr-lite) post-install
+const DEPRECATED_LITES = new Set(['forward-lite', 'recap-lite', 'rrr-lite']);
 
 const TEST_DIR = join(tmpdir(), `arra-install-all-${Date.now()}`);
 const SKILLS_DIR = join(TEST_DIR, "skills");
@@ -58,11 +59,10 @@ describe("install all (default)", () => {
     await installSkills([TEST_AGENT], { global: true, yes: true });
 
     const installed = await listSkillDirs(SKILLS_DIR);
-    // Lites are auto-removed post-install when full counterpart exists
-    const expectedCount = allSkills.filter(s => !AUTO_REMOVED_LITES.has(s.name)).length;
+    const expectedCount = allSkills.filter(s => !DEPRECATED_LITES.has(s.name)).length;
     expect(installed.length).toBe(expectedCount);
     for (const skill of allSkills) {
-      if (AUTO_REMOVED_LITES.has(skill.name)) continue;
+      if (DEPRECATED_LITES.has(skill.name)) continue;
       expect(installed).toContain(skill.name);
     }
   });
@@ -93,8 +93,7 @@ describe("install all (default)", () => {
 
     const manifest = JSON.parse(await readFile(join(SKILLS_DIR, ".arra-oracle-skills.json"), "utf-8"));
     expect(manifest.version).toMatch(/^\d+\.\d+\.\d+(-[\w.]+)?$/);
-    // Manifest is updated post-install to reflect lite auto-removal
-    const expectedManifestCount = allSkills.filter(s => !AUTO_REMOVED_LITES.has(s.name)).length;
+    const expectedManifestCount = allSkills.filter(s => !DEPRECATED_LITES.has(s.name)).length;
     expect(manifest.skills.length).toBe(expectedManifestCount);
     expect(manifest.agent).toBe(TEST_AGENT);
   });

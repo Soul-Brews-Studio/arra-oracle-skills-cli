@@ -7,7 +7,7 @@ import { agents } from "../src/cli/agents";
 import { installSkills, uninstallSkills, discoverSkills } from "../src/cli/installer";
 import type { AgentConfig } from "../src/cli/types";
 
-const AUTO_REMOVED_LITES = 3; // forward-lite, recap-lite, rrr-lite removed when full present
+const DEPRECATED_LITES = 3; // forward-lite, recap-lite, rrr-lite migrated away post-install
 
 const TEST_DIR = join(tmpdir(), `arra-uninstall-${Date.now()}`);
 const SKILLS_DIR = join(TEST_DIR, "skills");
@@ -56,7 +56,7 @@ describe("uninstall all", () => {
     await installSkills([TEST_AGENT], { global: true, yes: true });
 
     const result = await uninstallSkills([TEST_AGENT], { global: true, yes: true });
-    expect(result.removed).toBe(allSkills.length - AUTO_REMOVED_LITES);
+    expect(result.removed).toBe(allSkills.length - DEPRECATED_LITES);
 
     const remaining = await listSkillDirs(SKILLS_DIR);
     expect(remaining.length).toBe(0);
@@ -79,7 +79,7 @@ describe("uninstall specific skills", () => {
     const remaining = await listSkillDirs(SKILLS_DIR);
     expect(remaining).not.toContain("recap");
     expect(remaining).not.toContain("trace");
-    expect(remaining.length).toBe(allSkills.length - AUTO_REMOVED_LITES - 2);
+    expect(remaining.length).toBe(allSkills.length - DEPRECATED_LITES - 2);
   });
 });
 

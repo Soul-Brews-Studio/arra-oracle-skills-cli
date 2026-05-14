@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { join, dirname, basename } from 'path';
 import { homedir, tmpdir } from 'os';
 import { rm } from 'fs/promises';
@@ -821,34 +821,32 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
 
   spinner.stop(`Installed ${skillsToInstall.length} skills to ${targetAgents.length} agent(s)`);
 
-  // Post-install: auto-remove lite variants when their full counterpart is on disk.
-  // forward-lite is redundant when forward exists, same for recap-lite/rrr-lite.
-  // Only runs when NO explicit minimal profile was requested — minimal WANTS lites.
-  if (options.profile !== 'minimal') {
-    const liteToFull: Record<string, string> = {
-      'forward-lite': 'forward',
-      'recap-lite': 'recap',
-      'rrr-lite': 'rrr',
-    };
-    for (const agentName of targetAgents) {
-      const agent = agents[agentName as keyof typeof agents];
-      if (!agent) continue;
-      const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
-      for (const [lite, full] of Object.entries(liteToFull)) {
-        const fullOnDisk = existsSync(join(skillsDir, full));
-        const liteOnDisk = existsSync(join(skillsDir, lite));
-        if (fullOnDisk && liteOnDisk && await isOurSkill(join(skillsDir, lite))) {
-          await rm(join(skillsDir, lite), { recursive: true, force: true });
-          p.log.info(`Auto-removed ${lite} (${full} is present — lite variant redundant)`);
-          const manifestPath = join(skillsDir, '.arra-oracle-skills.json');
-          if (existsSync(manifestPath)) {
-            try {
-              const m = JSON.parse(readFileSync(manifestPath, 'utf-8'));
-              m.skills = m.skills.filter((s: string) => s !== lite);
-              writeFileSync(manifestPath, JSON.stringify(m, null, 2));
-            } catch {}
-          }
-        }
+  // Migration: remove deprecated lite skills from prior installs.
+  // Lites (forward-lite, recap-lite, rrr-lite) were killed 2026-05-14;
+  // minimal profile now uses the full versions directly.
+  const deprecatedLites = ['forward-lite', 'recap-lite', 'rrr-lite'];
+  for (const agentName of targetAgents) {
+    const agent = agents[agentName as keyof typeof agents];
+    if (!agent) continue;
+    const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
+    let migrated = false;
+    for (const lite of deprecatedLites) {
+      const litePath = join(skillsDir, lite);
+      if (existsSync(litePath) && await isOurSkill(litePath)) {
+        await rm(litePath, { recursive: true, force: true });
+        migrated = true;
+      }
+    }
+    if (migrated) {
+      p.log.info(`Migrated: removed deprecated lite skills (forward-lite, recap-lite, rrr-lite)`);
+      const manifestPath = join(skillsDir, '.arra-oracle-skills.json');
+      if (existsSync(manifestPath)) {
+        try {
+          const content = await Bun.file(manifestPath).text();
+          const m = JSON.parse(content);
+          m.skills = m.skills.filter((s: string) => !deprecatedLites.includes(s));
+          await Bun.write(manifestPath, JSON.stringify(m, null, 2));
+        } catch {}
       }
     }
   }

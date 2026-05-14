@@ -7,7 +7,7 @@ import { agents } from "../src/cli/agents";
 import { installSkills, discoverSkills } from "../src/cli/installer";
 import type { AgentConfig } from "../src/cli/types";
 
-const AUTO_REMOVED_LITES = 3;
+const DEPRECATED_LITES = 3; // forward-lite, recap-lite, rrr-lite migrated away post-install
 
 const TEST_DIR = join(tmpdir(), `arra-install-specific-${Date.now()}`);
 const SKILLS_DIR = join(TEST_DIR, "skills");
@@ -91,7 +91,7 @@ describe("install specific skills (--skill)", () => {
     await installSkills([TEST_AGENT], { global: true, yes: true });
     const allSkills = await discoverSkills();
     let installed = await listSkillDirs(SKILLS_DIR);
-    expect(installed.length).toBe(allSkills.length - AUTO_REMOVED_LITES);
+    expect(installed.length).toBe(allSkills.length - DEPRECATED_LITES);
 
     // Install specific — should NOT remove others
     await installSkills([TEST_AGENT], {
@@ -102,7 +102,7 @@ describe("install specific skills (--skill)", () => {
 
     installed = await listSkillDirs(SKILLS_DIR);
     // Still has all skills (specific install is additive, not destructive)
-    expect(installed.length).toBe(allSkills.length - AUTO_REMOVED_LITES);
+    expect(installed.length).toBe(allSkills.length - DEPRECATED_LITES);
   });
 
   it("manifest lists only installed skills", async () => {

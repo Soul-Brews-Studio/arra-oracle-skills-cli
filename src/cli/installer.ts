@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, dirname, basename } from 'path';
 import { homedir, tmpdir } from 'os';
 import { rm } from 'fs/promises';
@@ -354,33 +354,6 @@ export async function installSkills(
         }
       }
       p.log.info(`Alignment: removed ${toRemove.length} skill(s) not in '${options.profile}' profile`);
-    }
-  }
-
-  // Auto-remove minimal-only lite variants whenever their full counterpart is present.
-  // forward-lite is redundant when forward is installed, same for recap-lite/rrr-lite.
-  // Runs on ALL install paths: -s cherry-pick, --profile, bare install, /go update.
-  const liteToFull: Record<string, string> = {
-    'forward-lite': 'forward',
-    'recap-lite': 'recap',
-    'rrr-lite': 'rrr',
-  };
-  {
-    const installing = new Set(skillsToInstall.map((s) => s.name));
-    for (const agentName of targetAgents) {
-      const agent = agents[agentName as keyof typeof agents];
-      if (!agent) continue;
-      const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
-      for (const [lite, full] of Object.entries(liteToFull)) {
-        const fullPresent = installing.has(full) || existsSync(join(skillsDir, full));
-        const liteBeingInstalled = installing.has(lite);
-        if (fullPresent && !liteBeingInstalled && existsSync(join(skillsDir, lite))) {
-          if (await isOurSkill(join(skillsDir, lite))) {
-            await rm(join(skillsDir, lite), { recursive: true, force: true });
-            p.log.info(`Auto-removed ${lite} (${full} is present — lite variant redundant)`);
-          }
-        }
-      }
     }
   }
 
@@ -761,6 +734,39 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
   }
 
   spinner.stop(`Installed ${skillsToInstall.length} skills to ${targetAgents.length} agent(s)`);
+
+  // Post-install: auto-remove lite variants when their full counterpart is on disk.
+  // forward-lite is redundant when forward exists, same for recap-lite/rrr-lite.
+  // Only runs when NO explicit minimal profile was requested — minimal WANTS lites.
+  if (options.profile !== 'minimal') {
+    const liteToFull: Record<string, string> = {
+      'forward-lite': 'forward',
+      'recap-lite': 'recap',
+      'rrr-lite': 'rrr',
+    };
+    for (const agentName of targetAgents) {
+      const agent = agents[agentName as keyof typeof agents];
+      if (!agent) continue;
+      const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
+      for (const [lite, full] of Object.entries(liteToFull)) {
+        const fullOnDisk = existsSync(join(skillsDir, full));
+        const liteOnDisk = existsSync(join(skillsDir, lite));
+        if (fullOnDisk && liteOnDisk && await isOurSkill(join(skillsDir, lite))) {
+          await rm(join(skillsDir, lite), { recursive: true, force: true });
+          p.log.info(`Auto-removed ${lite} (${full} is present — lite variant redundant)`);
+          // Update manifest to reflect removal
+          const manifestPath = join(skillsDir, '.arra-oracle-skills.json');
+          if (existsSync(manifestPath)) {
+            try {
+              const m = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+              m.skills = m.skills.filter((s: string) => s !== lite);
+              writeFileSync(manifestPath, JSON.stringify(m, null, 2));
+            } catch {}
+          }
+        }
+      }
+    }
+  }
 }
 
 export async function uninstallSkills(

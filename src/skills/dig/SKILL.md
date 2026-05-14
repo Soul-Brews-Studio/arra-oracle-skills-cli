@@ -44,13 +44,28 @@ Output metadata includes detected timezone name and offset.
 ## Step 0: Timestamp
 
 ```bash
-date "+🕐 %H:%M %Z (%A %d %B %Y)" && ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
+date "+🕐 %H:%M %Z (%A %d %B %Y)"
+ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
-for wt in "$HOME/.claude/projects/${ENCODED_PWD}"-wt*; do [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"; done
+
+# Strip -wt* suffix to find parent project dir
+PARENT_ENCODED=$(echo "$ENCODED_PWD" | sed 's/-wt-[^/]*$//')
+if [ "$PARENT_ENCODED" != "$ENCODED_PWD" ]; then
+  PARENT_BASE=$(ls -d "$HOME/.claude/projects/${PARENT_ENCODED}" 2>/dev/null | head -1)
+  [ -n "$PARENT_BASE" ] && export PROJECT_DIRS="$PROJECT_DIRS:$PARENT_BASE"
+fi
+
+# nullglob-safe worktree scan (both parent and self)
+for base in "$PROJECT_BASE" "$PARENT_BASE"; do
+  [ -z "$base" ] && continue
+  for wt in "$base"-wt-*(N); do  # (N) = zsh nullglob qualifier
+    [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"
+  done
+done
 ```
 
-Encodes `pwd` the same way Claude does (replace `/` and `.` with `-`, prepend `-`) to match the `.claude/projects/` directory naming (e.g. `github.com` → `github-com`). Also picks up worktree dirs (`-wt`, `-wt-1`, etc.).
+Encodes `pwd` the same way Claude does (replace `/` and `.` with `-`, prepend `-`) to match the `.claude/projects/` directory naming (e.g. `github.com` → `github-com`). Detects parent project from worktree dirs (strips `-wt-*` suffix) and includes both parent and self worktrees. The `(N)` qualifier prevents zsh crashes when no worktrees exist.
 
 **With `--all`** (all repos):
 ```bash

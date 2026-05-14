@@ -76,6 +76,22 @@ ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
+
+# Strip -wt* suffix to find parent project dir
+PARENT_ENCODED=$(echo "$ENCODED_PWD" | sed 's/-wt-[^/]*$//')
+if [ "$PARENT_ENCODED" != "$ENCODED_PWD" ]; then
+  PARENT_BASE=$(ls -d "$HOME/.claude/projects/${PARENT_ENCODED}" 2>/dev/null | head -1)
+  [ -n "$PARENT_BASE" ] && export PROJECT_DIRS="$PROJECT_DIRS:$PARENT_BASE"
+fi
+
+# nullglob-safe worktree scan (both parent and self)
+for base in "$PROJECT_BASE" "$PARENT_BASE"; do
+  [ -z "$base" ] && continue
+  for wt in "$base"-wt-*(N); do  # (N) = zsh nullglob qualifier
+    [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"
+  done
+done
+
 python3 ~/.claude/skills/dig/scripts/dig.py 1
 ```
 

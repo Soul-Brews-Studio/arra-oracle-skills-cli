@@ -9,18 +9,22 @@ argument-hint: "[--quick | --detail | --deep]"
 > "Reflect to grow, document to remember."
 
 ```
-/rrr                      # Retro with session timeline (dig-powered)
-/rrr --quick              # No dig — memory-only, faster but no timeline after compaction
-/rrr --detail             # Full template + dig timeline
+/rrr                      # Retro + 1 background dig subagent (parallel, fast)
+/rrr --quick              # No dig, no subagent — memory only (fastest)
+/rrr --detail             # Full template + background dig
 /rrr --deep               # 5 parallel subagents
 /rrr --deep --teammate    # 3 coordinated team agents (requires AGENT_TEAMS)
 ```
 
-**Default mode always mines session .jsonl for timeline** — survives compaction, shows real timestamps.
-`--quick` skips dig for speed when you don't need the timeline.
+**Default mode**: main agent starts writing the retro immediately from conversation memory.
+One background subagent runs dig + .jsonl timestamp extraction in parallel.
+When the subagent returns, main agent merges real timestamps into the Timeline section.
+**No speed penalty** — dig runs while you write.
 
-**NEVER spawn subagents or use the Task tool. Only `--deep` and `--deep --teammate` may use subagents.**
-**`/rrr`, `/rrr --quick`, `/rrr --detail` = main agent only. Zero subagents. Zero Task calls.**
+`--quick` skips dig entirely — memory only, zero subagents.
+
+**Subagent rules**: default /rrr spawns exactly 1 background Agent (dig miner). `--deep` spawns 5. `--quick` spawns 0.
+**NEVER use the Task tool.** Only `--deep` and `--deep --teammate` use TeamCreate.
 
 ---
 
@@ -53,58 +57,47 @@ All paths below use `$PSI/` instead of bare `ψ/`.
 
 ---
 
-## /rrr (Default — dig-powered)
+## /rrr (Default — background dig + parallel write)
 
-### 1. Gather + Mine Session Timeline
-
-Run git context AND dig in one step:
+### 1. Gather git context (main agent)
 
 ```bash
 date "+%H:%M %Z (%A %d %B %Y)"
 git log --oneline -10 && git diff --stat HEAD~5
 ```
 
-Detect session + mine timeline from .jsonl:
+Detect session ID:
 
 ```bash
 ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
-export PROJECT_DIRS="$PROJECT_BASE"
-
-# Strip -wt* suffix to find parent project dir
-PARENT_ENCODED=$(echo "$ENCODED_PWD" | sed 's/-wt-[^/]*$//')
-if [ "$PARENT_ENCODED" != "$ENCODED_PWD" ]; then
-  PARENT_BASE=$(ls -d "$HOME/.claude/projects/${PARENT_ENCODED}" 2>/dev/null | head -1)
-  [ -n "$PARENT_BASE" ] && export PROJECT_DIRS="$PROJECT_DIRS:$PARENT_BASE"
-fi
-
-# nullglob-safe worktree scan
-for base in "$PROJECT_BASE" "$PARENT_BASE"; do
-  [ -z "$base" ] && continue
-  for wt in "$base"-wt-*(N); do
-    [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"
-  done
-done
-
-python3 ~/.claude/skills/dig/scripts/dig.py 0 --deep
+LATEST_JSONL=$(ls -t "$PROJECT_BASE"/*.jsonl 2>/dev/null | head -1)
+[ -n "$LATEST_JSONL" ] && SESSION_ID=$(basename "$LATEST_JSONL" .jsonl) && echo "SESSION: ${SESSION_ID:0:8}"
 ```
 
-Extract session ID + mine REAL message timestamps from the .jsonl:
-```bash
-LATEST_JSONL=$(ls -t "$PROJECT_BASE"/*.jsonl 2>/dev/null | head -1)
-if [ -n "$LATEST_JSONL" ]; then
-  SESSION_ID=$(basename "$LATEST_JSONL" .jsonl)
-  echo "SESSION: ${SESSION_ID:0:8}"
-fi
+### 1.5. Spawn timestamp miner (background subagent)
 
-# REQUIRED: extract real timestamps for the Timeline section.
-# Pull every real user message + its timestamp from the session file.
-# Dig gives session-level data only — for sub-session timestamps we read the jsonl directly.
-python3 - <<'PYEOF'
+Spawn ONE background Agent to extract real timestamps from the session .jsonl:
+
+```
+Agent({
+  name: "timestamp-miner",
+  description: "Extract session timestamps for /rrr",
+  run_in_background: true,
+  prompt: `Extract real user message timestamps from a Claude Code session file.
+Read-only — do NOT write files.
+
+Run this single command:
+
+ENCODED_PWD=$(echo "[ORACLE_ROOT]" | sed 's|^/|-|; s|[/.]|-|g')
+PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
+LATEST_JSONL=$(ls -t "$PROJECT_BASE"/*.jsonl 2>/dev/null | head -1)
+echo "SESSION_FILE: $LATEST_JSONL"
+python3 -c "
 import json, os
 from datetime import datetime, timezone, timedelta
 tz = timezone(timedelta(hours=7))
-jsonl = os.environ.get('LATEST_JSONL', '')
+jsonl = '$LATEST_JSONL'
 if not jsonl or not os.path.exists(jsonl): exit(0)
 with open(jsonl) as f:
     for line in f:
@@ -118,44 +111,20 @@ with open(jsonl) as f:
                         content = c.get('text', ''); break
             if not isinstance(content, str): continue
             ts = m.get('timestamp', '')
-            # Skip tool-result / system messages
-            if not ts or '<command-name>' in content[:200] or content.startswith('<bash-'): continue
+            if not ts or '<command-name>' in content[:200]: continue
             dt = datetime.fromisoformat(ts.replace('Z', '+00:00')).astimezone(tz)
-            snippet = content[:100].replace(chr(10), ' ')
-            print(f"{dt.strftime('%Y-%m-%d %H:%M')} | {snippet}")
+            snippet = content[:80].replace(chr(10), ' ')
+            print(f'{dt.strftime(\"%Y-%m-%d %H:%M\")} | {snippet}')
         except: pass
-PYEOF
+"
+
+Return ALL output lines. The main agent will use them for the Timeline.`
+})
 ```
 
-**RULES for the Timeline section**:
+**Why only .jsonl, not dig.py**: the subagent has no conversation context — it can't interpret dig session summaries. The .jsonl timestamps are objective data (real ISO timestamps from every user message). That's all we need for the Timeline.
 
-1. **REAL timestamps only** — pulled from this jsonl extraction, never "approx" or memory-guesses. If extraction is empty (no session file), say so explicitly in the timeline rather than inventing times.
-
-2. **Date once in a header, time-only in rows** — when all entries are same-day, format like this:
-
-   ```markdown
-   ## Timeline
-
-   **Date**: 2026-05-14 (GMT+7) · all times same-day
-
-   | Time | What |
-   |---|---|
-   | 20:14 | User: "..." |
-   | 20:21 | PR #379 merged |
-   | 21:13 | User: "..." |
-   ```
-
-   Do NOT repeat `2026-05-14 20:14` on every row. The date belongs in the header.
-
-3. **Multi-day session** — if entries span more than one day, group by day with a `### YYYY-MM-DD` subheader for each day, then `HH:MM` rows under it.
-
-Include in retrospective header:
-```
-📡 Session: 74c32f34 | repo-name | Xh XXm
-```
-If dig or session detection fails, skip silently and continue with git-only context.
-
-### 2. Write Retrospective with Timeline
+### 2. Write Retrospective (main agent — start immediately, don't wait for dig)
 
 **Path**: `$PSI/memory/retrospectives/YYYY-MM/DD/HH.MM_slug.md`
 
@@ -163,7 +132,35 @@ If dig or session detection fails, skip silently and continue with git-only cont
 mkdir -p "$PSI/memory/retrospectives/$(date +%Y-%m/%d)"
 ```
 
-Write immediately, no prompts. Build the Timeline section from the .jsonl extraction above — every row must have a real `YYYY-MM-DD HH:MM` timestamp. Never use "approx", "around", or memory-guessed times. Include:
+**Start writing NOW from conversation memory.** Draft all sections. When the dig-miner subagent returns (background notification), merge its timestamp data into the Timeline section.
+
+### Timeline format rules
+
+1. **Use dig-miner timestamps when available** — real `HH:MM` from .jsonl extraction. If dig-miner hasn't returned yet or failed, write `[timestamps pending from dig-miner]` and fill in when it returns.
+
+2. **Date once in header, time-only in rows** — same-day sessions:
+
+   ```markdown
+   ## Timeline
+
+   **Date**: 2026-05-14 (GMT+7)
+
+   | Time | What |
+   |---|---|
+   | 20:14 | User: "..." |
+   | 20:21 | PR #379 merged |
+   ```
+
+3. **Multi-day session** — group by `### YYYY-MM-DD` subheader, `HH:MM` rows under each.
+
+4. **Never invent timestamps.** If dig-miner fails, say "timestamps unavailable" — don't guess.
+
+Include in retrospective header:
+```
+📡 Session: 74c32f34 | repo-name | Xh XXm
+```
+
+**Write immediately, no prompts.** Include:
 - Session Summary
 - Timeline (real timestamps from .jsonl mining — `YYYY-MM-DD HH:MM | what`)
 - Files Modified

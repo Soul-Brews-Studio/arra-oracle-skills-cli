@@ -79,18 +79,20 @@ Exit code 2 from any hook = reject action + send feedback to agent.
 
 ## When to Use
 
-| Tier | When | Tools |
-|------|------|-------|
-| **Subagents** | < 3 agents, independent work | Agent tool |
-| **Team Agents** | 3-5 agents, need coordination | TeamCreate + SendMessage + TaskList |
-| **Cross-Oracle** | Inter-session, multi-repo | /talk-to + contacts |
+| Context | What happens |
+|---------|-------------|
+| **User types `/team-agents`** | Always Tier 1 (tmux) or Tier 2 (in-process). Never downgrade. |
+| **Agent tool without `/team-agents`** | AI spawns subagents directly — no tmux, no TeamCreate. |
+| **Cross-Oracle messaging** | Use /talk-to + contacts, not team-agents. |
 
-**Rule**: 2 independent agents → subagents. Coordinated work → team-agents.
+**Rule**: `/team-agents` = tmux panes. Plain `Agent()` = quiet subagents. The user's choice of invocation decides the tier.
 **Sizing**: 3-5 teammates, 5-6 tasks each. Tokens scale linearly per teammate.
 
 ### Spawn Fallback Order
 
-When the user asks for `/team-agents`, try in this order. Stop at the first tier whose preflight passes — don't skip ahead.
+When the user explicitly invokes `/team-agents`, they want tmux panes. **Never downgrade to Tier 3 when Tier 1 or 2 preflight passes** — even for "read-only" or "simple" tasks. The user typed `/team-agents` because they want to SEE agents working. If they wanted quiet subagents, they'd just ask without the skill.
+
+Try tiers in order. Stop at the first whose preflight passes — **never skip ahead**.
 
 #### Tier 1 — tmux + team-agents framework (preferred)
 
@@ -109,9 +111,9 @@ All four pass → real team. Teammates spawn into **split tmux panes** with isol
 
 env var + tools present but `$TMUX` empty → set `teammateMode: "in-process"` (per-session: `claude --teammate-mode in-process`) and proceed with TeamCreate. All teammates run in the main terminal — cycle with `Shift+Down`, view with `Enter`. Same coordination machinery, less visual separation.
 
-#### Tier 3 — parallel subagents (Agent tool, graceful fallback)
+#### Tier 3 — parallel subagents (Agent tool, ONLY when preflight fails)
 
-env var missing, tools didn't load, version too old, or task is read-only multi-lens analysis → fall back to plain `Agent` tool calls.
+env var missing, tools didn't load, or version too old → fall back to plain `Agent` tool calls. **Never choose Tier 3 because the task "seems simple" or "read-only" — that's the user's call, not yours.**
 
 - Spawn N parallel `Agent` calls in a **single message** — same role prompts, no SendMessage/TaskUpdate
 - Each agent returns its report as the tool result
@@ -123,14 +125,14 @@ env var missing, tools didn't load, version too old, or task is read-only multi-
 | Cheaper — no heartbeats, no mailbox archiving | No task dependencies (all spawn at once, parallel only) |
 | Simpler for read-only analysis | No per-agent worktree (agents share main repo state) |
 
-**Best for**: read-only multi-lens analysis (≤5 lenses, no shared-file writes). Downstream skills that wrap parallel reads should target Tier 3 by default and only escalate to Tier 1/2 when peer coordination or per-agent writes are actually needed.
+**Only used when**: Tier 1/2 preflight fails (no tmux, no env var, CLI too old). Never chosen based on task complexity — `/team-agents` means the user wants the full framework.
 
 #### Decision rule
 
-> Framework (Tier 1/2) when **coordination matters** — sequencing, file writes, peer messaging, worktrees.
-> Subagents (Tier 3) when **angles don't need to talk to each other**.
+> `/team-agents` = user wants tmux panes. Period.
+> Tier 3 is a **fallback for broken environments**, not an optimization for simple tasks.
 
-If unsure, run the preflight. If Tier 1 passes, use it — the cost is per-teammate tokens, which the user opted into by saying `/team-agents`.
+If Tier 1 preflight passes → use Tier 1. Always. The user opted into the token cost by typing `/team-agents`.
 
 ### Subagent Definitions
 

@@ -110,11 +110,12 @@ arra_search("[query]", limit=10)
 
 ---
 
-## Mode 3: --deep (Wave Execution)
+## Mode 3: --deep (Wave Execution + Session Mining)
 
-**Two waves of parallel search. Each wave has fresh context (no rot).**
+**Two waves of parallel search + dig session mining. Each wave has fresh context (no rot).**
+`--deep --dig` is now the same as `--deep` (dig is always included).
 
-### Wave 1 — Fast surface search (run in parallel)
+### Wave 1 — Fast surface search + session mining (run in parallel)
 
 **Agent A: Current/Target Repo Files**
 ```
@@ -140,6 +141,40 @@ Search ψ/memory/ for:
 - Previous trace logs for same query
 
 Return findings as text. Main agent compiles.
+```
+
+**Agent F: Session History (dig)**
+```
+You are mining session history for: [query]
+
+Run the dig script to get all sessions:
+ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
+PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
+export PROJECT_DIRS="$PROJECT_BASE"
+
+PARENT_ENCODED=$(echo "$ENCODED_PWD" | sed 's/-wt-[^/]*$//')
+if [ "$PARENT_ENCODED" != "$ENCODED_PWD" ]; then
+  PARENT_BASE=$(ls -d "$HOME/.claude/projects/${PARENT_ENCODED}" 2>/dev/null | head -1)
+  [ -n "$PARENT_BASE" ] && export PROJECT_DIRS="$PROJECT_DIRS:$PARENT_BASE"
+fi
+
+for base in "$PROJECT_BASE" "$PARENT_BASE"; do
+  [ -z "$base" ] && continue
+  for wt in "$base"-wt-*(N); do
+    [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"
+  done
+done
+
+python3 ~/.claude/skills/dig/scripts/dig.py 0 --deep
+
+Then search the session data for mentions of: [query]
+Look for:
+- Sessions where this topic was worked on
+- Timeline of when it was touched
+- Which repos it appeared in
+- How much time was spent
+
+Return findings as text. Max 500 words.
 ```
 
 After Wave 1: check if answer is sufficient.
@@ -189,60 +224,12 @@ Return findings as text. Main agent compiles.
 
 ---
 
-## Mode 4: --deep --dig (Combo)
+## Mode 4: --deep --dig (Alias)
 
-**Trace deep + session mining in parallel.** Runs both `/trace --deep` and `/dig` simultaneously, then merges results into one output.
+**Same as `--deep`** — dig is now always included in `--deep` mode (Agent F in Wave 1).
+This flag is kept for backward compatibility but has no additional effect.
 
-### How it works
-
-Launch trace Wave 1 agents AND the dig session miner at the same time:
-
-**In parallel:**
-1. **Trace agents** (Wave 1: Agent A + Agent B) — same as --deep mode above
-2. **Dig agent** — mines session history for the query:
-
-```
-You are mining session history for: [query]
-
-Run the dig script to get all sessions:
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
-PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
-export PROJECT_DIRS="$PROJECT_BASE"
-
-# Strip -wt* suffix to find parent project dir
-PARENT_ENCODED=$(echo "$ENCODED_PWD" | sed 's/-wt-[^/]*$//')
-if [ "$PARENT_ENCODED" != "$ENCODED_PWD" ]; then
-  PARENT_BASE=$(ls -d "$HOME/.claude/projects/${PARENT_ENCODED}" 2>/dev/null | head -1)
-  [ -n "$PARENT_BASE" ] && export PROJECT_DIRS="$PROJECT_DIRS:$PARENT_BASE"
-fi
-
-# nullglob-safe worktree scan (both parent and self)
-for base in "$PROJECT_BASE" "$PARENT_BASE"; do
-  [ -z "$base" ] && continue
-  for wt in "$base"-wt-*(N); do  # (N) = zsh nullglob qualifier
-    [ -d "$wt" ] && export PROJECT_DIRS="$PROJECT_DIRS:$wt"
-  done
-done
-
-python3 ~/.claude/skills/dig/scripts/dig.py 0
-
-Then search the session data for mentions of: [query]
-Look for:
-- Sessions where this topic was worked on
-- Timeline of when it was touched
-- Which repos it appeared in
-- How much time was spent
-
-Return findings as text. Max 500 words.
-```
-
-**After Wave 1 + Dig complete:**
-- Check trace results — if insufficient, run Wave 2 (same as --deep)
-- Merge all results: trace findings + session history
-
-### Combined Output
-
-The trace log includes an extra section:
+The trace log includes a **Session History** section from the dig agent:
 
 ```markdown
 ## Session History (from /dig)
@@ -250,12 +237,6 @@ The trace log includes an extra section:
 ```
 
 This goes between "Oracle Memory" and "Friction Analysis" in the trace log.
-
-### When to use
-
-- "When did we work on X and where is it now?" — both questions answered
-- Investigating a topic across code AND session history
-- Building a complete picture: what exists (trace) + what happened (dig)
 
 ---
 
@@ -458,8 +439,8 @@ Omar surfaces this. jeera-p decides what to do about it.
 |------|-------|-------|-------|
 | `--oracle` | Fast | Oracle only | — |
 | `--smart` | Medium | Oracle → maybe deep | Auto |
-| `--deep` | Thorough | Wave 1 + Wave 2 if needed | 2 |
-| `--deep --dig` | Thorough+ | Deep + session mining (parallel) | 2 + dig |
+| `--deep` | Thorough | Wave 1 (+ dig) + Wave 2 if needed | 2 + dig |
+| `--deep --dig` | (alias) | Same as --deep | — |
 
 | Output field | Description |
 |-------------|-------------|

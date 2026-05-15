@@ -7,6 +7,10 @@ import { agents } from "../src/cli/agents";
 import { installSkills, uninstallSkills, discoverSkills } from "../src/cli/installer";
 import type { AgentConfig } from "../src/cli/types";
 
+// Lites auto-removed when their full counterpart is also installed (post-install cleanup)
+// Migration removes deprecated lites (forward-lite, recap-lite, rrr-lite) post-install
+const DEPRECATED_LITES = new Set(['forward-lite', 'recap-lite', 'rrr-lite']);
+
 const TEST_DIR = join(tmpdir(), `arra-install-all-${Date.now()}`);
 const SKILLS_DIR = join(TEST_DIR, "skills");
 const COMMANDS_DIR = join(TEST_DIR, "commands");
@@ -55,8 +59,10 @@ describe("install all (default)", () => {
     await installSkills([TEST_AGENT], { global: true, yes: true });
 
     const installed = await listSkillDirs(SKILLS_DIR);
-    expect(installed.length).toBe(allSkills.length);
+    const expectedCount = allSkills.filter(s => !DEPRECATED_LITES.has(s.name)).length;
+    expect(installed.length).toBe(expectedCount);
     for (const skill of allSkills) {
+      if (DEPRECATED_LITES.has(skill.name)) continue;
       expect(installed).toContain(skill.name);
     }
   });
@@ -87,7 +93,8 @@ describe("install all (default)", () => {
 
     const manifest = JSON.parse(await readFile(join(SKILLS_DIR, ".arra-oracle-skills.json"), "utf-8"));
     expect(manifest.version).toMatch(/^\d+\.\d+\.\d+(-[\w.]+)?$/);
-    expect(manifest.skills.length).toBe(allSkills.length);
+    const expectedManifestCount = allSkills.filter(s => !DEPRECATED_LITES.has(s.name)).length;
+    expect(manifest.skills.length).toBe(expectedManifestCount);
     expect(manifest.agent).toBe(TEST_AGENT);
   });
 

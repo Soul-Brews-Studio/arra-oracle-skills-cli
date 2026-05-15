@@ -56,8 +56,8 @@ describe("profiles", () => {
     expect(LAB_SKILLS).toHaveLength(11);
   });
 
-  it("ZOMBIE_SKILLS has 28 archived candidates (27 prior + oracle-soul-sync-update replaced by /go update)", () => {
-    expect(ZOMBIE_SKILLS).toHaveLength(28);
+  it("ZOMBIE_SKILLS has 31 archived candidates (28 prior + 3 lites killed)", () => {
+    expect(ZOMBIE_SKILLS).toHaveLength(31);
   });
 
   it("labOnly matches LAB_SKILLS", () => {
@@ -84,22 +84,15 @@ describe("profiles", () => {
     }
   });
 
-  // #285: MINIMAL_ONLY classification — lite skills excluded from full + lab
-  it("MINIMAL_ONLY_SKILLS has 3 lite variants", () => {
-    expect(MINIMAL_ONLY_SKILLS).toHaveLength(3);
-    expect(MINIMAL_ONLY_SKILLS).toContain("forward-lite");
-    expect(MINIMAL_ONLY_SKILLS).toContain("recap-lite");
-    expect(MINIMAL_ONLY_SKILLS).toContain("rrr-lite");
+  // Lites killed 2026-05-14: MINIMAL_ONLY_SKILLS is now empty
+  it("MINIMAL_ONLY_SKILLS is empty (lites zombied)", () => {
+    expect(MINIMAL_ONLY_SKILLS).toHaveLength(0);
   });
 
-  it("minimalOnly alias matches MINIMAL_ONLY_SKILLS", () => {
-    expect(minimalOnly).toEqual([...MINIMAL_ONLY_SKILLS]);
-  });
-
-  it("minimal profile still includes all 3 lite skills (regression guard)", () => {
-    for (const skill of MINIMAL_ONLY_SKILLS) {
-      expect(MINIMAL_SKILLS).toContain(skill);
-    }
+  it("minimal uses full forward/recap/rrr (not lite)", () => {
+    expect(MINIMAL_SKILLS).toContain("forward");
+    expect(MINIMAL_SKILLS).toContain("recap");
+    expect(MINIMAL_SKILLS).toContain("rrr");
   });
 
   it("full profile excludes both lab and minimal-only skills", () => {
@@ -110,11 +103,9 @@ describe("profiles", () => {
     expect(profiles.lab.exclude).toEqual(minimalOnly);
   });
 
-  it("no overlap between STANDARD_SKILLS and MINIMAL_ONLY_SKILLS", () => {
-    const standardSet = new Set(STANDARD_SKILLS);
-    for (const skill of MINIMAL_ONLY_SKILLS) {
-      expect(standardSet.has(skill as any)).toBe(false);
-    }
+  it("MINIMAL_ONLY is empty (backward compat alias)", () => {
+    expect(MINIMAL_ONLY_SKILLS).toHaveLength(0);
+    expect(minimalOnly).toHaveLength(0);
   });
 });
 
@@ -152,15 +143,10 @@ describe("resolveProfile", () => {
     }
   });
 
-  it("lab returns all minus minimal-only skills, even with no secrets/zombies (#285)", () => {
-    // Pre-#285: lab profile was {}, returned null for "all skills". Post-#285: lab
-    // excludes minimalOnly so a filtered list is always returned, never null.
-    const result = resolveProfile("lab", ALL_SKILLS)!;
-    expect(result).not.toBeNull();
-    expect(result.length).toBe(ALL_SKILLS.length - minimalOnly.length);
-    for (const name of minimalOnly) {
-      expect(result).not.toContain(name);
-    }
+  it("lab returns null (all skills) when no secrets/zombies — lites killed, no exclusions", () => {
+    // Post lite-kill: minimalOnly is empty, lab has no exclusions, returns null = "all skills"
+    const result = resolveProfile("lab", ALL_SKILLS);
+    expect(result).toBeNull();
   });
 
   it("unknown profile returns null", () => {
@@ -194,8 +180,9 @@ describe("resolveProfile", () => {
     }
   });
 
-  // #285: lite skills must NOT appear in full or lab resolutions
-  it("full does NOT include any minimal-only lite skills", () => {
+  // Lites killed — MINIMAL_ONLY is empty so these loops are no-ops.
+  // Kept as a regression guard: if someone re-adds lites, these fire.
+  it("full does NOT include any MINIMAL_ONLY skills", () => {
     const result = resolveProfile("full", ALL_SKILLS, [], ZOMBIE_LIST)!;
     expect(result).not.toBeNull();
     for (const lite of MINIMAL_ONLY_SKILLS) {
@@ -203,18 +190,10 @@ describe("resolveProfile", () => {
     }
   });
 
-  it("lab does NOT include any minimal-only lite skills", () => {
-    const result = resolveProfile("lab", ALL_SKILLS, [], ZOMBIE_LIST)!;
-    expect(result).not.toBeNull();
-    for (const lite of MINIMAL_ONLY_SKILLS) {
-      expect(result).not.toContain(lite);
-    }
-  });
-
-  it("minimal STILL includes all 3 lite skills (regression guard for resolveProfile)", () => {
+  it("minimal includes forward/recap/rrr (full versions, not lites)", () => {
     const result = resolveProfile("minimal", ALL_SKILLS)!;
-    for (const lite of MINIMAL_ONLY_SKILLS) {
-      expect(result).toContain(lite);
-    }
+    expect(result).toContain("forward");
+    expect(result).toContain("recap");
+    expect(result).toContain("rrr");
   });
 });

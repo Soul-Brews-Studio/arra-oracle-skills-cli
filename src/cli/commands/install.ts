@@ -1,4 +1,6 @@
 import type { Command } from 'commander';
+import { join } from 'path';
+import { existsSync } from 'fs';
 import * as p from '@clack/prompts';
 import { agents, getDefaultAgents, getAgentNames, detectInstalledAgents, thClawsAvailable } from '../agents.js';
 import { listSkills, installSkills, discoverSkills } from '../installer.js';
@@ -133,7 +135,17 @@ export function registerInstall(program: Command, version: string) {
                 targetAgents = detected;
               }
             } else {
-              targetAgents = detected;
+              // #398: with -y (non-interactive), only update agents that ALREADY
+              // have arra skills installed. Prevents cross-contamination where
+              // /go update from Claude Code also writes to ~/.codex/skills/.
+              // First install is always interactive (no -y) so user chooses.
+              const alreadyInstalled = detected.filter((a) => {
+                const agent = agents[a as keyof typeof agents];
+                if (!agent) return false;
+                const manifestPath = join(agent.globalSkillsDir, '.arra-oracle-skills.json');
+                return existsSync(manifestPath);
+              });
+              targetAgents = alreadyInstalled.length > 0 ? alreadyInstalled : detected;
             }
           }
 

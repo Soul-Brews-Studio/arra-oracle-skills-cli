@@ -35,37 +35,140 @@ export function getCodexMarketplaceDir(homeDir?: string): string {
 }
 
 /**
+ * Return the Codex 0.130+ plugin cache directory for arra-oracle-skills.
+ * Codex resolves enabled plugins from `~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/`
+ * (mirroring the marketplace source layout). Without populating this, Codex logs
+ * "failed to load plugin: plugin is not installed" even when the marketplace is registered.
+ */
+export function getCodexPluginCacheDir(homeDir?: string): string {
+  const home = homeDir ?? homedir();
+  return join(home, '.codex', 'plugins', 'cache', 'arra-oracle-skills');
+}
+
+/**
+ * Detect the installed Codex CLI version by invoking `codex --version`.
+ * Returns the semver string ("0.130.0") or null if Codex is not on PATH.
+ *
+ * Used by codexUsesJsonFormat() to branch the plugin layout between the
+ * TOML format (0.128–0.129) and the JSON format (0.130+).
+ */
+export function getCodexVersion(): string | null {
+  try {
+    const result = Bun.spawnSync(['codex', '--version']);
+    if (result.exitCode !== 0) return null;
+    const output = new TextDecoder().decode(result.stdout).trim();
+    // Expected format: "codex-cli 0.130.0"
+    const match = output.match(/(\d+)\.(\d+)\.(\d+)/);
+    return match ? `${match[1]}.${match[2]}.${match[3]}` : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Determine whether Codex expects the 0.130+ JSON plugin format
+ * (`.codex-plugin/plugin.json` + `skills/<n>/SKILL.md`) instead of the
+ * 0.128 TOML format (`plugin.toml` + `prompt.md`).
+ *
+ * Defaults to FALSE (TOML) when the version cannot be detected, preserving
+ * compatibility with Codex 0.128.x installs that already work today.
+ */
+export function codexUsesJsonFormat(versionOverride?: string | null): boolean {
+  const v = versionOverride === undefined ? getCodexVersion() : versionOverride;
+  if (!v) return false;
+  const parts = v.split('.').map(Number);
+  const major = parts[0] ?? 0;
+  const minor = parts[1] ?? 0;
+  // 0.130.0 introduced the JSON plugin manifest + skills/<n>/SKILL.md layout
+  return major > 0 || (major === 0 && minor >= 130);
+}
+
+/**
  * Install skills for Codex 0.128.0+ plugin marketplace.
  *
- * Creates:
- *   <marketplaceDir>/manifest.toml
- *   <marketplaceDir>/plugins/<skill>/plugin.toml
- *   <marketplaceDir>/plugins/<skill>/prompt.md   (skill body)
+ * Branches the layout based on the runtime Codex version:
+ *
+ *   0.128–0.129 (TOML format — default when codex version cannot be detected):
+ *     <marketplaceDir>/manifest.toml
+ *     <marketplaceDir>/plugins/<skill>/plugin.toml
+ *     <marketplaceDir>/plugins/<skill>/prompt.md
+ *
+ *   0.130+ (JSON format — matches first-party `openai-bundled` shape):
+ *     <marketplaceDir>/plugins/<skill>/.codex-plugin/plugin.json
+ *     <marketplaceDir>/plugins/<skill>/skills/<skill>/SKILL.md
  *
  * Then updates ~/.codex/config.toml with:
  *   [marketplaces.arra-oracle-skills]  source_type + source
  *   [plugins."<skill>@arra-oracle-skills"]  enabled = true
+ *
+ * Pass `opts.useJson` to override format detection (used by tests).
  */
 export async function installCodexPluginMarketplace(
   skills: Skill[],
   version: string,
   shellMode: ShellMode,
-  opts?: { marketplaceDir?: string; configPath?: string }
+  opts?: {
+    marketplaceDir?: string;
+    configPath?: string;
+    useJson?: boolean;
+    pluginCacheDir?: string;
+  }
 ): Promise<void> {
   const marketplaceDir = opts?.marketplaceDir ?? getCodexMarketplaceDir();
   const configPath = opts?.configPath ?? join(homedir(), '.codex', 'config.toml');
+  const useJson = opts?.useJson ?? codexUsesJsonFormat();
+  const pluginCacheDir = opts?.pluginCacheDir ?? getCodexPluginCacheDir();
 
   // ── 1. Create marketplace bundle directory ─────────────────────────────────
   await mkdirp(marketplaceDir, shellMode);
 
-  // ── 2. Write marketplace manifest ─────────────────────────────────────────
-  const manifestContent = [
-    `name = "arra-oracle-skills"`,
-    `version = "${version}"`,
-    `description = "Oracle skills for Codex by Soul Brews Studio"`,
-    ``,
-  ].join('\n');
-  await Bun.write(join(marketplaceDir, 'manifest.toml'), manifestContent);
+  // ── 2. Marketplace manifest ───────────────────────────────────────────────
+  // 0.128 TOML: <marketplaceDir>/manifest.toml
+  // 0.130 JSON: <marketplaceDir>/.agents/plugins/marketplace.json
+  const manifestPath = join(marketplaceDir, 'manifest.toml');
+  if (useJson) {
+    // Clean up stale TOML manifest from a prior 0.128 install
+    if (existsSync(manifestPath)) await rmf(manifestPath, shellMode);
+
+    // Write 0.130 marketplace manifest at .agents/plugins/marketplace.json.
+    // Codex's `codex plugin marketplace add <path>` requires this manifest to
+    // register the marketplace; without it: "marketplace root does not contain
+    // a supported manifest".
+    const agentsManifestDir = join(marketplaceDir, '.agents', 'plugins');
+    await mkdirp(agentsManifestDir, shellMode);
+    const marketplaceManifest = {
+      name: 'arra-oracle-skills',
+      interface: {
+        displayName: 'Arra Oracle Skills',
+      },
+      plugins: skills
+        .filter((s) => !s.hidden)
+        .map((s) => ({
+          name: s.name,
+          source: {
+            source: 'local',
+            path: `./plugins/${s.name}`,
+          },
+          policy: {
+            installation: 'AVAILABLE',
+            authentication: 'ON_INSTALL',
+          },
+          category: 'Productivity',
+        })),
+    };
+    await Bun.write(
+      join(agentsManifestDir, 'marketplace.json'),
+      `${JSON.stringify(marketplaceManifest, null, 2)}\n`
+    );
+  } else {
+    const manifestContent = [
+      `name = "arra-oracle-skills"`,
+      `version = "${version}"`,
+      `description = "Oracle skills for Codex by Soul Brews Studio"`,
+      ``,
+    ].join('\n');
+    await Bun.write(manifestPath, manifestContent);
+  }
 
   // ── 3. Per-skill plugin directories ───────────────────────────────────────
   const pluginsDir = join(marketplaceDir, 'plugins');
@@ -75,27 +178,83 @@ export async function installCodexPluginMarketplace(
     const skillPluginDir = join(pluginsDir, skill.name);
     await mkdirp(skillPluginDir, shellMode);
 
-    // plugin.toml descriptor
-    const escapedDesc = skill.description.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-    const pluginToml = [
-      `name = "${skill.name}"`,
-      `description = "${escapedDesc}"`,
-      `version = "${version}"`,
-      `command = "/${skill.name}"`,
-      ``,
-    ].join('\n');
-    await Bun.write(join(skillPluginDir, 'plugin.toml'), pluginToml);
+    if (useJson) {
+      // ── Codex 0.130+ JSON format ────────────────────────────────────────
+      const codexPluginDir = join(skillPluginDir, '.codex-plugin');
+      await mkdirp(codexPluginDir, shellMode);
+      const skillsSubDir = join(skillPluginDir, 'skills', skill.name);
+      await mkdirp(skillsSubDir, shellMode);
 
-    // prompt.md — skill body for Codex to execute
-    if (isCompiled()) {
-      // VFS mode: write entire skill tree (includes SKILL.md + any extras)
-      await writeSkillToDir(skill.name, skillPluginDir);
+      const pluginJson = {
+        name: skill.name,
+        version,
+        description: skill.description,
+        skills: './skills/',
+        interface: {
+          displayName: skill.name,
+          shortDescription:
+            skill.description.length > 100
+              ? `${skill.description.slice(0, 97)}...`
+              : skill.description,
+        },
+      };
+      await Bun.write(
+        join(codexPluginDir, 'plugin.json'),
+        `${JSON.stringify(pluginJson, null, 2)}\n`
+      );
+
+      // Skill content → skills/<name>/SKILL.md
+      if (isCompiled()) {
+        // VFS mode: write entire skill tree under skills/<name>/
+        await writeSkillToDir(skill.name, skillsSubDir);
+      } else {
+        const skillMdPath = join(skill.path, 'SKILL.md');
+        if (existsSync(skillMdPath)) {
+          const content = await Bun.file(skillMdPath).text();
+          await Bun.write(join(skillsSubDir, 'SKILL.md'), content);
+        }
+      }
+
+      // Clean up stale TOML-format files from a prior 0.128 install
+      const stalePluginToml = join(skillPluginDir, 'plugin.toml');
+      const stalePromptMd = join(skillPluginDir, 'prompt.md');
+      if (existsSync(stalePluginToml)) await rmf(stalePluginToml, shellMode);
+      if (existsSync(stalePromptMd)) await rmf(stalePromptMd, shellMode);
+
+      // ── Populate Codex 0.130+ plugin cache ─────────────────────────────
+      // Codex resolves enabled plugins from `~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/`,
+      // NOT directly from the marketplace bundle. Without this, Codex logs:
+      //   "failed to load plugin: plugin is not installed"
+      // The cache layout mirrors the marketplace plugin dir (including .codex-plugin/plugin.json).
+      const cachePluginRoot = join(pluginCacheDir, skill.name);
+      await mkdirp(cachePluginRoot, shellMode);
+      const cacheDest = join(cachePluginRoot, version);
+      // Remove a stale same-version cache before copying to ensure clean state
+      if (existsSync(cacheDest)) await rmrf(cacheDest, shellMode);
+      await cpr(skillPluginDir, cacheDest, shellMode);
     } else {
-      // Filesystem mode: copy SKILL.md as prompt.md
-      const skillMdPath = join(skill.path, 'SKILL.md');
-      if (existsSync(skillMdPath)) {
-        const content = await Bun.file(skillMdPath).text();
-        await Bun.write(join(skillPluginDir, 'prompt.md'), content);
+      // ── Codex 0.128 TOML format ─────────────────────────────────────────
+      const escapedDesc = skill.description.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const pluginToml = [
+        `name = "${skill.name}"`,
+        `description = "${escapedDesc}"`,
+        `version = "${version}"`,
+        `command = "/${skill.name}"`,
+        ``,
+      ].join('\n');
+      await Bun.write(join(skillPluginDir, 'plugin.toml'), pluginToml);
+
+      // prompt.md — skill body for Codex to execute
+      if (isCompiled()) {
+        // VFS mode: write entire skill tree (includes SKILL.md + any extras)
+        await writeSkillToDir(skill.name, skillPluginDir);
+      } else {
+        // Filesystem mode: copy SKILL.md as prompt.md
+        const skillMdPath = join(skill.path, 'SKILL.md');
+        if (existsSync(skillMdPath)) {
+          const content = await Bun.file(skillMdPath).text();
+          await Bun.write(join(skillPluginDir, 'prompt.md'), content);
+        }
       }
     }
   }
@@ -284,35 +443,6 @@ export async function installSkills(
         }
       }
       p.log.info(`Alignment: removed ${toRemove.length} skill(s) not in '${options.profile}' profile`);
-    }
-  }
-
-  // Auto-remove minimal-only lite variants when cherry-picking their full counterparts.
-  // forward-lite is redundant when forward is installed, same for recap-lite/rrr-lite.
-  // Only triggers on -s (cherry-pick) without --profile — profile alignment handles the rest.
-  const liteToFull: Record<string, string> = {
-    'forward-lite': 'forward',
-    'recap-lite': 'recap',
-    'rrr-lite': 'rrr',
-  };
-  const isCherryPick = options.skills && options.skills.length > 0 && !options.profileExplicit;
-  if (isCherryPick) {
-    const installing = new Set(skillsToInstall.map((s) => s.name));
-    for (const agentName of targetAgents) {
-      const agent = agents[agentName as keyof typeof agents];
-      if (!agent) continue;
-      const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
-      for (const [lite, full] of Object.entries(liteToFull)) {
-        // Remove lite only if: 1) its full version is being installed or already exists, 2) lite is not being installed
-        const fullInstalling = installing.has(full) || existsSync(join(skillsDir, full));
-        const liteInstalling = installing.has(lite);
-        if (fullInstalling && !liteInstalling && existsSync(join(skillsDir, lite))) {
-          if (await isOurSkill(join(skillsDir, lite))) {
-            await rm(join(skillsDir, lite), { recursive: true, force: true });
-            p.log.info(`Auto-removed ${lite} (${full} is installed — lite variant redundant)`);
-          }
-        }
-      }
     }
   }
 
@@ -672,12 +802,21 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
       }
     }
 
-    // Codex 0.128.0+: install plugin marketplace bundle in addition to skills/+prompts/
-    // The old ~/.codex/skills/ + ~/.codex/prompts/ layout is kept for backward compat
-    // with Codex < 0.128.0, but 0.128.0+ requires the plugin marketplace registration.
-    if (agentName === 'codex' && isCodexPluginMarketplace()) {
-      await installCodexPluginMarketplace(agentSkillsToInstall, pkg.version, shellMode);
-      p.log.success(`Codex plugin marketplace: ${getCodexMarketplaceDir()}`);
+    // Codex: skip marketplace + plugin cache — write to ~/.codex/skills/ ONLY.
+    // The marketplace bundle + cache caused triple-duplicate autocomplete entries
+    // (skills/ + marketplace/ + cache/ all visible to Codex). Skills-only is clean.
+    // Clean up stale marketplace/cache from prior installs.
+    if (agentName === 'codex') {
+      const marketplaceDir = getCodexMarketplaceDir();
+      const cacheDir = getCodexPluginCacheDir();
+      if (existsSync(marketplaceDir)) {
+        await rm(marketplaceDir, { recursive: true, force: true });
+        p.log.info('Cleaned stale Codex marketplace bundle');
+      }
+      if (existsSync(cacheDir)) {
+        await rm(cacheDir, { recursive: true, force: true });
+        p.log.info('Cleaned stale Codex plugin cache');
+      }
     }
 
     p.log.success(`${agent.displayName}: ${targetDir}`);
@@ -690,6 +829,36 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
   }
 
   spinner.stop(`Installed ${skillsToInstall.length} skills to ${targetAgents.length} agent(s)`);
+
+  // Migration: remove deprecated lite skills from prior installs.
+  // Lites (forward-lite, recap-lite, rrr-lite) were killed 2026-05-14;
+  // minimal profile now uses the full versions directly.
+  const deprecatedLites = ['forward-lite', 'recap-lite', 'rrr-lite'];
+  for (const agentName of targetAgents) {
+    const agent = agents[agentName as keyof typeof agents];
+    if (!agent) continue;
+    const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
+    let migrated = false;
+    for (const lite of deprecatedLites) {
+      const litePath = join(skillsDir, lite);
+      if (existsSync(litePath) && await isOurSkill(litePath)) {
+        await rm(litePath, { recursive: true, force: true });
+        migrated = true;
+      }
+    }
+    if (migrated) {
+      p.log.info(`Migrated: removed deprecated lite skills (forward-lite, recap-lite, rrr-lite)`);
+      const manifestPath = join(skillsDir, '.arra-oracle-skills.json');
+      if (existsSync(manifestPath)) {
+        try {
+          const content = await Bun.file(manifestPath).text();
+          const m = JSON.parse(content);
+          m.skills = m.skills.filter((s: string) => !deprecatedLites.includes(s));
+          await Bun.write(manifestPath, JSON.stringify(m, null, 2));
+        } catch {}
+      }
+    }
+  }
 }
 
 export async function uninstallSkills(

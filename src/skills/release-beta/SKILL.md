@@ -2,6 +2,7 @@
 name: release-beta
 description: "Cut a beta pre-release — bump CalVer with --beta, PR to beta branch, CI auto-tags + publishes to npm @beta. Use when user says 'release beta', 'cut beta', '/release-beta', or wants to publish a beta version for pre-release testing."
 argument-hint: ""
+secret: true
 ---
 
 # /release-beta

@@ -55,7 +55,7 @@ def build_repo_map():
         r = subprocess.run(['ghq', 'list', '-p'], capture_output=True, text=True, timeout=5)
         for path in r.stdout.strip().split('\n'):
             if path:
-                mapping[path.replace('/', '-')] = path.split('/')[-1]
+                mapping[path.replace('/', '-').replace('.', '-')] = path.split('/')[-1]
     except:
         pass
     return mapping

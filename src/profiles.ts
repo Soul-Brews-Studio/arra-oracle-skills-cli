@@ -11,14 +11,14 @@
  * oracle-soul-sync-update (6), standup (10), skills-list (3), oracle-family-scan (8).
  * These move to full (still installable, not lab-gated).
  *
- * MINIMAL_ONLY classification (#285): forward-lite, recap-lite, rrr-lite are token-
- * optimized replacements for full versions. They have value in minimal only —
- * elsewhere they duplicate functionality of forward/recap/rrr. Excluded from full+lab.
+ * Lites killed 2026-05-14: forward-lite/recap-lite/rrr-lite moved to zombie.
+ * 900 chars of description savings wasn't worth 4 PRs of cleanup bugs (#368, #382, #384, #387).
+ * Minimal now uses full forward/recap/rrr — same skills, fewer of them.
  */
 
-/** Minimal profile — lite lifecycle + trace (token-optimized) */
+/** Minimal profile — essential lifecycle + trace */
 export const MINIMAL_SKILLS = [
-  'about-oracle', 'forward-lite', 'go', 'recap-lite', 'rrr-lite', 'trace',
+  'about-oracle', 'forward', 'go', 'recap', 'rrr', 'trace',
 ] as const;
 
 /** Standard profile — daily driver skills (always installed) */
@@ -33,13 +33,9 @@ export const LAB_SKILLS = [
   'schedule', 'watch', 'worktree', 'xray',
 ] as const;
 
-/** Minimal-only skills — token-optimized lite variants that replace the full
- *  version when in `minimal` profile. They have no value outside minimal because
- *  the full versions (`forward`, `recap`, `rrr`) are present in higher tiers.
- *  Excluded from `full` and `lab` profiles. Closes #285. */
-export const MINIMAL_ONLY_SKILLS = [
-  'forward-lite', 'recap-lite', 'rrr-lite',
-] as const;
+/** Minimal-only — DEPRECATED, kept as empty for backward compat with imports.
+ *  Lites moved to zombie 2026-05-14. See ZOMBIE_SKILLS for forward-lite etc. */
+export const MINIMAL_ONLY_SKILLS = [] as const;
 
 /** Zombie skills — internal development candidates from arra-symbiosis-skills.
  *  Excluded from ALL profiles. Install by name only: `arra install -s workon`
@@ -66,6 +62,8 @@ export const ZOMBIE_SKILLS = [
   'dream-original',
   // 2026-05-14: replaced by /go update verb — no longer needs its own skill slot.
   'oracle-soul-sync-update',
+  // 2026-05-14: lites killed — 900 chars savings wasn't worth 4 PRs of bugs.
+  'forward-lite', 'recap-lite', 'rrr-lite',
 ] as const;
 
 /** Return the source directory for a skill by name — `.archive/` for zombies,

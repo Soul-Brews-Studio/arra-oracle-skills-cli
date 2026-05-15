@@ -1,30 +1,30 @@
 # arra-oracle-skills-cli
 
-38 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+35 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
 ```bash
 # Claude Code — standard profile (default)
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent claude-code
 
 # Full profile (all skills)
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y -p full --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y -p full --agent claude-code
 
 # Lab profile (full + experimental)
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y -p lab --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y -p lab --agent claude-code
 
 # Specific skills only
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y -s recap rrr trace --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y -s recap rrr trace --agent claude-code
 
 # Other agents (skills + commands)
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y --agent codex --with-commands
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y --agent opencode --with-commands
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y --agent cursor
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y --agent gemini-cli --with-commands
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent codex --with-commands
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent opencode --with-commands
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent cursor
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent gemini-cli --with-commands
 
 # Multiple agents
-npx arra-oracle-skills@26.5.14-beta.1913 install -g -y --agent claude-code codex opencode
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent claude-code codex opencode
 
 # thClaws (federated agent — explicit opt-in)
 bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --with-thclaws
@@ -44,10 +44,10 @@ By default (no `-g` flag), skills install to the current project's `.claude/skil
 
 ```bash
 # Local install (current project)
-npx arra-oracle-skills@26.5.14-beta.1913 install -a claude-code -s trace -y
+npx arra-oracle-skills@26.5.15-alpha.1631 install -a claude-code -s trace -y
 
 # Same with explicit -l flag (symmetric to -g)
-npx arra-oracle-skills@26.5.14-beta.1913 install -l -a claude-code -s trace -y
+npx arra-oracle-skills@26.5.15-alpha.1631 install -l -a claude-code -s trace -y
 ```
 
 Use when:
@@ -64,7 +64,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>38 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>35 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -87,27 +87,24 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 15 | **dream** | skill | 'Speculative dreaming |
 | 16 | **feel** | skill | "Capture how the system feels |
 | 17 | **forward** | skill | Create handoff + enter plan mode for next |
-| 18 | **forward-lite** | skill | Quick handoff to next session |
-| 19 | **fyi** | skill | Log information for future reference |
-| 20 | **go** | skill | Manage Oracle skills |
-| 21 | **hey** | skill | Talk to another oracle via maw federation |
-| 22 | **inbox** | skill | Read and write to Oracle inbox |
-| 23 | **incubate** | skill | Clone or create repos for active development |
-| 24 | **mailbox** | skill | 'Persistent agent mailbox |
-| 25 | **recap-lite** | skill | Quick session orientation |
-| 26 | **release-alpha** | skill | "Cut an alpha pre-release |
-| 27 | **release-beta** | skill | "Cut a beta pre-release |
-| 28 | **resonance** | skill | Capture a resonance moment |
-| 29 | **rrr-lite** | skill | Quick session retrospective |
-| 30 | **standup** | skill | Daily standup check |
-| 31 | **talk-to** | skill | Talk to another Oracle agent |
-| 32 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 33 | **trace** | skill | Find projects, code |
-| 34 | **watch** | skill | 'Extract YouTube video transcripts |
-| 35 | **where-we-are** | skill | Session awareness |
-| 36 | **who-are-you** | skill | Know ourselves |
-| 37 | **worktree** | skill | 'Work in an isolated git worktree |
-| 38 | **xray** | skill | X-ray deep scan |
+| 18 | **fyi** | skill | Log information for future reference |
+| 19 | **go** | skill | Manage Oracle skills |
+| 20 | **hey** | skill | Talk to another oracle via maw federation |
+| 21 | **inbox** | skill | Read and write to Oracle inbox |
+| 22 | **incubate** | skill | Clone or create repos for active development |
+| 23 | **mailbox** | skill | 'Persistent agent mailbox |
+| 24 | **release-alpha** | skill | "Cut an alpha pre-release |
+| 25 | **release-beta** | skill | "Cut a beta pre-release |
+| 26 | **resonance** | skill | Capture a resonance moment |
+| 27 | **standup** | skill | Daily standup check |
+| 28 | **talk-to** | skill | Talk to another Oracle agent |
+| 29 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 30 | **trace** | skill | Find projects, code |
+| 31 | **watch** | skill | 'Extract YouTube video transcripts |
+| 32 | **where-we-are** | skill | Session awareness |
+| 33 | **who-are-you** | skill | Know ourselves |
+| 34 | **worktree** | skill | 'Work in an isolated git worktree |
+| 35 | **xray** | skill | X-ray deep scan |
 
 </details>
 
@@ -119,10 +116,10 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 
 | Profile | Count | Skills |
 |---------|-------|--------|
-| **minimal** | 6 | `about-oracle`, `forward-lite`, `go`, `recap-lite`, `rrr-lite`, `trace` |
+| **minimal** | 6 | `about-oracle`, `forward`, `go`, `recap`, `rrr`, `trace` |
 | **standard** | 12 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace` |
-| **full** | 38 | all |
-| **lab** | 38 | all |
+| **full** | 35 | all |
+| **lab** | 35 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 
@@ -144,7 +141,7 @@ about                   # version + status
 
 ## Zombie Skills
 
-28 skills excluded from all profiles. Install by name:
+31 skills excluded from all profiles. Install by name:
 
 ```bash
 npx arra-oracle-skills install -g -y -s <name>
@@ -180,6 +177,9 @@ npx arra-oracle-skills install -g -y -s <name>
 | `/vault` | Connect external knowledge bases (Obsidian, Logseq, markd... |
 | `/dream-original` | Cross-repo pattern discovery with parallel agents. Finds ... |
 | `/oracle-soul-sync-update` | Sync Oracle instruments with the family. Check and update... |
+| `/forward-lite` | Lite variant killed 2026-05-14. Use /forward instead. |
+| `/recap-lite` | Lite variant killed 2026-05-14. Use /recap instead. |
+| `/rrr-lite` | Lite variant killed 2026-05-14. Use /rrr instead. |
 <!-- secret-skills:end -->
 
 ## Team Agent Scripts

@@ -802,12 +802,21 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
       }
     }
 
-    // Codex 0.128.0+: install plugin marketplace bundle in addition to skills/+prompts/
-    // The old ~/.codex/skills/ + ~/.codex/prompts/ layout is kept for backward compat
-    // with Codex < 0.128.0, but 0.128.0+ requires the plugin marketplace registration.
-    if (agentName === 'codex' && isCodexPluginMarketplace()) {
-      await installCodexPluginMarketplace(agentSkillsToInstall, pkg.version, shellMode);
-      p.log.success(`Codex plugin marketplace: ${getCodexMarketplaceDir()}`);
+    // Codex: skip marketplace + plugin cache — write to ~/.codex/skills/ ONLY.
+    // The marketplace bundle + cache caused triple-duplicate autocomplete entries
+    // (skills/ + marketplace/ + cache/ all visible to Codex). Skills-only is clean.
+    // Clean up stale marketplace/cache from prior installs.
+    if (agentName === 'codex') {
+      const marketplaceDir = getCodexMarketplaceDir();
+      const cacheDir = getCodexPluginCacheDir();
+      if (existsSync(marketplaceDir)) {
+        await rm(marketplaceDir, { recursive: true, force: true });
+        p.log.info('Cleaned stale Codex marketplace bundle');
+      }
+      if (existsSync(cacheDir)) {
+        await rm(cacheDir, { recursive: true, force: true });
+        p.log.info('Cleaned stale Codex plugin cache');
+      }
     }
 
     p.log.success(`${agent.displayName}: ${targetDir}`);

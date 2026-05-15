@@ -6,25 +6,25 @@
 
 ```bash
 # Claude Code — standard profile (default)
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent claude-code
 
 # Full profile (all skills)
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y -p full --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y -p full --agent claude-code
 
 # Lab profile (full + experimental)
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y -p lab --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y -p lab --agent claude-code
 
 # Specific skills only
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y -s recap rrr trace --agent claude-code
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y -s recap rrr trace --agent claude-code
 
 # Other agents (skills + commands)
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y --agent codex --with-commands
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y --agent opencode --with-commands
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y --agent cursor
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y --agent gemini-cli --with-commands
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent codex --with-commands
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent opencode --with-commands
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent cursor
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent gemini-cli --with-commands
 
 # Multiple agents
-npx arra-oracle-skills@26.5.15-alpha.1342 install -g -y --agent claude-code codex opencode
+npx arra-oracle-skills@26.5.15-alpha.1631 install -g -y --agent claude-code codex opencode
 
 # thClaws (federated agent — explicit opt-in)
 bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --with-thclaws
@@ -44,10 +44,10 @@ By default (no `-g` flag), skills install to the current project's `.claude/skil
 
 ```bash
 # Local install (current project)
-npx arra-oracle-skills@26.5.15-alpha.1342 install -a claude-code -s trace -y
+npx arra-oracle-skills@26.5.15-alpha.1631 install -a claude-code -s trace -y
 
 # Same with explicit -l flag (symmetric to -g)
-npx arra-oracle-skills@26.5.15-alpha.1342 install -l -a claude-code -s trace -y
+npx arra-oracle-skills@26.5.15-alpha.1631 install -l -a claude-code -s trace -y
 ```
 
 Use when:

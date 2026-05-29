@@ -1,6 +1,6 @@
 ---
 name: project
-description: Clone and track external repos. Use when user shares GitHub URL to study or develop, or says "search repos", "find repo", "where is [project]". Actions - learn (clone for study), search/find (search repos), list (show tracked). For active development, use /incubate.
+description: Clone and track external repos. Use when user shares a GitHub URL to study or develop, or says "search repos", "find repo", "where is [project]". For active development, use /incubate.
 argument-hint: "<github-url> | search <query>"
 ---
 

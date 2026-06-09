@@ -131,6 +131,19 @@ After completing your work:
 
 ## Step 3: Spawn (or dry-run)
 
+### Self-bring guard
+
+If `ORACLE == SELF` (spawning yourself), `maw bring` will refuse due to self-bring protection (#1816). Use worktree instead:
+
+```
+if ORACLE == SELF:
+  MODE = "worktree"
+  COMMAND = maw wake $ORACLE --wt --task "$WORKER_PROMPT" --split
+else:
+  MODE = "bring"
+  COMMAND = maw bring $ORACLE --task "$WORKER_PROMPT"
+```
+
 ### If --dry-run:
 
 ```
@@ -139,7 +152,8 @@ After completing your work:
   Target:   ${ORACLE}
   Task:     ${TASK}
   Caller:   ${SELF}
-  Command:  maw bring ${ORACLE} --task "..."
+  Mode:     ${MODE} (bring / worktree)
+  Command:  ${COMMAND}
 
   Worker will:
   1. Search KB → do task → write findings to KB
@@ -149,6 +163,16 @@ After completing your work:
 ```
 
 ### If not dry-run:
+
+**Self-spawn** (`ORACLE == SELF`):
+
+```bash
+maw wake "$ORACLE" --wt --task "$WORKER_PROMPT" --split
+```
+
+Show note: `⚠️ self-spawn detected → using worktree instance`
+
+**Cross-spawn** (`ORACLE != SELF`):
 
 ```bash
 maw bring "$ORACLE" --task "$WORKER_PROMPT"
@@ -161,6 +185,7 @@ Then confirm:
 
   Task:     ${TASK}
   Caller:   ${SELF}
+  Mode:     ${MODE}
   Pane:     visible in split (right)
 
   Worker will notify you when done via: maw hey ${SELF} "done: ..."

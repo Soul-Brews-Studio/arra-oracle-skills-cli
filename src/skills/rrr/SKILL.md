@@ -99,7 +99,7 @@ from datetime import datetime, timezone, timedelta
 tz = timezone(timedelta(hours=7))
 jsonl = '$LATEST_JSONL'
 if not jsonl or not os.path.exists(jsonl): exit(0)
-with open(jsonl) as f:
+with open(jsonl, encoding='utf-8') as f:
     for line in f:
         try:
             m = json.loads(line)

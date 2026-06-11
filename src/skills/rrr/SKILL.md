@@ -94,7 +94,8 @@ PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head 
 LATEST_JSONL=$(ls -t "$PROJECT_BASE"/*.jsonl 2>/dev/null | head -1)
 echo "SESSION_FILE: $LATEST_JSONL"
 python3 -c "
-import json, os
+import json, os, sys
+sys.stdout.reconfigure(encoding='utf-8')  # Windows Thai locale: stdout defaults to cp874 -> Thai snippets mojibake; force UTF-8 output
 from datetime import datetime, timezone, timedelta
 tz = timezone(timedelta(hours=7))
 jsonl = '$LATEST_JSONL'

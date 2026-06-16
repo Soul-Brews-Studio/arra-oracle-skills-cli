@@ -199,6 +199,41 @@ echo "📋 Outbox: $OUTBOX_FILE"
 
 ---
 
+## Then: Report to jan (family digest — fleet only)
+
+If this Oracle is part of the maw family fleet (`maw` is on PATH), send a one-shot
+digest to **jan**, the family's central index Oracle. This implements the family rule
+(Earth, 2026-06-16): every house reports to jan after /rrr + /forward, before closing —
+so family status is push-collected centrally, not pulled per-house. If `maw` is absent,
+skip this whole step silently.
+
+Send it (durable — `--inbox` is REQUIRED, otherwise maw only pane-injects into jan's
+shell and **no inbox file is created**):
+
+```bash
+command -v maw >/dev/null 2>&1 && \
+maw hey --inbox --from <host>:<house> local:jan "[report:<house>] $(date '+%Y-%m-%d %H:%M')
+did: <1-3 lines from the handoff 'What We Did'>
+decision: <key decision/change, if any>
+lesson: <new lesson crystallized, if any>
+blocker: <🔴 hard / ⚠️ some / — none>
+next: <carried-forward next action from the handoff>"
+```
+
+- `<house>` = this Oracle's name (repo dir without the `oracle-` prefix).
+  `<host>` = the maw host on this machine.
+- **Fallback** (bus down / unsure it landed): write the digest as markdown directly to
+  `~/Desktop/oracle-jan/ψ/inbox/<YYYY-MM-DD_HH-MM>_report-from-<house>.md` with
+  frontmatter (`from` / `to` / `timestamp` / `read: false`) + the digest body, then
+  verify the file exists.
+- **Point, don't copy**: the report is a digest — full sources (handoff/retro) stay in
+  the house vault. It does **not** duplicate the handoff (handoff = for this house's next
+  session; report = for the family's central index).
+- Spec: `~/Desktop/oracle-jan/ψ/active/REPORT-PROTOCOL.md`. Don't block on this — if maw
+  errors, note it and continue to the plan box.
+
+---
+
 ## Then: MUST Show Plan Approval Box
 
 **CRITICAL — DO NOT SKIP**: The whole point of /forward is the plan approval UI.

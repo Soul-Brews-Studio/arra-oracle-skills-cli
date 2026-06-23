@@ -35,7 +35,8 @@ export type AgentType =
   | 'aider'
   | 'continue'
   | 'zed'
-  | 'thclaws';
+  | 'thclaws'
+  | 'grok';
 
 export interface Skill {
   name: string;

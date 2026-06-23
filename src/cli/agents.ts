@@ -15,6 +15,15 @@ export function thClawsAvailable(): boolean {
   }
 }
 
+export function grokAvailable(): boolean {
+  try {
+    execSync('command -v grok', { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export const agents: Record<AgentType, AgentConfig> = {
   opencode: {
     name: 'opencode',
@@ -158,6 +167,14 @@ export const agents: Record<AgentType, AgentConfig> = {
     skillsDir: '.zed/skills',
     globalSkillsDir: join(home, '.zed/skills'),
     detectInstalled: () => existsSync(join(home, '.zed')),
+  },
+  grok: {
+    name: 'grok',
+    displayName: 'Grok CLI',
+    skillsDir: '.grok/skills',
+    globalSkillsDir: join(home, '.grok/skills'),
+    detectInstalled: () =>
+      existsSync(join(home, '.grok')) || grokAvailable(),
   },
   thclaws: {
     name: 'thclaws',

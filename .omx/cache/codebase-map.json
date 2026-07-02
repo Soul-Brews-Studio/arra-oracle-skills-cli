@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "worktreeRoot": "/opt/Code/github.com/Soul-Brews-Studio/arra-oracle-skills-cli/agents/1-coder-2",
+  "gitDir": "/opt/Code/github.com/Soul-Brews-Studio/arra-oracle-skills-cli/.git/worktrees/1-coder-2",
+  "indexMtimeMs": 1780337211032.9788,
+  "indexSize": 29120,
+  "map": "  src/: profiles\n  src/cli/: agents, about, agents, awaken, contacts, init, install, list, profiles, select\n  src/hooks/: arra-oracle-skills\n  src/skills/: main, fleet-scan, create, history, incubate, learn, offload, resolve-slug, reunion\n  scripts/: calver, clawhub-build, compile, ensure-vfs-stub, generate-table, generate-vfs, update-readme-table\n  __tests__/: calver.test, codex-plugin.test, compile.test, dig-skill.test, e2e-features.test, e2e-install.test, fs-utils.test, index.test, install-all.test, install-commands.test\n  .opencode/: oracle-skills",
+  "createdAt": "2026-06-01T18:06:54.879Z"
+}

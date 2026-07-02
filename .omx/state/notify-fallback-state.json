@@ -1,0 +1,90 @@
+{
+  "pid": 65456,
+  "parent_pid": 64662,
+  "started_at": "2026-06-01T18:06:47.808Z",
+  "cwd": "/opt/Code/github.com/Soul-Brews-Studio/arra-oracle-skills-cli/agents/1-coder-1",
+  "notify_script": "/Users/nat/.nvm/versions/node/v24.15.0/lib/node_modules/oh-my-codex/dist/scripts/notify-hook.js",
+  "authority_only": false,
+  "poll_ms": 250,
+  "effective_poll_ms": 250,
+  "idle_max_poll_ms": 1000,
+  "pid_file": "/opt/Code/github.com/Soul-Brews-Studio/arra-oracle-skills-cli/agents/1-coder-1/.omx/state/notify-fallback.pid",
+  "max_lifetime_ms": 21600000,
+  "tracked_files": 0,
+  "seen_turns": 0,
+  "dispatch_drain": {
+    "enabled": true,
+    "max_per_tick": 5,
+    "run_count": 64292,
+    "leader_only": true,
+    "last_tick_at": "2026-06-01T22:58:22.415Z",
+    "last_result": {
+      "processed": 0,
+      "skipped": 0,
+      "failed": 0
+    },
+    "last_error": null
+  },
+  "leader_nudge": {
+    "enabled": true,
+    "leader_only": true,
+    "stale_threshold_ms": 180000,
+    "precomputed_leader_stale": true,
+    "last_tick_at": "2026-06-01T22:58:22.424Z",
+    "last_error": null,
+    "run_count": 64292
+  },
+  "ralph_continue_steer": {
+    "enabled": true,
+    "cadence_ms": 60000,
+    "message": "Ralph loop active continue",
+    "active": false,
+    "last_state_check_at": "2026-06-01T22:58:22.430Z",
+    "last_sent_at": "",
+    "cooldown_anchor_at": "",
+    "last_reason": "blocked_by_current_session",
+    "last_error": null,
+    "state_path": "",
+    "pane_id": "",
+    "pane_current_command": "",
+    "current_phase": "",
+    "subagent_session_id": "",
+    "active_subagent_thread_ids": [],
+    "shared_timestamp_path": "/opt/Code/github.com/Soul-Brews-Studio/arra-oracle-skills-cli/agents/1-coder-1/.omx/state/ralph-last-steer-at",
+    "shared_last_sent_at": "",
+    "singleton_lock_path": "/opt/Code/github.com/Soul-Brews-Studio/arra-oracle-skills-cli/agents/1-coder-1/.omx/state/ralph-continue-steer.lock"
+  },
+  "fallback_auto_nudge": {
+    "enabled": true,
+    "stall_ms": 5000,
+    "last_tick_at": "2026-06-01T22:58:22.429Z",
+    "last_turn_at": "2026-06-01T18:06:47.684Z",
+    "last_turn_count": 0,
+    "last_message": "",
+    "last_reason": "hud_state_incomplete",
+    "last_error": null,
+    "last_nudged_signature": "",
+    "last_nudged_at": ""
+  },
+  "authority_backoff": {
+    "active": false,
+    "reason": "",
+    "primary_pid": null,
+    "primary_last_tick_at": "",
+    "freshness_ms": null,
+    "threshold_ms": null
+  },
+  "adaptive_poll": {
+    "enabled": true,
+    "base_ms": 250,
+    "max_ms": 1000,
+    "current_ms": 250,
+    "idle_streak": 0,
+    "last_tick_at": "2026-06-01T22:58:22.430Z",
+    "last_activity_at": "2026-06-01T22:58:22.430Z",
+    "last_activity_reason": "leader_nudge"
+  },
+  "stop_reason": "parent_gone",
+  "stop_signal": null,
+  "stopping": true
+}

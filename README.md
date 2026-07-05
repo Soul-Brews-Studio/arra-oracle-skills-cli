@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-36 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+39 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -64,7 +64,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>36 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>39 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -81,31 +81,34 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 9 | **bampenpien** | skill | "บำเพ็ญเพียร |
 | 10 | **bud** | skill | 'Create a new oracle via maw bud |
 | 11 | **calver** | skill | Show or bump CalVer version |
-| 12 | **contacts** | skill | Manage Oracle contacts |
-| 13 | **create-shortcut** | skill | Create local skills as shortcuts |
-| 14 | **dig** | skill | Mine Claude Code sessions |
-| 15 | **dream** | skill | 'Speculative dreaming |
-| 16 | **feel** | skill | "Capture how the system feels |
-| 17 | **forward** | skill | Create handoff + enter plan mode for next |
-| 18 | **fyi** | skill | Log information for future reference |
-| 19 | **go** | skill | Manage Oracle skills |
-| 20 | **hey** | skill | Talk to another oracle via maw federation |
-| 21 | **inbox** | skill | Read and write to Oracle inbox |
-| 22 | **incubate** | skill | Clone or create repos for active development |
-| 23 | **mailbox** | skill | 'Persistent agent mailbox |
-| 24 | **oracle-up** | skill | '[standard] G-SKLL | Bring up a Docker-first |
-| 25 | **release-alpha** | skill | "Cut an alpha pre-release |
-| 26 | **release-beta** | skill | "Cut a beta pre-release |
-| 27 | **resonance** | skill | Capture a resonance moment |
-| 28 | **standup** | skill | Daily standup check |
-| 29 | **talk-to** | skill | Talk to another Oracle agent |
-| 30 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 31 | **trace** | skill | Find projects, code |
-| 32 | **watch** | skill | 'Extract YouTube video transcripts |
-| 33 | **where-we-are** | skill | Session awareness |
-| 34 | **who-are-you** | skill | Know ourselves |
-| 35 | **worktree** | skill | 'Work in an isolated git worktree |
-| 36 | **xray** | skill | X-ray deep scan |
+| 12 | **consolidation-review** | skill | Review Arra Oracle memory consolidation |
+| 13 | **contacts** | skill | Manage Oracle contacts |
+| 14 | **create-shortcut** | skill | Create local skills as shortcuts |
+| 15 | **dig** | skill | Mine Claude Code sessions |
+| 16 | **dream** | skill | 'Speculative dreaming |
+| 17 | **feel** | skill | "Capture how the system feels |
+| 18 | **forward** | skill | Create handoff + enter plan mode for next |
+| 19 | **fyi** | skill | Log information for future reference |
+| 20 | **go** | skill | Manage Oracle skills |
+| 21 | **hey** | skill | Talk to another oracle via maw federation |
+| 22 | **inbox** | skill | Read and write to Oracle inbox |
+| 23 | **incubate** | skill | Clone or create repos for active development |
+| 24 | **mailbox** | skill | 'Persistent agent mailbox |
+| 25 | **mine-notes** | skill | Run the arra mine ingest flow for notes |
+| 26 | **oracle-ask** | skill | Ask Arra Oracle for grounded answers |
+| 27 | **oracle-up** | skill | '[standard] G-SKLL | Bring up a Docker-first |
+| 28 | **release-alpha** | skill | "Cut an alpha pre-release |
+| 29 | **release-beta** | skill | "Cut a beta pre-release |
+| 30 | **resonance** | skill | Capture a resonance moment |
+| 31 | **standup** | skill | Daily standup check |
+| 32 | **talk-to** | skill | Talk to another Oracle agent |
+| 33 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 34 | **trace** | skill | Find projects, code |
+| 35 | **watch** | skill | 'Extract YouTube video transcripts |
+| 36 | **where-we-are** | skill | Session awareness |
+| 37 | **who-are-you** | skill | Know ourselves |
+| 38 | **worktree** | skill | 'Work in an isolated git worktree |
+| 39 | **xray** | skill | X-ray deep scan |
 
 </details>
 
@@ -119,8 +122,8 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 |---------|-------|--------|
 | **minimal** | 6 | `about-oracle`, `forward`, `go`, `recap`, `rrr`, `trace` |
 | **standard** | 12 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace` |
-| **full** | 36 | all |
-| **lab** | 36 | all |
+| **full** | 39 | all |
+| **lab** | 39 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

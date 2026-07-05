@@ -65,6 +65,9 @@ ssh <user>@<host> 'cat ~/.ssh/id_ed25519.pub' | gh ssh-key add - --title "<user>
 ssh <user>@<host> 'zsh -lc "bun add -g arra-oracle-skills && arra-oracle-skills install -g -y --agent claude-code"'
 # omx (oh-my-codex) for the codex coders — install per its own method
 # arra-oracle MCP v3 into the user's ~/.claude.json mcpServers (stdio: bunx --bun arra-oracle-v2@github:Soul-Brews-Studio/arra-oracle-v3#main)
+# HEADLESS FLAGS (else claude stops at onboarding/trust dialog): set in ~/.claude.json:
+#   hasCompletedOnboarding=true, hasTrustDialogAccepted=true,
+#   projects[<repo>].hasTrustDialogAccepted=true + hasCompletedProjectOnboarding=true
 ```
 
 ### P4.5 — Code root override (Nat prefers ~/Code, not /opt/<user>/Code)

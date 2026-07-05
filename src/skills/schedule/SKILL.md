@@ -27,7 +27,7 @@ Run the query script:
 bun .claude/skills/schedule/scripts/query.ts [filter]
 ```
 
-The script queries `GET /api/schedule` on the Oracle HTTP server (port 47778).
+The script queries `GET /api/v1/schedule` on the Oracle HTTP server (port 47778). It uses `ORACLE_API`, `ARRA_API_TOKEN`, `X_ORACLE_TENANT`/`ORACLE_TENANT`, and `X_ORACLE_TENANT_TOKEN`/`ORACLE_TENANT_TOKEN` when present.
 
 ## Output Format
 
@@ -56,12 +56,12 @@ Rules:
 ## API Reference
 
 ```
-GET /api/schedule                         → next 14 days (pending)
-GET /api/schedule?date=2026-03-05         → specific day
-GET /api/schedule?date=today              → today
-GET /api/schedule?from=2026-03-01&to=2026-03-31  → range
-GET /api/schedule?filter=keyword          → search
-GET /api/schedule?status=all              → include done/cancelled
+GET /api/v1/schedule                         → next 14 days (pending)
+GET /api/v1/schedule?date=2026-03-05         → specific day
+GET /api/v1/schedule?date=today              → today
+GET /api/v1/schedule?from=2026-03-01&to=2026-03-31  → range
+GET /api/v1/schedule?filter=keyword          → search
+GET /api/v1/schedule?status=all              → include done/cancelled
 ```
 
 ## See Also

@@ -75,7 +75,17 @@ Scan recent LINE messages for potential appointments:
    ### LINE Appointments Found
    - [date] [event] (from: [group]) — Add? Y/N
    ```
-7. On user approval → call `arra_schedule_add` for each confirmed appointment
+7. On user approval → `POST /api/v1/schedule` for each confirmed appointment (schedule MCP is not wired). Use `ORACLE_API`, `ARRA_API_TOKEN`, `X-Oracle-Tenant`, and `X-Oracle-Tenant-Token` headers when needed.
+
+   ```bash
+   ORACLE_API=${ORACLE_API:-http://localhost:47778}
+   curl -fsS -X POST "$ORACLE_API/api/v1/schedule" \
+     ${ARRA_API_TOKEN:+-H "Authorization: Bearer $ARRA_API_TOKEN"} \
+     ${ORACLE_TENANT:+-H "X-Oracle-Tenant: $ORACLE_TENANT"} \
+     ${ORACLE_TENANT_TOKEN:+-H "X-Oracle-Tenant-Token: $ORACLE_TENANT_TOKEN"} \
+     -H 'content-type: application/json' \
+     -d '{"date":"2026-03-05","event":"Team standup","time":"09:30","notes":"from LINE scan"}'
+   ```
 
 ### 8. Auto-post to Pulse Discussion
 

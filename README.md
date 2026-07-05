@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-35 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+36 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -64,7 +64,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>35 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>36 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -93,18 +93,19 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 21 | **inbox** | skill | Read and write to Oracle inbox |
 | 22 | **incubate** | skill | Clone or create repos for active development |
 | 23 | **mailbox** | skill | 'Persistent agent mailbox |
-| 24 | **release-alpha** | skill | "Cut an alpha pre-release |
-| 25 | **release-beta** | skill | "Cut a beta pre-release |
-| 26 | **resonance** | skill | Capture a resonance moment |
-| 27 | **standup** | skill | Daily standup check |
-| 28 | **talk-to** | skill | Talk to another Oracle agent |
-| 29 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 30 | **trace** | skill | Find projects, code |
-| 31 | **watch** | skill | 'Extract YouTube video transcripts |
-| 32 | **where-we-are** | skill | Session awareness |
-| 33 | **who-are-you** | skill | Know ourselves |
-| 34 | **worktree** | skill | 'Work in an isolated git worktree |
-| 35 | **xray** | skill | X-ray deep scan |
+| 24 | **oracle-up** | skill | '[standard] G-SKLL | Bring up a Docker-first |
+| 25 | **release-alpha** | skill | "Cut an alpha pre-release |
+| 26 | **release-beta** | skill | "Cut a beta pre-release |
+| 27 | **resonance** | skill | Capture a resonance moment |
+| 28 | **standup** | skill | Daily standup check |
+| 29 | **talk-to** | skill | Talk to another Oracle agent |
+| 30 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 31 | **trace** | skill | Find projects, code |
+| 32 | **watch** | skill | 'Extract YouTube video transcripts |
+| 33 | **where-we-are** | skill | Session awareness |
+| 34 | **who-are-you** | skill | Know ourselves |
+| 35 | **worktree** | skill | 'Work in an isolated git worktree |
+| 36 | **xray** | skill | X-ray deep scan |
 
 </details>
 
@@ -118,8 +119,8 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 |---------|-------|--------|
 | **minimal** | 6 | `about-oracle`, `forward`, `go`, `recap`, `rrr`, `trace` |
 | **standard** | 12 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace` |
-| **full** | 35 | all |
-| **lab** | 35 | all |
+| **full** | 36 | all |
+| **lab** | 36 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

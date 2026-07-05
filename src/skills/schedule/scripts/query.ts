@@ -2,10 +2,9 @@
 // Query schedule via Oracle HTTP API (backed by Drizzle DB)
 // Usage: bun query.ts [filter]
 // Filters: today, tomorrow, week, month, march, <keyword>
-export {};
+import { oracleApiBase, oracleJson } from "./oracle-http.js";
 
 const filter = process.argv[2] || "upcoming";
-const API = process.env.ORACLE_API || "http://localhost:47778";
 
 const MONTHS: Record<string, string> = {
   jan: "01", january: "01", feb: "02", february: "02",
@@ -76,14 +75,7 @@ switch (filter.toLowerCase()) {
 }
 
 try {
-  const res = await fetch(`${API}/api/schedule?${params}`);
-  if (!res.ok) {
-    console.error(`API error: ${res.status} ${res.statusText}`);
-    console.error("Is the Oracle server running? Start with: bun src/server.ts");
-    process.exit(1);
-  }
-
-  const data = await res.json() as {
+  const data = await oracleJson<{
     total: number;
     events: Array<{
       id: number;
@@ -96,7 +88,7 @@ try {
       status: string;
     }>;
     byDate: Record<string, any[]>;
-  };
+  }>("/schedule", { query: params });
 
   if (data.total === 0) {
     console.log(`No events found for: ${filter}`);
@@ -119,8 +111,8 @@ try {
   console.log(`\n📄 \`ψ/inbox/schedule.md\``);
 } catch (e: any) {
   if (e.code === "ConnectionRefused" || e.message?.includes("fetch")) {
-    console.error("Cannot connect to Oracle API at " + API);
-    console.error("Start the server: cd arra-oracle-v3 && bun src/server.ts");
+    console.error("Cannot connect to Oracle API at " + oracleApiBase());
+    console.error("Start the server: docker run ... ghcr.io/soul-brews-studio/arra-oracle-v3:http");
   } else {
     console.error("Error:", e.message);
   }

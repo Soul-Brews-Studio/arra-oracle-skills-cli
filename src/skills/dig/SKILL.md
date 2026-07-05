@@ -175,7 +175,7 @@ When `--timeline` flag is present, group sessions by date instead of a flat tabl
 After displaying the timeline, log the discovery to Oracle so it's searchable later:
 
 ```
-arra_trace({
+oracle_trace({
   query: "dig session [N]",
   project: "[repo-name]",
   foundFiles: [],

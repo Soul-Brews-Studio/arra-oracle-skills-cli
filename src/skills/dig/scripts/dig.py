@@ -50,6 +50,13 @@ tz_offset, tz_name = detect_tz()
 
 
 def build_repo_map():
+    # `ghq list -p` maps encoded project-dir names → real repo names, but it can
+    # take several seconds on machines with a large ghq root — and it runs on
+    # every dig/recap/rrr invocation. DIG_SKIP_REPO_MAP=1 skips the subprocess
+    # entirely: repo names then fall back to get_repo_name()'s own parsing. The
+    # e2e test sets it so it stays hermetic (no ghq dependency) and fast.
+    if os.environ.get('DIG_SKIP_REPO_MAP', '').lower() in ('1', 'true', 'yes', 'on'):
+        return {}
     mapping = {}
     try:
         r = subprocess.run(['ghq', 'list', '-p'], capture_output=True, text=True, timeout=5)

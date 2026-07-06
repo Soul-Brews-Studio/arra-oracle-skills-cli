@@ -25,31 +25,8 @@ describe("installer behavior by agent type", () => {
     }
   });
 
-  describe("compiled stub format", () => {
-    it("should have instruction format (not full content)", async () => {
-      // Copy a stub to test directory
-      const stubContent = await readFile(
-        join(process.cwd(), "src/commands", "trace.md"),
-        "utf-8"
-      );
-      
-      // Stub should tell agent to execute skill with args
-      expect(stubContent).toContain("Execute the `trace` skill");
-      expect(stubContent).toContain("## Instructions");
-      expect(stubContent).toContain("$ARGUMENTS");
-      expect(stubContent).not.toContain("## Step 0:");
-    });
-
-    it("stub should include skill location", async () => {
-      const stubContent = await readFile(
-        join(process.cwd(), "src/commands", "standup.md"),
-        "utf-8"
-      );
-
-      // Should tell agent where to find full skill
-      expect(stubContent).toContain("~/.claude/skills/standup/SKILL.md");
-    });
-  });
+  // Repo-level command stubs (src/commands/) no longer exist — the installer
+  // generates agent-specific stubs inline at install time (installer.ts).
 
   describe("Claude Code install format", () => {
     it("should install directories with SKILL.md (full content)", async () => {
@@ -98,15 +75,4 @@ describe("installer behavior by agent type", () => {
     });
   });
 
-  describe("hardcoded paths in stubs", () => {
-    it("should have hardcoded skill path (no placeholder)", async () => {
-      const stub = await readFile(
-        join(process.cwd(), "src/commands", "trace.md"),
-        "utf-8"
-      );
-
-      expect(stub).toContain("~/.claude/skills/trace/SKILL.md");
-      expect(stub).not.toContain("{skillPath}");
-    });
-  });
 });

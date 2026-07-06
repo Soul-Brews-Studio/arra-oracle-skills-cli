@@ -5,8 +5,7 @@
     "url": "https://github.com/Soul-Brews-Studio"
   },
   "metadata": {
-    "description": "Oracle Skills — symbiotic-intelligence skills for Claude Code and friends",
-    "version": "26.5.16"
+    "description": "Oracle Skills — symbiotic-intelligence skills for Claude Code and friends"
   },
   "plugins": [
     {

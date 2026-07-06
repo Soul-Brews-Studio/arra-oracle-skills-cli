@@ -139,30 +139,6 @@ describe("integration: OpenCode global install", () => {
   });
 });
 
-describe("integration: compiled stubs", () => {
-  const COMMANDS_DIR = join(process.cwd(), "src/commands");
-
-  it("compiled stubs should exist", async () => {
-    expect(existsSync(COMMANDS_DIR)).toBe(true);
-
-    const stubs = await readdir(COMMANDS_DIR);
-    expect(stubs.length).toBeGreaterThan(0);
-    expect(stubs).toContain("rrr.md");
-  });
-
-  it("compiled stub should have instruction format", async () => {
-    const stubPath = join(COMMANDS_DIR, "rrr.md");
-    const content = await readFile(stubPath, "utf-8");
-
-    // Should have version
-    expect(content).toMatch(/v\d+\.\d+\.\d+/);
-
-    // Should have instructions
-    expect(content).toContain("## Instructions");
-    expect(content).toContain("Read the skill file");
-    expect(content).toContain("$ARGUMENTS");
-
-    // Should have skill path in instructions
-    expect(content).toContain("~/.claude/skills");
-  });
-});
+// "integration: compiled stubs" removed — src/commands/ no longer exists.
+// The installer generates agent-specific command stubs inline at install time;
+// see "integration: OpenCode global install" above for the installed-stub checks.

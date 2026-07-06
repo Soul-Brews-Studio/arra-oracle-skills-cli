@@ -62,7 +62,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install
-      - name: Compile skills to commands
+      - name: Validate skills + generate manifest
         run: bun run compile
-      - name: Verify compiled commands exist
-        run: ls src/commands/*.md | wc -l
+      - name: Verify marketplace.json is current (committed manifest matches skills)
+        run: git diff --exit-code .claude-plugin/marketplace.json

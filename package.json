@@ -16,7 +16,7 @@
     "test": "bun test __tests__/",
     "compile": "bun scripts/compile.ts",
     "calver": "bun scripts/calver.ts",
-    "version": "bun run compile && bun scripts/update-readme-table.ts && git add src/commands README.md",
+    "version": "bun run compile && bun scripts/update-readme-table.ts && git add .claude-plugin/marketplace.json README.md",
     "prepare": "lefthook install",
     "prepublishOnly": "bun run compile && bun run build",
     "clawhub": "bun scripts/clawhub-build.ts"

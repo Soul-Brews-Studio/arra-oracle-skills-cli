@@ -1,21 +1,24 @@
 # Oracle Skills CLI
 
-## Commands are Auto-Generated
+## Skills are the Only Source of Truth
 
-**DO NOT manually edit `src/commands/*.md`** — they are auto-generated!
+There is **no `src/commands/` directory anymore**. Command stubs are generated
+inline by the installer at install time (`src/cli/installer.ts`) for agents that
+need them (OpenCode, Codex, Gemini). Claude Code invokes SKILL.md directly as `/name`.
 
 ### How It Works
 
 ```
-src/skills/         →  bun run compile  →  src/commands/
-(SKILL.md files)                          (auto-generated stubs)
+src/skills/         →  bun run compile  →  .claude-plugin/marketplace.json
+(SKILL.md files)       (validate +          (curated allowlist manifest)
+                        manifest)
 ```
 
 ### Workflow
 
 1. Edit skill in `src/skills/{name}/SKILL.md`
-2. Run `bun run compile` to regenerate commands
-3. Commands are committed via `bun run version`
+2. Run `bun run compile` — validates frontmatter + regenerates marketplace.json
+3. Commit the marketplace.json change with your skill change (CI fails on drift)
 
 ### Creating New Skills
 
@@ -32,12 +35,20 @@ description: Short description shown in skill list. Use when user says "trigger 
 Full documentation here...
 ```
 
-The compile script:
-1. Reads `description` from frontmatter
-2. Prepends version: `v{version} | {description}`
-3. Generates command stub in `src/commands/`
+The compile script validates against the official Agent Skills spec and **fails on**:
+- `name` >64 chars, not lowercase/digits/hyphens, or containing "claude"/"anthropic"
+- `description` missing, >1024 chars, or containing XML tags
+- missing frontmatter block
 
-**Without frontmatter:** Skill won't compile and shows as "(user)" in list.
+It **warns** (doesn't fail) when SKILL.md exceeds 500 lines — move detail to `references/`.
+
+### Curation tiers → marketplace.json
+
+`.claude-plugin/marketplace.json` is the explicit allowlist external ecosystems
+read. Skills flagged `secret: true`, `hidden: true`, or `zombie: true` in
+frontmatter (and everything under `src/skills/.archive/`) are **never listed**.
+Note: unlisted ≠ private — files in this public repo are still readable by
+anyone; see issue #441.
 
 ### Installing Skills (Auto-Reload)
 
@@ -132,18 +143,27 @@ gh pr create --base main --head alpha --title "release: vYY.M.D"
 **`/alpha-feature`** commits to `alpha` branch.
 **`/release-alpha`** tags from `alpha` branch (and only it should ever target main).
 
-## Version Workflow
+## Version Workflow — always /calver, never manual
+
+Versions are **CalVer computed from date + time**: `v{yy}.{m}.{d}-alpha.{HMM}`
+(e.g. 2026-07-06 10:44 → `v26.7.6-alpha.1044`). Never type a version by hand.
 
 ```bash
-# Bump version
-npm version 3.3.0-alpha.N --no-git-tag-version
+# Preview what the next version would be (no writes)
+bun run calver -- --check
+
+# Bump (writes package.json) — do this on alpha branch, at release time only
+bun run calver
 
 # Compile + test
 bun run compile
 bun test
 
-# Commit + tag (on alpha branch!)
-git add -A && git commit
-git tag vX.Y.Z-alpha.N
-git push origin alpha --tags
+# Commit + push (on alpha branch!) — CI tags + publishes from the bump commit
+git add -A && git commit -m "bump: vYY.M.D-alpha.HMM"
+git push origin alpha
 ```
+
+Note: `bun run calver` writes package.json immediately — it is NOT a dry run.
+marketplace.json intentionally carries no version field, so calver bumps never
+touch it.

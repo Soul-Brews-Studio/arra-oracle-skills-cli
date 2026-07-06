@@ -64,6 +64,10 @@ export const ZOMBIE_SKILLS = [
   'oracle-soul-sync-update',
   // 2026-05-14: lites killed — 900 chars savings wasn't worth 4 PRs of bugs.
   'forward-lite', 'recap-lite', 'rrr-lite',
+  // 2026-07-05: infra-specific (remote oracle-node provisioning) — too narrow
+  // for the general skill set. Proven in the field (arra → natz-ai-01) but
+  // opt-in only: `arra install -s oracle-up`.
+  'oracle-up',
 ] as const;
 
 /** Return the source directory for a skill by name — `.archive/` for zombies,

@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
+import { readdir, readFile, writeFile, mkdir, unlink } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import pkg from '../package.json' with { type: 'json' };
@@ -21,6 +21,7 @@ async function compile() {
   const skills = await readdir(SKILLS_DIR, { withFileTypes: true });
 
   let count = 0;
+  const written = new Set<string>();
 
   for (const dirent of skills) {
     if (!dirent.isDirectory() || dirent.name.startsWith('.') || dirent.name === '_template') continue;
@@ -75,6 +76,7 @@ Execute the \`${skillName}\` skill with the provided arguments.
 `;
 
         await writeFile(join(COMMANDS_DIR, `${skillName}.md`), commandContent);
+        written.add(`${skillName}.md`);
         console.log(`✓ ${skillName} (v${pkg.version})`);
         count++;
       }
@@ -107,10 +109,22 @@ This is an alias for \`/${target}\`. Use the Skill tool with \`skill: "${target}
 *oracle-skills-cli v${pkg.version}*
 `;
       await writeFile(join(COMMANDS_DIR, `${alias}.md`), aliasContent);
+      written.add(`${alias}.md`);
     }
   }
 
-  console.log(`\n✨ Compiled ${count} skill stubs + ${Object.keys(aliases).length} alias(es) to ${COMMANDS_DIR}`);
+  // Prune stale stubs: any .md in COMMANDS_DIR that wasn't (re)written this run
+  // means its source skill was renamed/archived/removed — delete the leftover.
+  let pruned = 0;
+  for (const f of await readdir(COMMANDS_DIR)) {
+    if (f.endsWith('.md') && !written.has(f)) {
+      await unlink(join(COMMANDS_DIR, f));
+      console.log(`✗ pruned stale stub: ${f}`);
+      pruned++;
+    }
+  }
+
+  console.log(`\n✨ Compiled ${count} skill stubs + ${Object.keys(aliases).length} alias(es) to ${COMMANDS_DIR}${pruned > 0 ? ` (pruned ${pruned} stale stub${pruned === 1 ? '' : 's'})` : ''}`);
 }
 
 compile().catch(console.error);

@@ -78,6 +78,11 @@ function runDig(args: string[]): { stdout: string; stderr: string; exitCode: num
       PROJECT_DIRS: FIXTURE_DIR,
       // Force UTC so timestamps are deterministic
       MAW_DISPLAY_TZ: "0",
+      // Skip the `ghq list -p` subprocess — on a dev machine with a big ghq root
+      // it takes ~5s per call (and hits dig.py's 5s timeout → empty stdout →
+      // flaky failures). We don't assert repo-name values, so this keeps the
+      // suite hermetic and fast without changing what's tested.
+      DIG_SKIP_REPO_MAP: "1",
     },
     encoding: "utf-8",
     timeout: 15_000,
@@ -291,7 +296,7 @@ describe("fix #274 — timezone detection", () => {
   it("respects MAW_DISPLAY_TZ env var", () => {
     // MAW_DISPLAY_TZ=0 → UTC; timestamps should show UTC times
     const result = spawnSync("python3", [DIG_PY, "10"], {
-      env: { ...process.env, PROJECT_DIRS: FIXTURE_DIR, MAW_DISPLAY_TZ: "0" },
+      env: { ...process.env, PROJECT_DIRS: FIXTURE_DIR, MAW_DISPLAY_TZ: "0", DIG_SKIP_REPO_MAP: "1" },
       encoding: "utf-8",
       timeout: 15_000,
     });
@@ -305,7 +310,7 @@ describe("fix #274 — timezone detection", () => {
   it("timezone offset shifts timestamps correctly", () => {
     // MAW_DISPLAY_TZ=7 → GMT+7; 08:00Z + 7h = 15:00
     const result = spawnSync("python3", [DIG_PY, "10"], {
-      env: { ...process.env, PROJECT_DIRS: FIXTURE_DIR, MAW_DISPLAY_TZ: "7" },
+      env: { ...process.env, PROJECT_DIRS: FIXTURE_DIR, MAW_DISPLAY_TZ: "7", DIG_SKIP_REPO_MAP: "1" },
       encoding: "utf-8",
       timeout: 15_000,
     });

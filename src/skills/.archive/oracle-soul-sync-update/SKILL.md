@@ -1,6 +1,7 @@
 ---
 name: oracle-soul-sync-update
 description: Sync Oracle instruments with the family. Check and update skills to latest version. Use when user says "soul-sync", "sync", "calibrate", "update", or before /awaken.
+zombie: true
 ---
 
 # /oracle-soul-sync-update

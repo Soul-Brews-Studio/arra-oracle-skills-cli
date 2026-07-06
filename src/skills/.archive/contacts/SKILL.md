@@ -2,6 +2,7 @@
 name: contacts
 description: Manage Oracle contacts — add, list, remove agents with their transport info (maw, inbox, thread). Use when user says "contacts", "add contact", "register agent", "who can I talk to", "list contacts". Do NOT trigger for sending messages (use /talk-to) or family registry (use /oracle-family-scan).
 argument-hint: "[list | add <name> | remove <name> | show <name>]"
+zombie: true
 ---
 
 # /contacts - Oracle Contact Registry

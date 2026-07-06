@@ -1,6 +1,6 @@
 ---
 name: calver
-description: Show or bump CalVer version via bun scripts/calver.ts in arra-oracle-skills-cli. Default is dry-run --check. Read-only by default; `--apply` writes package.json. **For full release flow (commit + push + PR), use /release-alpha or /release-stable instead** — /calver alone never commits, pushes, or PRs.
+description: Show or bump the project's CalVer version. Use when user says "calver", "bump version", "what version", or wants to check or set the skills version. For the full release flow (commit + push + PR) use /release-alpha or /release-stable instead — /calver alone never commits, pushes, or PRs.
 ---
 
 # /calver

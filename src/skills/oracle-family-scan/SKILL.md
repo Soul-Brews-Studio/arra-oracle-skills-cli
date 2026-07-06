@@ -1,6 +1,6 @@
 ---
 name: oracle-family-scan
-description: Oracle Family Registry — scan, query, welcome. 186+ Oracles indexed. Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
+description: Oracle Family Registry — the index of all known Oracles (186+). Use when user says "family scan", "oracle registry", "welcome new oracles", or needs to check Oracle population.
 argument-hint: "[--scan | --query <name> | --welcome | --activity-report | --timeline | --usage | --calibrate]"
 ---
 

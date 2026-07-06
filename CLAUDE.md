@@ -50,6 +50,20 @@ frontmatter (and everything under `src/skills/.archive/`) are **never listed**.
 Note: unlisted ≠ private — files in this public repo are still readable by
 anyone; see issue #441.
 
+**Deciding what to zombie/archive** is data-driven, not vibes. Run the usage
+census over your real Claude Code transcripts before demoting anything:
+
+```bash
+scripts/skill-usage-census.py                       # all skills, markdown table
+scripts/skill-usage-census.py --skills recap,dig    # just these
+scripts/skill-usage-census.py --json                # + monthly histogram
+```
+
+It counts user-typed (`/name`) and agent-invoked (Skill tool) hits separately by
+parsing JSONL structurally (not `grep` — tool_result echoes and prose mentions
+would inflate a raw count), and dedups cross-file copies left behind by repo
+renames. `__tests__/census.test.ts` locks in those four behaviours.
+
 ### Installing Skills (Auto-Reload)
 
 **DO NOT manually copy to `~/.claude/skills/`** — use the installer!

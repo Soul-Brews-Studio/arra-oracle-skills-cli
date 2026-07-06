@@ -42,6 +42,7 @@
         "./src/skills/talk-to",
         "./src/skills/team-agents",
         "./src/skills/trace",
+        "./src/skills/verification-gate-fail-closed",
         "./src/skills/watch",
         "./src/skills/where-we-are",
         "./src/skills/who-are-you",

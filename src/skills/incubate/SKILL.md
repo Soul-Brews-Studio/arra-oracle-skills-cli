@@ -187,12 +187,24 @@ ${LEARNED_FROM}
 BREADCRUMB
 
 echo "✓ Breadcrumb dropped: $TARGET_REPO/.claude/INCUBATED_BY"
+
+# Keep the breadcrumb OUT of the target repo's git history (#447).
+# .git/info/exclude is local-only (never committed) — right home for
+# machine-local metadata. Do NOT touch the target's .gitignore.
+if [ -d "$TARGET_REPO/.git" ]; then
+  grep -qxF '.claude/INCUBATED_BY' "$TARGET_REPO/.git/info/exclude" 2>/dev/null \
+    || echo '.claude/INCUBATED_BY' >> "$TARGET_REPO/.git/info/exclude"
+  echo "✓ Excluded from git: .claude/INCUBATED_BY (local .git/info/exclude)"
+fi
 ```
 
 The breadcrumb enables:
 - **Orphan detection**: Any Claude session can check who tracks this repo
 - **Provenance chain**: `learned-from` links /learn → /incubate (#232)
 - **/recap awareness**: /recap shows a warning when INCUBATED_BY exists (#229)
+
+The breadcrumb is machine-local — it must never appear in the target repo's
+git history. If a repo already committed one: `git rm --cached .claude/INCUBATED_BY` (#447).
 
 ### If just a name (no slash, no URL)
 

@@ -2,6 +2,7 @@
 name: inbox
 description: Read and write to Oracle inbox — notes, tasks, messages, handoffs. Use when user says "inbox", "leave a note", "write to inbox", "check inbox", "what's pending", or wants to read/write messages for self or other agents. Do NOT trigger for session handoffs (use /forward), schedule (use /schedule), or agent messaging (use /talk-to).
 argument-hint: "[read | write <topic> | ls | clean]"
+zombie: true
 ---
 
 # /inbox - Oracle Inbox

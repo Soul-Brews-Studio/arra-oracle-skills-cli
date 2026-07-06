@@ -113,6 +113,32 @@ async function compile() {
     }
   }
 
+  // ── Archive integrity gate ─────────────────────────────────────────────
+  // Every skill parked under src/skills/.archive/ MUST carry a curation flag
+  // (zombie/secret/hidden) in its frontmatter. That flag is the ONLY zombie
+  // signal that survives into the compiled binary: the VFS (scripts/generate-vfs.ts)
+  // flattens active + archived skills into one name→files map with NO .archive/
+  // path info, so discoverSkills() in compiled mode can't tell them apart by
+  // location. A skill moved to .archive/ but left unflagged therefore silently
+  // leaks back into the `full`/`lab` install profiles. This gate fails the
+  // build the moment that happens (regression: 2026-07 zombie round 2 moved 11
+  // skills to .archive/ but forgot the frontmatter flag → they kept installing).
+  const archiveDir = join(SKILLS_DIR, '.archive');
+  if (existsSync(archiveDir)) {
+    for (const dirent of await readdir(archiveDir, { withFileTypes: true })) {
+      if (!dirent.isDirectory() || dirent.name.startsWith('.')) continue;
+      const md = join(archiveDir, dirent.name, 'SKILL.md');
+      if (!existsSync(md)) continue;
+      const fm = (await readFile(md, 'utf-8')).split(/^---\s*$/m)[1] ?? '';
+      if (!/(zombie|secret|hidden):\s*(true|yes)/i.test(fm)) {
+        errors.push({
+          skill: `.archive/${dirent.name}`,
+          message: 'archived skill lacks a zombie/secret/hidden frontmatter flag — it would leak into full/lab install (the compiled VFS has no .archive/ path signal). Add `zombie: true` to its frontmatter.',
+        });
+      }
+    }
+  }
+
   // ── .claude-plugin/marketplace.json — explicit allowlist manifest ──────
   // The only curation mechanism external ecosystems honor (Claude Code
   // plugin marketplaces read this; nothing scans for unlisted skills).

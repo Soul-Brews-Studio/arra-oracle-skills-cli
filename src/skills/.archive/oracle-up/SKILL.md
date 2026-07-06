@@ -2,6 +2,7 @@
 name: oracle-up
 description: '[standard] G-SKLL | Bring up a whole oracle node on a remote host — provision the user, install the full toolchain (maw-js, arra-oracle-skills, arra-oracle MCP v3, omx), create the oracle repo, and stand up its Claude-leader + omx-coder team. Idempotent, dry-run by default. Use when user says "oracle-up", "bring up an oracle", "new oracle node", "provision oracle on <host>", or wants a fresh self-sufficient oracle on a remote machine. Do NOT trigger for local identity setup (use /awaken), repo-only creation (use /bud), or cloning for dev (use /incubate).'
 argument-hint: "<name> --host <host> --user <user> [--port N] [--mirror nat] [--apply]"
+zombie: true
 ---
 
 # /oracle-up — Bring Up a Whole Oracle Node

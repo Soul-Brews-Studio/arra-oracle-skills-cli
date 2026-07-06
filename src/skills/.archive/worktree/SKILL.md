@@ -2,6 +2,7 @@
 name: worktree
 description: 'Work in an isolated git worktree — safe parallel editing, experimental branches, throwaway spikes. Use when user says "worktree", "isolate", "safe branch", "spike", "experiment", or wants to work without touching main.'
 argument-hint: "[<name> | list | exit | clean]"
+zombie: true
 ---
 
 # /worktree — Isolated Work

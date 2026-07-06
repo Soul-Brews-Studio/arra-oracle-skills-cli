@@ -9,6 +9,15 @@ export function registerProfiles(program: Command) {
     .action(async (name?: string) => {
       const allSkills = await discoverSkills();
       const allNames = allSkills.map((s) => s.name);
+      // Secret + zombie skills are excluded from every profile — pass them to
+      // resolveProfile so this display matches what `install` actually resolves.
+      // Omitting them made `lab` print all 68 discovered skills (incl. archived
+      // zombies) instead of the ~36 it really installs.
+      const secretNames = allSkills.filter((s) => s.secret).map((s) => s.name);
+      const zombieNames = allSkills.filter((s) => s.zombie).map((s) => s.name);
+      const cleanAll = allNames.filter(
+        (s) => !secretNames.includes(s) && !zombieNames.includes(s),
+      );
 
       if (name) {
         if (!profiles[name]) {
@@ -16,16 +25,16 @@ export function registerProfiles(program: Command) {
           console.log(`  Available: ${Object.keys(profiles).join(', ')}\n`);
           return;
         }
-        const skills = resolveProfile(name, allNames) || allNames;
+        const skills = resolveProfile(name, allNames, secretNames, zombieNames) || cleanAll;
         console.log(`\n  Profile: ${name} (${skills.length} skills)`);
         console.log(`  Skills: ${skills.join(', ')}\n`);
         return;
       }
 
       console.log('\n  Available profiles:\n');
-      for (const [pName, profile] of Object.entries(profiles)) {
-        const skills = resolveProfile(pName, allNames);
-        const count = skills ? skills.length : allNames.length;
+      for (const [pName] of Object.entries(profiles)) {
+        const skills = resolveProfile(pName, allNames, secretNames, zombieNames);
+        const count = skills ? skills.length : cleanAll.length;
         console.log(`    ${pName.padEnd(12)} ${count} skills`);
       }
       console.log(`\n  Usage: arra-oracle-skills install -g -y -p <profile>\n`);

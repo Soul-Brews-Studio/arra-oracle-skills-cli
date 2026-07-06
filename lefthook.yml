@@ -11,3 +11,8 @@ pre-commit:
     skill-convention:
       glob: 'src/skills/**/*.md'
       run: bash scripts/check_skill_convention.sh
+    skill-scripts-exec:
+      # Every .ts/.sh under src/skills/*/scripts/ must be committed +x (mode
+      # 100755) or shebang scripts break with "permission denied". Runs on every
+      # commit — mode drift can arrive via checkout/rebase, not just script edits.
+      run: bash scripts/check_skill_scripts_exec.sh

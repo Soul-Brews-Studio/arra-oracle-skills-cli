@@ -31,10 +31,10 @@ describe("recap scripts", () => {
   it("recap.ts", async () => expect(await run(`${S}/recap/recap.ts`)).toContain("RECAP"));
 });
 
-describe("schedule scripts", () => {
+describe("schedule scripts (zombie tier — still installable via -s schedule)", () => {
   // Skip calendar.ts on CI - `cal` command not available on Linux runners
-  it.skipIf(!!process.env.CI || !!process.env.SKIP_CAL)("calendar.ts", async () => expect(await run(`${S}/schedule/scripts/calendar.ts`)).toMatch(/\d{4}|Su Mo Tu/));
-  it("query.ts", async () => expect(await run(`${S}/schedule/scripts/query.ts`)).toMatch(/Schedule|No events|Cannot connect/));
+  it.skipIf(!!process.env.CI || !!process.env.SKIP_CAL)("calendar.ts", async () => expect(await run(`${S}/.archive/schedule/scripts/calendar.ts`)).toMatch(/\d{4}|Su Mo Tu/));
+  it("query.ts", async () => expect(await run(`${S}/.archive/schedule/scripts/query.ts`)).toMatch(/Schedule|No events|Cannot connect/));
 });
 
 // watch scripts moved to arra-symbiosis-skills

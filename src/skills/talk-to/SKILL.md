@@ -8,6 +8,11 @@ argument-hint: "<agent-name> [message] [--maw | --thread | --inbox]"
 
 Send messages to agents via Oracle threads. Each agent has a persistent channel thread.
 
+> **Messaging consolidation (2026-07-06):** /hey, /contacts, /mailbox, and /inbox were
+> archived to the zombie tier — this skill is the one messaging verb now. For real-time
+> tmux pings use `maw hey` directly (or `--maw` here). Archived skills remain installable
+> via `arra install -s <name>`.
+
 ## Usage
 
 ```

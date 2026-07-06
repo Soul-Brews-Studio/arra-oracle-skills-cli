@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-35 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+36 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -64,7 +64,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>35 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>36 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -80,13 +80,13 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 8 | **awaken** | skill | "Guided Oracle birth and awakening ritual |
 | 9 | **bampenpien** | skill | "บำเพ็ญเพียร |
 | 10 | **bud** | skill | 'Create a new oracle via maw bud |
-| 11 | **calver** | skill | Show or bump CalVer version |
+| 11 | **calver** | skill | Show or bump the project's CalVer version |
 | 12 | **contacts** | skill | Manage Oracle contacts |
 | 13 | **create-shortcut** | skill | Create local skills as shortcuts |
 | 14 | **dig** | skill | Mine Claude Code sessions |
 | 15 | **dream** | skill | 'Speculative dreaming |
 | 16 | **feel** | skill | "Capture how the system feels |
-| 17 | **forward** | skill | Create handoff + enter plan mode for next |
+| 17 | **forward** | skill | Hand off the current session to the next one |
 | 18 | **fyi** | skill | Log information for future reference |
 | 19 | **go** | skill | Manage Oracle skills |
 | 20 | **hey** | skill | Talk to another oracle via maw federation |
@@ -100,11 +100,12 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 28 | **talk-to** | skill | Talk to another Oracle agent |
 | 29 | **team-agents** | skill | Spin up coordinated agent teams for any task |
 | 30 | **trace** | skill | Find projects, code |
-| 31 | **watch** | skill | 'Extract YouTube video transcripts |
-| 32 | **where-we-are** | skill | Session awareness |
-| 33 | **who-are-you** | skill | Know ourselves |
-| 34 | **worktree** | skill | 'Work in an isolated git worktree |
-| 35 | **xray** | skill | X-ray deep scan |
+| 31 | **verification-gate-fail-closed** | skill | Reference for building verification gates |
+| 32 | **watch** | skill | 'Extract YouTube video transcripts |
+| 33 | **where-we-are** | skill | Session awareness |
+| 34 | **who-are-you** | skill | Know ourselves |
+| 35 | **worktree** | skill | 'Work in an isolated git worktree |
+| 36 | **xray** | skill | X-ray deep scan |
 
 </details>
 
@@ -118,8 +119,8 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 |---------|-------|--------|
 | **minimal** | 6 | `about-oracle`, `forward`, `go`, `recap`, `rrr`, `trace` |
 | **standard** | 12 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace` |
-| **full** | 35 | all |
-| **lab** | 35 | all |
+| **full** | 36 | all |
+| **lab** | 36 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

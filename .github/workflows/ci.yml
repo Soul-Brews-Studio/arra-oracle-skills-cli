@@ -66,3 +66,5 @@ jobs:
         run: bun run compile
       - name: Verify marketplace.json is current (committed manifest matches skills)
         run: git diff --exit-code .claude-plugin/marketplace.json
+      - name: Verify skill scripts are executable (mode 100755)
+        run: bash scripts/check_skill_scripts_exec.sh

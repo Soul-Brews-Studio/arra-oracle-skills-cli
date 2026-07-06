@@ -1,0 +1,53 @@
+{
+  "name": "oracle-skills",
+  "owner": {
+    "name": "Nat Weerawan",
+    "url": "https://github.com/Soul-Brews-Studio"
+  },
+  "metadata": {
+    "description": "Oracle Skills — symbiotic-intelligence skills for Claude Code and friends"
+  },
+  "plugins": [
+    {
+      "name": "oracle-skills",
+      "source": ".",
+      "description": "Curated Oracle skill set (secret/archived tiers are intentionally not listed)",
+      "strict": false,
+      "skills": [
+        "./src/skills/about-oracle",
+        "./src/skills/awaken",
+        "./src/skills/bampenpien",
+        "./src/skills/bud",
+        "./src/skills/calver",
+        "./src/skills/contacts",
+        "./src/skills/create-shortcut",
+        "./src/skills/dig",
+        "./src/skills/dream",
+        "./src/skills/feel",
+        "./src/skills/forward",
+        "./src/skills/fyi",
+        "./src/skills/go",
+        "./src/skills/hey",
+        "./src/skills/inbox",
+        "./src/skills/incubate",
+        "./src/skills/learn",
+        "./src/skills/mailbox",
+        "./src/skills/oracle-family-scan",
+        "./src/skills/project",
+        "./src/skills/recap",
+        "./src/skills/resonance",
+        "./src/skills/rrr",
+        "./src/skills/schedule",
+        "./src/skills/standup",
+        "./src/skills/talk-to",
+        "./src/skills/team-agents",
+        "./src/skills/trace",
+        "./src/skills/watch",
+        "./src/skills/where-we-are",
+        "./src/skills/who-are-you",
+        "./src/skills/worktree",
+        "./src/skills/xray"
+      ]
+    }
+  ]
+}

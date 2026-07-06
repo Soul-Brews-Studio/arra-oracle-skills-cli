@@ -14,6 +14,8 @@
     "build": "bun scripts/ensure-vfs-stub.ts && bun build src/cli/index.ts --outdir dist --target bun --minify",
     "dev": "bun run src/cli/index.ts",
     "test": "bun test __tests__/",
+    "test:e2e": "bun test ./tests-e2e/",
+    "test:full": "bun test ./__tests__/ ./tests-e2e/",
     "compile": "bun scripts/compile.ts",
     "calver": "bun scripts/calver.ts",
     "version": "bun run compile && bun scripts/update-readme-table.ts && git add .claude-plugin/marketplace.json README.md",

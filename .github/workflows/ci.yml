@@ -15,7 +15,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun run compile
-      - run: bun test
+      - run: bun run test:full
 
   smoke:
     name: Smoke (${{ matrix.os }})

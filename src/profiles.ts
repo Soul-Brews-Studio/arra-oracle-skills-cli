@@ -27,10 +27,11 @@ export const STANDARD_SKILLS = [
   'learn', 'recap', 'rrr', 'talk-to', 'team-agents', 'trace',
 ] as const;
 
-/** Lab-only skills — experimental, not in standard or full */
+/** Lab-only skills — experimental, not in standard or full.
+ *  2026-07-06 zombie round 2 removed: contacts, feel, hey, inbox, mailbox,
+ *  schedule, worktree, xray (usage census over 15,895 sessions). */
 export const LAB_SKILLS = [
-  'contacts', 'dream', 'feel', 'fyi', 'hey', 'inbox', 'mailbox',
-  'schedule', 'watch', 'worktree', 'xray',
+  'dream', 'fyi', 'watch',
 ] as const;
 
 /** Minimal-only — DEPRECATED, kept as empty for backward compat with imports.
@@ -68,6 +69,13 @@ export const ZOMBIE_SKILLS = [
   // for the general skill set. Proven in the field (arra → natz-ai-01) but
   // opt-in only: `arra install -s oracle-up`.
   'oracle-up',
+  // 2026-07-06 zombie round 2 — usage census over 15,895 sessions (Nat approved):
+  // schedule (5 uses, stale), worktree (5 uses, last 2026-02; harness has native
+  // worktrees now), standup (1 use; /recap covers it), xray (0), feel (0),
+  // and the messaging consolidation — hey (9; superseded by `maw hey` CLI),
+  // contacts (19), mailbox (1), inbox (1) all fold into /talk-to (41 uses).
+  'schedule', 'worktree', 'standup', 'xray', 'feel',
+  'hey', 'contacts', 'mailbox', 'inbox',
 ] as const;
 
 /** Return the source directory for a skill by name — `.archive/` for zombies,

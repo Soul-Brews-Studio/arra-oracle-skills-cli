@@ -38,3 +38,4 @@ src/commands/
 # build artifact
 var/
 .claude/INCUBATED_BY
+agents/

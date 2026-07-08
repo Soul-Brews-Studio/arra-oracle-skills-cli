@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-27 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
+30 skills for AI coding agents. Give your AI persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -71,7 +71,7 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 <!-- skills:start -->
 
 <details>
-<summary>📚 <strong>27 skills installed</strong> — click to expand</summary>
+<summary>📚 <strong>30 skills installed</strong> — click to expand</summary>
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -94,16 +94,19 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 | 15 | **fyi** | skill | Log information for future reference |
 | 16 | **go** | skill | Manage Oracle skills |
 | 17 | **incubate** | skill | Clone or create repos for active development |
-| 18 | **release-alpha** | skill | "Cut an alpha pre-release |
-| 19 | **release-beta** | skill | "Cut a beta pre-release |
-| 20 | **resonance** | skill | Capture a resonance moment |
-| 21 | **talk-to** | skill | Talk to another Oracle agent |
-| 22 | **team-agents** | skill | Spin up coordinated agent teams for any task |
-| 23 | **trace** | skill | Find projects, code |
-| 24 | **verification-gate-fail-closed** | skill | Reference for building verification gates |
-| 25 | **watch** | skill | 'Extract YouTube video transcripts |
-| 26 | **where-we-are** | skill | Session awareness |
-| 27 | **who-are-you** | skill | Know ourselves |
+| 18 | **kien-thai** | skill | Write Thai-language prose (technical |
+| 19 | **oracle-cheatsheet** | skill | "Generate a copy-paste cheat sheet from the |
+| 20 | **oracle-prism** | skill | 'Multi-perspective analysis |
+| 21 | **release-alpha** | skill | "Cut an alpha pre-release |
+| 22 | **release-beta** | skill | "Cut a beta pre-release |
+| 23 | **resonance** | skill | Capture a resonance moment |
+| 24 | **talk-to** | skill | Talk to another Oracle agent |
+| 25 | **team-agents** | skill | Spin up coordinated agent teams for any task |
+| 26 | **trace** | skill | Find projects, code |
+| 27 | **verification-gate-fail-closed** | skill | Reference for building verification gates |
+| 28 | **watch** | skill | 'Extract YouTube video transcripts |
+| 29 | **where-we-are** | skill | Session awareness |
+| 30 | **who-are-you** | skill | Know ourselves |
 
 </details>
 
@@ -117,8 +120,8 @@ The `L-SKLL` marker in the SKILL.md description distinguishes locally-installed 
 |---------|-------|--------|
 | **minimal** | 6 | `about-oracle`, `forward`, `go`, `recap`, `rrr`, `trace` |
 | **standard** | 12 | `awaken`, `bampenpien`, `bud`, `dig`, `forward`, `go`, `learn`, `recap`, `rrr`, `talk-to`, `team-agents`, `trace` |
-| **full** | 27 | all |
-| **lab** | 27 | all |
+| **full** | 30 | all |
+| **lab** | 30 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

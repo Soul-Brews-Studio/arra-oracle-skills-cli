@@ -4,27 +4,29 @@
 
 ## Install
 
+Installs run straight from the GitHub `alpha` branch — always the newest skills, no npm publish required:
+
 ```bash
 # Claude Code — standard profile (default)
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y --agent claude-code
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y --agent claude-code
 
 # Full profile (all skills)
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y -p full --agent claude-code
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -p full --agent claude-code
 
 # Lab profile (full + experimental)
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y -p lab --agent claude-code
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -p lab --agent claude-code
 
 # Specific skills only
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y -s recap rrr trace --agent claude-code
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -s recap rrr trace --agent claude-code
 
 # Other agents (skills + commands)
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y --agent codex --with-commands
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y --agent opencode --with-commands
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y --agent cursor
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y --agent gemini-cli --with-commands
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y --agent codex --with-commands
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y --agent opencode --with-commands
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y --agent cursor
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y --agent gemini-cli --with-commands
 
 # Multiple agents
-npx arra-oracle-skills@26.7.6-alpha.1059 install -g -y --agent claude-code codex opencode
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y --agent claude-code codex opencode
 
 # thClaws (federated agent — explicit opt-in)
 bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --with-thclaws
@@ -36,6 +38,11 @@ bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install 
 bunx arra-oracle-skills@github:Soul-Brews-Studio/arra-oracle-skills-cli install -y -g --all-detected
 ```
 
+> **Claude Code plugin marketplace** (fewest prerequisites — no bun/git needed):
+> `/plugin marketplace add Soul-Brews-Studio/arra-oracle-skills-cli` inside Claude Code installs the curated set from `.claude-plugin/marketplace.json`.
+>
+> **npm**: published releases may lag behind the `alpha` branch (publishing is manual). If you prefer npm: `npx arra-oracle-skills@latest install -g -y --agent claude-code`. Never pin an exact alpha version from git history — not every CalVer bump is published.
+
 > **#330 note**: as of v26.5.14+, federated agents (thClaws, OpenCode, GitHub Copilot, OpenClaw) are NOT auto-installed by default — they require explicit `-a <name>`, `--with-<name>`, or `--all-detected`. Host Anthropic agents (Claude Code, Codex) continue to auto-detect.
 
 ### Local project install
@@ -44,10 +51,10 @@ By default (no `-g` flag), skills install to the current project's `.claude/skil
 
 ```bash
 # Local install (current project)
-npx arra-oracle-skills@26.7.6-alpha.1059 install -a claude-code -s trace -y
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -a claude-code -s trace -y
 
 # Same with explicit -l flag (symmetric to -g)
-npx arra-oracle-skills@26.7.6-alpha.1059 install -l -a claude-code -s trace -y
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -l -a claude-code -s trace -y
 ```
 
 Use when:
@@ -136,7 +143,7 @@ about                   # version + status
 41 skills excluded from all profiles. Install by name:
 
 ```bash
-npx arra-oracle-skills install -g -y -s <name>
+bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -s <name>
 ```
 
 | Skill | What |

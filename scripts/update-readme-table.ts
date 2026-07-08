@@ -105,13 +105,11 @@ async function updateReadmeTable() {
     `${skillCount} skills for AI coding agents`
   );
 
-  // --- Update version in install commands ---
-  const pkg = JSON.parse(await readFile(join(process.cwd(), 'package.json'), 'utf-8'));
-  const version = pkg.version;
-  readme = readme.replaceAll(
-    /arra-oracle-skills@[\w.\-]+ install/g,
-    `arra-oracle-skills@${version} install`
-  );
+  // NOTE: install commands are no longer version-stamped from package.json.
+  // Under the GitHub-only release flow not every CalVer bump is published to
+  // npm, so stamping pinned READMEs to versions npx couldn't resolve (404 —
+  // e.g. 26.7.6-alpha.1059 was bumped+tagged but never published). Install
+  // commands use the evergreen `github:...#alpha` / `@latest` forms instead.
 
   // --- Update zombie skills section ---
   const secretStart = readme.indexOf('<!-- secret-skills:start -->');
@@ -131,7 +129,7 @@ async function updateReadmeTable() {
       `${zombieCount} skills excluded from all profiles. Install by name:`,
       '',
       '```bash',
-      'npx arra-oracle-skills install -g -y -s <name>',
+      'bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -s <name>',
       '```',
       '',
       '| Skill | What |',

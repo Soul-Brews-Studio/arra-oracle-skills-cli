@@ -25,7 +25,8 @@ assemble.py (strip + stitch existing blogs) → harden-md → wordbreak (attacut
   → pandoc MD→typst → cat preamble.typ + body.typ → typst compile
 ```
 
-Reuses `~/.claude/skills/oracle-booklet/scripts/{harden-md.py,wordbreak.py}` (don't duplicate).
+Self-contained: `harden-md.py` + `wordbreak.py` are bundled in `scripts/` (works even on a
+machine without oracle-booklet installed). The two helpers originate from `/oracle-booklet`.
 
 ## Steps
 

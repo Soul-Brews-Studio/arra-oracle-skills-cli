@@ -4,7 +4,7 @@
 // Fonts (macOS): Sarabun under AssetsV2, Fira Code + IBM Plex Sans Thai Looped under ~/Library/Fonts.
 // ACCENT color: pick one hex and use it in all 4 spots marked {{ACCENT}} (e.g. #2c3e50 navy, #c0392b red).
 
-#set text(font: ("Sarabun", "IBM Plex Sans Thai Looped"), lang: "th")
+#set text(font: ("IBM Plex Sans Thai Looped", "Sarabun"), lang: "th")
 
 // --- Cover page (NO page number) ---
 #set page(paper: "a4", margin: 2.2cm)

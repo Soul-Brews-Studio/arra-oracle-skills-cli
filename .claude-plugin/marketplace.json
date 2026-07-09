@@ -32,6 +32,7 @@
         "./src/skills/oracle-combine-blogs",
         "./src/skills/oracle-family-scan",
         "./src/skills/oracle-prism",
+        "./src/skills/oracle-title-forge",
         "./src/skills/project",
         "./src/skills/recap",
         "./src/skills/resonance",

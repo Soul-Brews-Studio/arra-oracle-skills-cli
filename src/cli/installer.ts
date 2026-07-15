@@ -14,6 +14,7 @@ import {
   skillHasHooks,
   isCompiled,
   getPublicSkillsDir,
+  extractDescription,
 } from './skill-source.js';
 import pkg from '../../package.json' with { type: 'json' };
 
@@ -410,6 +411,12 @@ export async function installSkills(
       const skillsDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
       if (!existsSync(skillsDir)) continue;
 
+      // Self-target guard: alignment rm-rf's non-profile skills — running it
+      // against the repo's own public shelf would delete skill SOURCE (the
+      // isOurSkill substring check can match shelf files whose PROSE mentions
+      // the installer marker). The install loop below refuses this agent too.
+      if (!options.global && isSelfTarget(skillsDir)) continue;
+
       const installedDirs = readdirSync(skillsDir, { withFileTypes: true })
         .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
         .map((d) => d.name);
@@ -476,6 +483,7 @@ export async function installSkills(
   const spinner = p.spinner();
   spinner.start('Installing skills');
 
+  let agentsInstalled = 0;
   for (const agentName of targetAgents) {
     const agent = agents[agentName as keyof typeof agents];
     if (!agent) {
@@ -491,8 +499,10 @@ export async function installSkills(
       p.log.error(
         `Refusing to install into ${agent.skillsDir}/ for ${agent.displayName} — that directory is this repo's skill source (public shelf). Run from another directory or use -g.`
       );
+      process.exitCode = 1;
       continue;
     }
+    agentsInstalled++;
 
     // Create target directory
     await mkdirp(targetDir, shellMode);
@@ -627,13 +637,26 @@ export async function installSkills(
               : (MINIMAL_ONLY_SKILLS as readonly string[]).includes(skill.name) ? '[minimal]'
               : (ZOMBIE_SKILLS as readonly string[]).includes(skill.name) ? '[zombie]'
               : '[core]';
-            content = content.replace(
-              /^(description:\s*)'?(.+?)'?(\n)/m,
-              (_, p1, p2, p3) => {
-                const desc = `${tierTag} v${pkg.version} ${scopeChar}-SKLL | ${p2}`;
-                return `${p1}${yamlQuote(desc)}${p3}`;
-              }
-            );
+            // Block-scalar descriptions (description: >-) would be corrupted
+            // by the single-line rewrite below (it would capture the literal
+            // ">-" and orphan the indented body → invalid YAML in the
+            // installed copy). Fold them to a quoted single line instead.
+            if (/^description:[ \t]*[>|][+-]?[ \t]*\r?$/m.test(content)) {
+              const folded = extractDescription(content);
+              const desc = `${tierTag} v${pkg.version} ${scopeChar}-SKLL | ${folded}`;
+              content = content.replace(
+                /^description:[ \t]*[>|][+-]?[ \t]*\r?\n(?:(?:[ \t]+[^\n]*)?\r?\n)*?(?=[^ \t\r\n])/m,
+                `description: ${yamlQuote(desc)}\n`
+              );
+            } else {
+              content = content.replace(
+                /^(description:\s*)'?(.+?)'?(\n)/m,
+                (_, p1, p2, p3) => {
+                  const desc = `${tierTag} v${pkg.version} ${scopeChar}-SKLL | ${p2}`;
+                  return `${p1}${yamlQuote(desc)}${p3}`;
+                }
+              );
+            }
             await Bun.write(skillMdPath, content);
           }
         }
@@ -853,7 +876,11 @@ Execute the \`${skill.name}\` skill with args: \`$ARGUMENTS\`
     //                                            Non-arra skills NEVER touched.
   }
 
-  spinner.stop(`Installed ${skillsToInstall.length} skills to ${targetAgents.length} agent(s)`);
+  spinner.stop(
+    agentsInstalled > 0
+      ? `Installed ${skillsToInstall.length} skills to ${agentsInstalled} agent(s)`
+      : 'Nothing installed (all targets refused or unknown)'
+  );
 
   // Migration: remove deprecated lite skills from prior installs.
   // Lites (forward-lite, recap-lite, rrr-lite) were killed 2026-05-14;
@@ -914,6 +941,7 @@ export async function uninstallSkills(
       p.log.error(
         `Refusing to uninstall from ${agent.skillsDir}/ for ${agent.displayName} — that directory is this repo's skill source (public shelf).`
       );
+      process.exitCode = 1;
       continue;
     }
 

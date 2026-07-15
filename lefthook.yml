@@ -5,10 +5,11 @@ pre-commit:
       stage_fixed: true
     regen-manifest:
       # Shelf changes must regenerate .claude-plugin/marketplace.json or the
-      # ci.yml drift gate rejects the PR. stage_fixed keeps it in the commit.
+      # ci.yml drift gate rejects the PR. Explicit `git add` because lefthook's
+      # stage_fixed only stages files matching THIS command's glob (skills/**),
+      # which can never cover the manifest it regenerates.
       glob: 'skills/**'
-      run: bun run compile
-      stage_fixed: true
+      run: bun run compile && git add .claude-plugin/marketplace.json
     test:
       # Fast unit suite only (~11s). Bare `bun test` would also pick up
       # tests-e2e/ (dig-skill scans real ~/.claude/projects — 90s locally).

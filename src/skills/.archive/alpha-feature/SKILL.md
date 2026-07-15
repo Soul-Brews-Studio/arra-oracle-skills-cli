@@ -33,7 +33,7 @@ If no arguments, ask:
 
 ### 2. Create Skill
 
-Create `src/skills/<name>/SKILL.md`:
+Create `skills/<name>/SKILL.md` (public shelf; vault src/skills/ is for secret/archived skills):
 
 ```markdown
 ---

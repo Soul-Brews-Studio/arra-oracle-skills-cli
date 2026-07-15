@@ -44,7 +44,7 @@ export function extractDescription(content: string): string {
   const inline = m[1].trim();
   if (!/^[>|][+-]?$/.test(inline)) return inline;
   const lines = content.split('\n');
-  const idx = lines.findIndex((l) => /^description:[ \t]*[>|][+-]?[ \t]*$/.test(l));
+  const idx = lines.findIndex((l) => /^description:[ \t]*[>|][+-]?[ \t]*\r?$/.test(l));
   if (idx === -1) return '';
   const out: string[] = [];
   for (let i = idx + 1; i < lines.length; i++) {

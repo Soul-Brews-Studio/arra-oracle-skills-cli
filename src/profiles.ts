@@ -78,11 +78,14 @@ export const ZOMBIE_SKILLS = [
   'hey', 'contacts', 'mailbox', 'inbox',
 ] as const;
 
-/** Return the source directory for a skill by name — `.archive/` for zombies,
- *  plain `src/skills/<name>` for everything else. Pure-function helper used by
- *  installer + VFS generator + any future tooling that needs to resolve a skill
- *  source path. Falls back to the active path so callers can still test
- *  existence via fs.existsSync. */
+/** Return the source directory for a skill by name under a given root —
+ *  `.archive/<name>` for zombies, plain `<root>/<name>` for everything else.
+ *  Callers pass the VAULT root (src/skills) for zombies/secrets; curated
+ *  skills live on the public shelf (skills/) — see skill-source.ts
+ *  resolveSkillDir for the shelf→vault→archive runtime resolution.
+ *  Pure-function helper used by installer + VFS generator + tooling.
+ *  Falls back to the active path so callers can still test existence via
+ *  fs.existsSync. */
 export function skillDirFor(name: string, skillsRoot: string): string {
   const isZombie = (ZOMBIE_SKILLS as readonly string[]).includes(name);
   // Use string concatenation here to avoid a node:path import in this pure module.

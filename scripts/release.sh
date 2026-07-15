@@ -112,10 +112,10 @@ echo "Bumping version..."
 # 1. Update package.json (portable sed — works on macOS and Linux)
 if [[ "$(uname)" == "Darwin" ]]; then
   sed -i '' "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW_VERSION\"/" package.json
-  find src/skills -name "SKILL.md" -exec sed -i '' "s/v$CURRENT/v$NEW_VERSION/g" {} \;
+  find skills src/skills -name "SKILL.md" -exec sed -i '' "s/v$CURRENT/v$NEW_VERSION/g" {} \;
 else
   sed -i "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW_VERSION\"/" package.json
-  find src/skills -name "SKILL.md" -exec sed -i "s/v$CURRENT/v$NEW_VERSION/g" {} \;
+  find skills src/skills -name "SKILL.md" -exec sed -i "s/v$CURRENT/v$NEW_VERSION/g" {} \;
 fi
 
 # 3. Compile skills

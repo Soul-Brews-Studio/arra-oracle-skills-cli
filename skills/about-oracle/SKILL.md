@@ -63,7 +63,7 @@ Gather live data and print:
 
 ```bash
 # Version
-cat src/skills/about-oracle/../../cli/index.ts 2>/dev/null | head -1 || echo "v2.x"
+cat src/cli/index.ts 2>/dev/null | head -1 || echo "v2.x"
 
 # Git stats for arra-oracle-skills-cli
 echo "## arra-oracle-skills-cli"
@@ -72,7 +72,7 @@ git log --reverse --format="%ai" | head -1
 git tag -l | wc -l
 
 # Skills count
-ls src/skills/ 2>/dev/null | wc -l
+ls skills/ 2>/dev/null | wc -l
 
 # Oracle-v2 stats (if accessible)
 ORACLE_V2="$HOME/Code/github.com/Soul-Brews-Studio/arra-oracle-v3"
@@ -99,7 +99,7 @@ Run the fleet scan:
 
 ```bash
 # Use the fleet-scan script if available
-bun src/skills/oracle-family-scan/scripts/fleet-scan.ts 2>/dev/null
+bun skills/oracle-family-scan/scripts/fleet-scan.ts 2>/dev/null
 ```
 
 Or fetch from GitHub:

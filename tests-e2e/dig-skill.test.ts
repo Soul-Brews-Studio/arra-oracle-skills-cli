@@ -15,7 +15,7 @@ import { tmpdir } from "os";
 import { spawnSync } from "child_process";
 
 const FIXTURE_DIR = join(tmpdir(), `dig-test-${Date.now()}`);
-const DIG_PY = join(process.cwd(), "src/skills/dig/scripts/dig.py");
+const DIG_PY = join(process.cwd(), "skills/dig/scripts/dig.py");
 
 // Minimal valid JSONL session entry
 function makeSession(id: string, ts: string, summary: string): string {

@@ -566,7 +566,7 @@ import { makeInstallFixture, listSkillDirs } from "./helpers/install-fixture";
     describe("Claude Code install format", () => {
       it("should install directories with SKILL.md (full content)", async () => {
         const skillContent = await readFile(
-          join(process.cwd(), "src/skills", "trace", "SKILL.md"),
+          join(process.cwd(), "skills", "trace", "SKILL.md"),
           "utf-8"
         );
 
@@ -577,7 +577,7 @@ import { makeInstallFixture, listSkillDirs } from "./helpers/install-fixture";
       });
 
       it("should include scripts directory if exists", async () => {
-        const projectSkillDir = join(process.cwd(), "src/skills", "project");
+        const projectSkillDir = join(process.cwd(), "skills", "project");
 
         if (existsSync(join(projectSkillDir, "scripts"))) {
           const scripts = await readdir(join(projectSkillDir, "scripts"));

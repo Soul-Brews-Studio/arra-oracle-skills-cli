@@ -23,24 +23,29 @@ import {
 // These tests exercise the REAL mechanism end-to-end (disk → discoverSkills →
 // resolveProfile) so the same class of drift can't slip through again.
 
-const SKILLS_DIR = join(process.cwd(), "src", "skills");
-const ARCHIVE_DIR = join(SKILLS_DIR, ".archive");
+// Dual-root layout: public shelf (skills/) + vault (src/skills/ — secrets,
+// .archive zombies, .template).
+const SHELF_DIR = join(process.cwd(), "skills");
+const VAULT_DIR = join(process.cwd(), "src", "skills");
+const ARCHIVE_DIR = join(VAULT_DIR, ".archive");
 
-function archivedSkillNames(): string[] {
-  if (!existsSync(ARCHIVE_DIR)) return [];
-  return readdirSync(ARCHIVE_DIR, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && !d.name.startsWith("."))
-    .filter((d) => existsSync(join(ARCHIVE_DIR, d.name, "SKILL.md")))
-    .map((d) => d.name);
-}
-
-function activeSkillNames(): string[] {
-  return readdirSync(SKILLS_DIR, { withFileTypes: true })
+function skillNamesIn(root: string): string[] {
+  if (!existsSync(root)) return [];
+  return readdirSync(root, { withFileTypes: true })
     .filter(
       (d) => d.isDirectory() && !d.name.startsWith(".") && d.name !== "_template",
     )
-    .filter((d) => existsSync(join(SKILLS_DIR, d.name, "SKILL.md")))
+    .filter((d) => existsSync(join(root, d.name, "SKILL.md")))
     .map((d) => d.name);
+}
+
+function archivedSkillNames(): string[] {
+  return skillNamesIn(ARCHIVE_DIR);
+}
+
+/** Shelf + vault-active (secrets) — everything outside the archive. */
+function activeSkillNames(): string[] {
+  return [...skillNamesIn(SHELF_DIR), ...skillNamesIn(VAULT_DIR)];
 }
 
 describe("archive integrity (real discoverSkills)", () => {
@@ -94,11 +99,21 @@ describe("curation consistency (constant ↔ directory ↔ profiles)", () => {
     expect(constant).toEqual(dirs);
   });
 
-  it("no skill name exists in both active and .archive/ (shadowing)", () => {
-    // resolveSkillDir() checks the active path first, so a duplicate name would
-    // silently shadow the archived copy and change what `-s <name>` installs.
-    const active = new Set(activeSkillNames());
-    const collisions = archivedSkillNames().filter((n) => active.has(n));
+  it("no skill name exists in more than one root (shelf/vault/archive shadowing)", () => {
+    // resolveSkillDir() checks shelf → vault → archive, so a duplicate name
+    // would silently shadow a copy and change what `-s <name>` installs.
+    const shelf = skillNamesIn(SHELF_DIR);
+    const vault = skillNamesIn(VAULT_DIR);
+    const archive = archivedSkillNames();
+    const counts = new Map<string, string[]>();
+    for (const [root, names] of [
+      ["skills/", shelf],
+      ["src/skills/", vault],
+      ["src/skills/.archive/", archive],
+    ] as const) {
+      for (const n of names) counts.set(n, [...(counts.get(n) ?? []), root]);
+    }
+    const collisions = [...counts.entries()].filter(([, roots]) => roots.length > 1);
     expect(collisions).toEqual([]);
   });
 

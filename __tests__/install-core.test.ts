@@ -614,7 +614,7 @@ import { makeInstallFixture, listSkillDirs } from "./helpers/install-fixture";
 
     it("rrr skill DEEP.md is installed alongside SKILL.md", async () => {
       // rrr has DEEP.md and TEAMMATE.md
-      const deepMdSrc = join(process.cwd(), "src/skills/rrr/DEEP.md");
+      const deepMdSrc = join(process.cwd(), "skills/rrr/DEEP.md");
       if (!existsSync(deepMdSrc)) return; // Skip if DEEP.md not present in source
 
       await installSkills([TEST_AGENT_GLOBAL], {

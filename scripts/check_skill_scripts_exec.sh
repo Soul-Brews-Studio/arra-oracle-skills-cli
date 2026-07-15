@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Enforce the "Script Permissions" convention from CLAUDE.md: every .ts / .sh
-# script under src/skills/*/scripts/ must be committed executable (git mode
-# 100755). Scripts with a shebang invoked directly (./script) fail with
-# "permission denied" without +x — this gate stops that regressing.
+# script under {skills,src/skills}/*/scripts/ must be committed executable
+# (git mode 100755). Scripts with a shebang invoked directly (./script) fail
+# with "permission denied" without +x — this gate stops that regressing.
 #
 # We read the git INDEX mode (not the on-disk +x bit) because that is what
 # actually ships: dig.py was +x on disk yet committed 100644 for months, which
@@ -12,7 +12,7 @@
 set -euo pipefail
 
 offenders=$(
-  git ls-files -s -- 'src/skills/' \
+  git ls-files -s -- 'skills/' 'src/skills/' \
     | awk '$4 ~ /\/scripts\/.*\.(ts|sh)$/ \
            && $4 !~ /\.test\.ts$/ \
            && $4 !~ /\/\.archive\// \

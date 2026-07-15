@@ -4,6 +4,8 @@ description: 'Quick GitHub issue creation. Use when user says "new issue", "crea
 argument-hint: "<title> [--label <label>] [--body <body>]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /new-issue — Create GitHub Issue

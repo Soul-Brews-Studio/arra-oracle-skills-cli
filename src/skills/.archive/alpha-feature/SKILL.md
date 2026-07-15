@@ -4,6 +4,8 @@ description: 'Full skill development pipeline — create, compile, test, commit,
 argument-hint: "<name> [description]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /alpha-feature — Create Skill + Install Locally

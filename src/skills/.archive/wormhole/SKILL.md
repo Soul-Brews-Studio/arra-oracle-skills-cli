@@ -5,6 +5,8 @@ argument-hint: "<node>:<agent> <question> [--raw | --deep]"
 zombie: true
 archived_reason: 'moved to zombie tier via #327 (usage audit, 3,685 sessions mined)'
 archived_date: 2026-05-13
+metadata:
+  internal: true
 ---
 
 # /wormhole — Federated Query Proxy

@@ -5,6 +5,8 @@ argument-hint: "[--pain | --plan | --gain | --all | --speculate | --between]"
 zombie: true
 archived_reason: 'consolidated into /dream via #333 (Variant A)'
 archived_date: 2026-05-14
+metadata:
+  internal: true
 ---
 
 # /morpheus — Speculative Dreaming

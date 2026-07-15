@@ -4,6 +4,8 @@ description: 'Smart action suggestions — scan context, rank priorities, sugges
 argument-hint: "[--issues] [--pulse]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /whats-next — Smart Action Suggestions

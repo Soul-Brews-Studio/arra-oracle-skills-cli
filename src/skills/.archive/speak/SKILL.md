@@ -4,6 +4,8 @@ description: 'Text-to-speech using edge-tts neural voices with macOS say fallbac
 argument-hint: '"<text>" [--thai] [--voice <name>]'
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /speak — Text-to-Speech

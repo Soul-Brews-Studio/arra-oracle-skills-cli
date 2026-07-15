@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'fs';
+import { existsSync, readdirSync, realpathSync } from 'fs';
 import { join, dirname, basename } from 'path';
 import { homedir, tmpdir } from 'os';
 import { rm } from 'fs/promises';
@@ -13,9 +13,23 @@ import {
   writeSkillToDir,
   skillHasHooks,
   isCompiled,
-  getCommandsDir,
+  getPublicSkillsDir,
 } from './skill-source.js';
 import pkg from '../../package.json' with { type: 'json' };
+
+/**
+ * True when a local skills target IS this repo's own public shelf (skills/).
+ * openclaw's skillsDir is literally 'skills' (agents.ts), so a local
+ * install/uninstall run from the repo root would write into — or rmrf —
+ * skill SOURCE. Guarded in install, uninstall, and the #230 shadow shield.
+ */
+function isSelfTarget(targetDir: string): boolean {
+  try {
+    return realpathSync(targetDir) === realpathSync(getPublicSkillsDir());
+  } catch {
+    return false; // either path missing → can't be the shelf
+  }
+}
 
 // ── Codex 0.128.0+ plugin marketplace helpers ────────────────────────────────
 
@@ -472,6 +486,14 @@ export async function installSkills(
     const targetDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
     const shellMode: ShellMode = options.shellMode || 'auto';
 
+    // Self-target guard: never install INTO the repo's own public shelf.
+    if (!options.global && isSelfTarget(targetDir)) {
+      p.log.error(
+        `Refusing to install into ${agent.skillsDir}/ for ${agent.displayName} — that directory is this repo's skill source (public shelf). Run from another directory or use -g.`
+      );
+      continue;
+    }
+
     // Create target directory
     await mkdirp(targetDir, shellMode);
 
@@ -485,7 +507,10 @@ export async function installSkills(
     const shadowedSkills: string[] = [];
     if (options.global && !options.forceGlobal) {
       const localSkillsDir = join(process.cwd(), agent.skillsDir);
-      if (existsSync(localSkillsDir)) {
+      // Skip the shield when cwd's skills/ IS the shelf itself: the source
+      // tree is not a user override, and treating it as one silently no-ops
+      // every global install run from the repo root.
+      if (existsSync(localSkillsDir) && !isSelfTarget(localSkillsDir)) {
         const filtered: Skill[] = [];
         for (const skill of skillsToInstall) {
           const localSkillMd = join(localSkillsDir, skill.name, 'SKILL.md');
@@ -879,6 +904,16 @@ export async function uninstallSkills(
     const targetDir = options.global ? agent.globalSkillsDir : join(process.cwd(), agent.skillsDir);
 
     if (!existsSync(targetDir)) {
+      continue;
+    }
+
+    // Self-target guard: never uninstall FROM the repo's own public shelf.
+    // Must run before any rmrf — `uninstall -s <name>` bypasses the
+    // isOurSkill marker gate below and would delete skill SOURCE.
+    if (!options.global && isSelfTarget(targetDir)) {
+      p.log.error(
+        `Refusing to uninstall from ${agent.skillsDir}/ for ${agent.displayName} — that directory is this repo's skill source (public shelf).`
+      );
       continue;
     }
 

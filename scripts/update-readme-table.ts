@@ -31,7 +31,12 @@ async function generateZombieTable(): Promise<string> {
   for (const name of ZOMBIE_SKILLS) {
     const dir = skillDirFor(name, skillsRoot);
     const skillFile = join(dir, 'SKILL.md');
-    if (!existsSync(skillFile)) continue;
+    if (!existsSync(skillFile)) {
+      // A ZOMBIE_SKILLS entry without a matching .archive/ dir means the
+      // constant and the tree drifted — fail loudly instead of silently
+      // shrinking the README zombie table.
+      throw new Error(`ZOMBIE_SKILLS entry "${name}" has no SKILL.md at ${skillFile} — fix src/profiles.ts or restore the archive dir.`);
+    }
 
     const content = await readFile(skillFile, 'utf-8');
     const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);

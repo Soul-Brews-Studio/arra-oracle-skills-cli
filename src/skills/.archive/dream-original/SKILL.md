@@ -5,6 +5,8 @@ argument-hint: "[--pain | --plan | --gain | --all]"
 zombie: true
 archived_reason: 'preserved original simple /dream body — replaced by evolved morpheus-derived body via #333 content correction'
 archived_date: 2026-05-14
+metadata:
+  internal: true
 ---
 
 # /dream — Cross-Repo Pattern Discovery

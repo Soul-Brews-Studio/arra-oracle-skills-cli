@@ -1,8 +1,14 @@
 import { readdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { extractDescription } from '../src/cli/skill-source.js';
 
-const SKILLS_DIR = join(process.cwd(), 'src', 'skills');
+// Public shelf (skills/) once the move lands; vault (src/skills/) pre-move.
+// The README table lists PUBLIC skills only — post-move that's the shelf,
+// which also drops the secret release-* rows the old table leaked.
+const SKILLS_DIR = existsSync(join(process.cwd(), 'skills'))
+  ? join(process.cwd(), 'skills')
+  : join(process.cwd(), 'src', 'skills');
 
 // Max description length for compact display
 const MAX_DESC_LENGTH = 45;
@@ -88,9 +94,8 @@ async function parseSkill(skillName: string): Promise<Skill | null> {
   const frontmatter = parts[1];
   const body = parts.slice(2).join('---');
   
-  // Extract description from frontmatter
-  const descMatch = frontmatter.match(/description:\s*(.+?)(?:\n|$)/);
-  const rawDescription = descMatch ? descMatch[1].trim() : `${skillName} skill`;
+  // Extract description from frontmatter (block-scalar aware)
+  const rawDescription = extractDescription(frontmatter) || `${skillName} skill`;
   
   // Shorten description
   const shortDesc = shortenDescription(rawDescription);

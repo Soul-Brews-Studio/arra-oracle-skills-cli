@@ -3,6 +3,8 @@ name: schedule
 description: Query schedule via Oracle API (Drizzle DB). Use when user says "schedule", "upcoming events", "what's on today", "calendar".
 argument-hint: "[today | tomorrow | week]"
 zombie: true
+metadata:
+  internal: true
 ---
 
 # /schedule - Query Schedule

@@ -4,6 +4,8 @@ description: 'Skill and profile management — prepare tools, switch profiles, e
 argument-hint: "<command> [args]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /oracle-manage — Skill and Profile Management

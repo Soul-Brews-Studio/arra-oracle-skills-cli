@@ -1,5 +1,6 @@
 import type { Command } from 'commander';
 import { agents, detectInstalledAgents } from '../agents.js';
+import { getPublicSkillsDir } from '../skill-source.js';
 
 export function registerList(program: Command) {
   program
@@ -8,8 +9,16 @@ export function registerList(program: Command) {
     .option('-g, --global', 'Show global (user-level) skills')
     .option('-a, --agent <agents...>', 'Show skills for specific agents')
     .action(async (options) => {
-      const { readdirSync, existsSync, readFileSync } = await import('fs');
+      const { readdirSync, existsSync, readFileSync, realpathSync } = await import('fs');
       const { join } = await import('path');
+
+      const isShelf = (dir: string) => {
+        try {
+          return realpathSync(dir) === realpathSync(getPublicSkillsDir());
+        } catch {
+          return false;
+        }
+      };
 
       let targetAgents: string[] = options.agent || [];
 
@@ -38,6 +47,12 @@ export function registerList(program: Command) {
 
         if (!existsSync(skillsDir)) {
           console.log(`  ${agent.displayName} ${scope}: (no skills directory)`);
+          continue;
+        }
+
+        // cwd's skills/ is this repo's public shelf, not an install target.
+        if (!options.global && isShelf(skillsDir)) {
+          console.log(`  ${agent.displayName} ${scope}: (skipped — ${agent.skillsDir}/ is this repo's skill source)`);
           continue;
         }
 

@@ -4,6 +4,8 @@ description: 'Extract a specific topic from a single session JSONL file using 4 
 argument-hint: "<keyword> [session-id]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /mine — Oracle Mining

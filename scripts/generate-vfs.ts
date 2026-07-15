@@ -12,7 +12,10 @@
 import { readdirSync, existsSync, mkdirSync } from 'fs';
 import { join, relative } from 'path';
 
-const SKILLS_DIR = join(import.meta.dir, '..', 'src', 'skills');
+// Dual root: public shelf (skills/, post-move) + vault (src/skills/ —
+// secrets, .archive zombies). Shelf is tolerated absent pre-move.
+const SHELF_DIR = join(import.meta.dir, '..', 'skills');
+const VAULT_DIR = join(import.meta.dir, '..', 'src', 'skills');
 const OUTPUT_DIR = join(import.meta.dir, '..', 'src', 'cli', 'generated');
 const OUTPUT_FILE = join(OUTPUT_DIR, 'skills-vfs.ts');
 
@@ -30,21 +33,34 @@ function walkDir(dir: string): string[] {
   return files;
 }
 
-// Discover skill directories (same logic as installer.ts discoverSkills)
-const activeDirs = readdirSync(SKILLS_DIR, { withFileTypes: true })
-  .filter((d) => d.isDirectory() && !d.name.startsWith('.') && d.name !== '_template')
-  .map((d) => ({ name: d.name, dir: join(SKILLS_DIR, d.name) }));
+// Discover skill directories (same logic as discoverSkills in skill-source.ts)
+const listDirs = (root: string) =>
+  existsSync(root)
+    ? readdirSync(root, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && !d.name.startsWith('.') && d.name !== '_template')
+        .map((d) => ({ name: d.name, dir: join(root, d.name) }))
+    : [];
+
+const shelfDirs = listDirs(SHELF_DIR);
+const vaultDirs = listDirs(VAULT_DIR);
 
 // Archived (zombie) skills live in src/skills/.archive/. Include them in the
 // VFS so compiled-binary `install -s <name>` opt-in still works after move.
-const ARCHIVE_DIR = join(SKILLS_DIR, '.archive');
-const archivedDirs = existsSync(ARCHIVE_DIR)
-  ? readdirSync(ARCHIVE_DIR, { withFileTypes: true })
-      .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
-      .map((d) => ({ name: d.name, dir: join(ARCHIVE_DIR, d.name) }))
-  : [];
+const archivedDirs = listDirs(join(VAULT_DIR, '.archive'));
 
-const skillDirs = [...activeDirs, ...archivedDirs].sort((a, b) => a.name.localeCompare(b.name));
+const skillDirs = [...shelfDirs, ...vaultDirs, ...archivedDirs].sort((a, b) => a.name.localeCompare(b.name));
+
+// A duplicate name across roots would silently last-wins in the VFS Map —
+// fail the build instead (same invariant compile.ts + discoverSkills enforce).
+{
+  const seen = new Map<string, string>();
+  for (const { name, dir } of skillDirs) {
+    const prev = seen.get(name);
+    if (prev) throw new Error(`Duplicate skill name "${name}" across roots: ${prev} and ${dir}`);
+    seen.set(name, dir);
+  }
+}
+
 const skillNames = skillDirs.map((s) => s.name);
 
 // Build VFS data

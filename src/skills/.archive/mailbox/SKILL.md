@@ -4,6 +4,8 @@ description: 'Persistent agent mailbox — store findings, standing orders, and 
 argument-hint: "[read <agent> | write <agent> | orders <agent> | list | load <agent>]"
 
 zombie: true
+metadata:
+  internal: true
 ---
 
 # /mailbox — Persistent Agent Memory

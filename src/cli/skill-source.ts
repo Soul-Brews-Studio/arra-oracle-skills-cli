@@ -31,6 +31,31 @@ async function getVFS() {
   return { vfs: _vfs!, skillNames: _skillNames! };
 }
 
+/**
+ * Extract the frontmatter `description:` value from SKILL.md content.
+ * Handles both inline scalars (`description: foo`) and folded/literal block
+ * scalars (`description: >-` + indented lines) — block scalars are required
+ * for descriptions containing `": "` so strict-YAML consumers (npx skills)
+ * don't reject the file. Folded lines join with spaces.
+ */
+export function extractDescription(content: string): string {
+  const m = content.match(/^description:[ \t]*(.*)$/m);
+  if (!m) return '';
+  const inline = m[1].trim();
+  if (!/^[>|][+-]?$/.test(inline)) return inline;
+  const lines = content.split('\n');
+  const idx = lines.findIndex((l) => /^description:[ \t]*[>|][+-]?[ \t]*\r?$/.test(l));
+  if (idx === -1) return '';
+  const out: string[] = [];
+  for (let i = idx + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim() === '') continue;
+    if (!/^[ \t]/.test(line)) break;
+    out.push(line.trim());
+  }
+  return out.join(' ').trim();
+}
+
 /** Check if running as a compiled binary */
 export function isCompiled(): boolean {
   try {
@@ -42,29 +67,47 @@ export function isCompiled(): boolean {
 
 // ── Filesystem mode (dev) ──────────────────────────────────
 
-function getSkillsDir(): string {
-  return join(dirname(import.meta.path), '..', 'skills');
+/**
+ * Walk up from this module to the nearest package.json. Robust across
+ * dev (`bun run src/cli/index.ts`), published-npm (node_modules/arra-oracle-skills),
+ * and dist-bundle layouts — unlike a fixed `../skills` hop that breaks the
+ * moment this file's depth changes.
+ */
+function findPackageRoot(): string {
+  let dir = dirname(import.meta.path);
+  while (dir !== dirname(dir)) {
+    if (existsSync(join(dir, 'package.json'))) return dir;
+    dir = dirname(dir);
+  }
+  return dirname(import.meta.path);
 }
 
-function getCommandsDir(): string {
-  return join(dirname(import.meta.path), '..', 'commands');
+/** Public shelf: top-level skills/ — the curated set every channel serves. */
+export function getPublicSkillsDir(): string {
+  return join(findPackageRoot(), 'skills');
+}
+
+/** Vault: src/skills/ — secrets, .archive zombies, .template. */
+function getVaultSkillsDir(): string {
+  return join(findPackageRoot(), 'src', 'skills');
 }
 
 /**
  * Resolve a skill name to its on-disk directory.
- * Checks the active path first (`src/skills/<name>`), then falls back to
- * the archive path (`src/skills/.archive/<name>`). Used by readSkillFile +
- * listSkillFiles + skillHasHooks so archived (zombie) skills remain
- * installable via `-s <name>` after move to `.archive/`.
+ * Order: public shelf (`skills/<name>`) → vault (`src/skills/<name>`) →
+ * vault archive (`src/skills/.archive/<name>`). The archive fallback keeps
+ * zombie skills installable via `-s <name>`.
  */
 function resolveSkillDir(skillName: string): string {
-  const skillsRoot = getSkillsDir();
-  const primary = join(skillsRoot, skillName);
-  if (existsSync(primary)) return primary;
-  const archived = join(skillsRoot, '.archive', skillName);
+  const shelf = join(getPublicSkillsDir(), skillName);
+  if (existsSync(shelf)) return shelf;
+  const vaultRoot = getVaultSkillsDir();
+  const vault = join(vaultRoot, skillName);
+  if (existsSync(vault)) return vault;
+  const archived = join(vaultRoot, '.archive', skillName);
   if (existsSync(archived)) return archived;
-  // Fall through to primary path so existsSync checks downstream report not-found
-  return primary;
+  // Fall through to vault path so existsSync checks downstream report not-found
+  return vault;
 }
 
 // ── Unified API ────────────────────────────────────────────
@@ -78,13 +121,12 @@ export async function discoverSkills(): Promise<Skill[]> {
       const files = vfs.get(name);
       const skillMd = files?.get('SKILL.md');
       if (skillMd) {
-        const descMatch = skillMd.match(/description:\s*(.+)/);
         const hiddenMatch = skillMd.match(/hidden:\s*(true|yes)/i);
         const secretMatch = skillMd.match(/secret:\s*(true|yes)/i);
         const zombieMatch = skillMd.match(/zombie:\s*(true|yes)/i);
         skills.push({
           name,
-          description: descMatch?.[1]?.trim() || '',
+          description: extractDescription(skillMd),
           path: `vfs://${name}`, // Virtual path marker
           ...(hiddenMatch ? { hidden: true } : {}),
           ...(secretMatch ? { secret: true } : {}),
@@ -95,36 +137,48 @@ export async function discoverSkills(): Promise<Skill[]> {
     return skills;
   }
 
-  // Filesystem mode
-  const skillsPath = getSkillsDir();
-  if (!existsSync(skillsPath)) return [];
+  // Filesystem mode — dual root.
+  // Public shelf (skills/): curated skills, every channel serves these.
+  // Vault (src/skills/): secret skills; .archive/ zombies stay discoverable
+  // by name for the `-s` opt-in path but are excluded from listings/profiles.
+  const listDirs = (root: string) =>
+    existsSync(root)
+      ? readdirSync(root, { withFileTypes: true })
+          .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
+          .map((d) => ({ name: d.name, dir: join(root, d.name) }))
+      : [];
 
-  // Active skills live directly under src/skills/.
-  // Archived skills (zombies) live under src/skills/.archive/ — still discoverable
-  // by name for the `-s` opt-in path. Excluded from default listings/profiles.
-  const activeDirs = readdirSync(skillsPath, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
-    .map((d) => ({ name: d.name, dir: join(skillsPath, d.name) }));
+  const shelfDirs = listDirs(getPublicSkillsDir());
+  const vaultRoot = getVaultSkillsDir();
+  const vaultDirs = listDirs(vaultRoot);
+  const archivedDirs = listDirs(join(vaultRoot, '.archive'));
 
-  const archivePath = join(skillsPath, '.archive');
-  const archivedDirs = existsSync(archivePath)
-    ? readdirSync(archivePath, { withFileTypes: true })
-        .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
-        .map((d) => ({ name: d.name, dir: join(archivePath, d.name) }))
-    : [];
+  if (shelfDirs.length === 0 && vaultDirs.length === 0 && archivedDirs.length === 0) return [];
+
+  // A name living in two roots is a split-brain bug (e.g. a rebase resurrecting
+  // src/skills/<name> after its move to the shelf) — fail loudly, never last-wins.
+  const seen = new Map<string, string>();
+  for (const { name, dir } of [...shelfDirs, ...vaultDirs, ...archivedDirs]) {
+    const prev = seen.get(name);
+    if (prev && existsSync(join(dir, 'SKILL.md')) && existsSync(join(prev, 'SKILL.md'))) {
+      throw new Error(
+        `Duplicate skill name "${name}" across roots: ${prev} and ${dir} — git mv one of them (shelf skills/ vs vault src/skills/).`
+      );
+    }
+    if (!prev) seen.set(name, dir);
+  }
 
   const skills: Skill[] = [];
-  for (const { name, dir } of [...activeDirs, ...archivedDirs]) {
+  for (const { name, dir } of [...shelfDirs, ...vaultDirs, ...archivedDirs]) {
     const skillMdPath = join(dir, 'SKILL.md');
     if (existsSync(skillMdPath)) {
       const content = await Bun.file(skillMdPath).text();
-      const descMatch = content.match(/description:\s*(.+)/);
       const hiddenMatch = content.match(/hidden:\s*(true|yes)/i);
       const secretMatch = content.match(/secret:\s*(true|yes)/i);
       const zombieMatch = content.match(/zombie:\s*(true|yes)/i);
       skills.push({
         name,
-        description: descMatch?.[1]?.trim() || '',
+        description: extractDescription(content),
         path: dir,
         ...(hiddenMatch ? { hidden: true } : {}),
         ...(secretMatch ? { secret: true } : {}),
@@ -213,5 +267,3 @@ export async function skillHasHooks(skillName: string): Promise<boolean> {
   return existsSync(join(resolveSkillDir(skillName), 'hooks', 'hooks.json'));
 }
 
-/** Get the commands directory path (filesystem mode only) */
-export { getCommandsDir };

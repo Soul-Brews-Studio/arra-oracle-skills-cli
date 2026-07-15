@@ -4,7 +4,8 @@ import { join } from 'path';
 import { $ } from 'bun';
 import pkg from '../package.json' with { type: 'json' };
 
-const SKILLS_DIR = 'src/skills';
+// Public shelf (skills/) once the move lands; vault (src/skills/) pre-move.
+const SKILLS_DIR = existsSync('skills') ? 'skills' : 'src/skills';
 const OUT_DIR = 'dist/clawhub';
 const PUBLISHER = 'soul-brews-studio';
 

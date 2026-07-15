@@ -4,6 +4,8 @@ description: 'Facts-only progress report — commits, PRs merged, issues closed,
 argument-hint: "[3h | 6h | 12h | 1d | 3d | 7d]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /what-we-done — Facts Only Progress Report

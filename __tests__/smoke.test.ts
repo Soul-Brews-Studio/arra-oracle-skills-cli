@@ -1,7 +1,9 @@
 import { describe, it, expect } from "bun:test";
 import { $ } from "bun";
 
-const S = "src/skills";
+// Public shelf (curated skills); zombies stay in the vault archive below.
+const S = "skills";
+const ARCHIVE = "src/skills/.archive";
 
 // Helper: run script and get stdout+stderr
 const run = async (cmd: string) => {
@@ -33,8 +35,8 @@ describe("recap scripts", () => {
 
 describe("schedule scripts (zombie tier — still installable via -s schedule)", () => {
   // Skip calendar.ts on CI - `cal` command not available on Linux runners
-  it.skipIf(!!process.env.CI || !!process.env.SKIP_CAL)("calendar.ts", async () => expect(await run(`${S}/.archive/schedule/scripts/calendar.ts`)).toMatch(/\d{4}|Su Mo Tu/));
-  it("query.ts", async () => expect(await run(`${S}/.archive/schedule/scripts/query.ts`)).toMatch(/Schedule|No events|Cannot connect/));
+  it.skipIf(!!process.env.CI || !!process.env.SKIP_CAL)("calendar.ts", async () => expect(await run(`${ARCHIVE}/schedule/scripts/calendar.ts`)).toMatch(/\d{4}|Su Mo Tu/));
+  it("query.ts", async () => expect(await run(`${ARCHIVE}/schedule/scripts/query.ts`)).toMatch(/Schedule|No events|Cannot connect/));
 });
 
 // watch scripts moved to arra-symbiosis-skills

@@ -2,6 +2,8 @@
 name: hey
 description: Talk to another oracle via maw federation. Uses fleet machine names (white, mba, clinic-nat, oracle-world, phaith). Auto-signs with current oracle's [host:handle] from CLAUDE.md. Global — works from any oracle repo.
 zombie: true
+metadata:
+  internal: true
 ---
 
 # /hey

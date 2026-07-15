@@ -130,7 +130,7 @@ until the eval harness lands — same shape as `scripts/eval_rrr.py`.
 
 ## Pairs with
 
-`src/skills/learn/SKILL.md` edits ship in a separate "Foundation" PR
+`skills/learn/SKILL.md` edits ship in a separate "Foundation" PR
 (skill-designer's 5 edits — Topic Ownership Matrix, per-agent budgets,
 hub cap, NEW Step 4 Self-Audit, audit-aware announce block). Together they
 implement the brainstorm-learn-eval team's full Round 3 output. The

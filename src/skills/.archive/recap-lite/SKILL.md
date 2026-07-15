@@ -2,6 +2,8 @@
 name: recap-lite
 description: "[DEPRECATED] Lite variant killed 2026-05-14. Use /recap instead."
 zombie: true
+metadata:
+  internal: true
 ---
 
 # /recap-lite

@@ -4,6 +4,8 @@ description: 'Transfer work to another Oracle — forward + wake + tell in one c
 argument-hint: "<oracle> <instruction>"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /handover — Transfer Work to Another Oracle

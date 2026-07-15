@@ -4,6 +4,8 @@ description: 'Open issues, PRs, and Pulse board in one view. Use when user says 
 argument-hint: "[issues | prs | board | closed | merged]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /list-issues-pr-pulse — Issues + PRs + Pulse Board

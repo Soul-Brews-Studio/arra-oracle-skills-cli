@@ -2,11 +2,13 @@ name: skill-convention
 on:
   pull_request:
     paths:
+      - 'skills/**/*.md'
       - 'src/skills/**/*.md'
       - 'scripts/check_skill_convention.sh'
   push:
     branches: [main, alpha, beta]
     paths:
+      - 'skills/**/*.md'
       - 'src/skills/**/*.md'
       - 'scripts/check_skill_convention.sh'
 jobs:

@@ -2,6 +2,8 @@
 name: rrr-lite
 description: "[DEPRECATED] Lite variant killed 2026-05-14. Use /rrr instead."
 zombie: true
+metadata:
+  internal: true
 ---
 
 # /rrr-lite

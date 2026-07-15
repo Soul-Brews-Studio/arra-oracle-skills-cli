@@ -27,7 +27,7 @@
 #   --silent     — print just the stale count (used by doctor.sh)
 #
 # See: https://github.com/Soul-Brews-Studio/arra-oracle-skills-cli/issues/300
-# Spec: src/skills/team-agents/SKILL.md (Heartbeat section)
+# Spec: skills/team-agents/SKILL.md (Heartbeat section)
 
 # Silent mode for doctor.sh
 if [ "${1:-}" = "--silent" ]; then

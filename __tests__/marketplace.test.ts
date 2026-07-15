@@ -40,6 +40,14 @@ describe("marketplace.json", () => {
     }
   });
 
+  it("lists only shelf paths — never the vault (src/skills/)", () => {
+    // Post-move the manifest is generated from the public shelf. A ./src/
+    // path here means the shelf/vault split regressed in compile.ts.
+    for (const path of marketplace.plugins[0].skills) {
+      expect(path.startsWith("./skills/")).toBe(true);
+    }
+  });
+
   it("every listed skill path exists with a SKILL.md", () => {
     for (const path of marketplace.plugins[0].skills) {
       expect(existsSync(join(process.cwd(), path, "SKILL.md"))).toBe(true);

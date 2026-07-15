@@ -6,18 +6,37 @@ There is **no `src/commands/` directory anymore**. Command stubs are generated
 inline by the installer at install time (`src/cli/installer.ts`) for agents that
 need them (OpenCode, Codex, Gemini). Claude Code invokes SKILL.md directly as `/name`.
 
+## Public Shelf / Vault Split (the layout invariant)
+
+**`skills/` = public shelf. `src/skills/` = vault. Membership IS curation.**
+
+- `skills/` — the curated set. Every external channel serves exactly this
+  directory: our CLI profiles, the Claude plugin marketplace
+  (`.claude-plugin/marketplace.json` is generated from it 1:1), and
+  `npx skills add Soul-Brews-Studio/arra-oracle-skills-cli` (it's the vercel
+  CLI's priority-scan dir — finding it suppresses the recursive fallback).
+  No `secret`/`hidden`/`zombie` flag ever belongs here (compile fails).
+- `src/skills/` — everything non-public: `release-alpha`/`release-beta`
+  (secret), `.archive/` (zombies — still installable via `-s <name>`),
+  `.template/`. All carry `metadata: internal: true` so external installers
+  skip them even under `--full-depth`. The archive **never** moves to the
+  shelf — the vercel CLI scans dot-dirs inside containers.
+- A skill name existing in BOTH roots is a split-brain (usually a rebase
+  resurrecting `src/skills/<name>` after its move) — compile, generate-vfs,
+  and discoverSkills all fail hard with a `git mv` hint.
+
 ### How It Works
 
 ```
-src/skills/         →  bun run compile  →  .claude-plugin/marketplace.json
-(SKILL.md files)       (validate +          (curated allowlist manifest)
-                        manifest)
+skills/  +  src/skills/   →  bun run compile  →  .claude-plugin/marketplace.json
+(shelf)     (vault)           (validate + gates)    (= readdir(skills/) exactly)
 ```
 
 ### Workflow
 
-1. Edit skill in `src/skills/{name}/SKILL.md`
+1. Edit skill in `skills/{name}/SKILL.md` (shelf) or `src/skills/` (vault)
 2. Run `bun run compile` — validates frontmatter + regenerates marketplace.json
+   (the lefthook pre-commit `regen-manifest` hook does this automatically)
 3. Commit the marketplace.json change with your skill change (CI fails on drift)
 
 ### Creating New Skills
@@ -105,18 +124,18 @@ Execute the `{skill-name}` skill with the provided arguments.
 
 ## Script Permissions
 
-**All `.ts` and `.sh` scripts in `src/skills/*/scripts/` must have executable permission!**
+**All `.ts` and `.sh` scripts in `{skills,src/skills}/*/scripts/` must have executable permission!**
 
 ```bash
 # When creating new scripts, always set +x
-chmod +x src/skills/my-skill/scripts/my-script.ts
+chmod +x skills/my-skill/scripts/my-script.ts
 ```
 
 **Why:** Scripts with shebang (`#!/usr/bin/env bun`) require `+x` to be invoked directly. Without it, you get "permission denied" even with correct shebang.
 
 **Check all scripts:**
 ```bash
-find src/skills -name "*.ts" ! -name "*.test.ts" -exec ls -la {} \; | grep -v rwx
+find skills src/skills -name "*.ts" ! -name "*.test.ts" -exec ls -la {} \; | grep -v rwx
 ```
 
 ## Skills with Hooks

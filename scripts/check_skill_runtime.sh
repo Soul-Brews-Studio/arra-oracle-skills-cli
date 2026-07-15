@@ -10,7 +10,7 @@
 #
 # Exit: 0 = pass, 2 = announce-mode violations
 #
-# See: src/skills/CONVENTIONS.md
+# See: skills/CONVENTIONS.md
 # Companion: scripts/check_skill_convention.sh (checks SKILL.md text)
 #
 set -euo pipefail

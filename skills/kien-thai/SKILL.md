@@ -1,6 +1,7 @@
 ---
 name: kien-thai
-description: Write Thai-language prose (technical documentation, marketing copy, explainers, blog posts, translations) that reads like a real Thai writer — not generic AI output. Counters training-data skew toward over-formal, over-polite, calqued Thai. TRIGGER when: user asks for any non-trivial Thai prose output (paragraph or longer — blog post, landing page, doc page, README in Thai, email, announcement, section); user asks to translate English into Thai; user asks to edit, rewrite, or review existing Thai prose; conversation is in Thai and user asks for a prose deliverable. DO NOT TRIGGER for: single-word or single-phrase translations, button labels, code identifiers, short UI strings, code comments, or conversational chat replies in Thai that aren't deliverable prose.
+description: >-
+  Write Thai-language prose (technical documentation, marketing copy, explainers, blog posts, translations) that reads like a real Thai writer — not generic AI output. Counters training-data skew toward over-formal, over-polite, calqued Thai. TRIGGER when: user asks for any non-trivial Thai prose output (paragraph or longer — blog post, landing page, doc page, README in Thai, email, announcement, section); user asks to translate English into Thai; user asks to edit, rewrite, or review existing Thai prose; conversation is in Thai and user asks for a prose deliverable. DO NOT TRIGGER for: single-word or single-phrase translations, button labels, code identifiers, short UI strings, code comments, or conversational chat replies in Thai that aren't deliverable prose.
 ---
 
 # kien-thai

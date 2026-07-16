@@ -140,7 +140,13 @@ import { makeInstallFixture, listSkillDirs } from "./helpers/install-fixture";
 
       const installed = await listSkillDirs(SKILLS_DIR);
       const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !minimalOnly.includes(s.name) && !s.secret && !s.zombie);
-      expect(installed.length).toBe(fullSkills.length);
+      // On mismatch, name the drift — a bare count diff is undebuggable on CI.
+      const fullNames = new Set(fullSkills.map((s) => s.name));
+      expect({
+        count: installed.length,
+        extra: installed.filter((n) => !fullNames.has(n)),
+        missing: [...fullNames].filter((n) => !installed.includes(n)),
+      }).toEqual({ count: fullSkills.length, extra: [], missing: [] });
     });
 
     it("every full-profile skill has a directory", async () => {
@@ -248,7 +254,13 @@ import { makeInstallFixture, listSkillDirs } from "./helpers/install-fixture";
       const allSkills = await discoverSkills();
       const fullSkills = allSkills.filter(s => !labOnly.includes(s.name) && !minimalOnly.includes(s.name) && !s.secret && !s.zombie);
       let skills = await listSkillDirs(SKILLS_DIR);
-      expect(skills.length).toBe(fullSkills.length);
+      // On mismatch, name the drift — a bare count diff is undebuggable on CI.
+      const fullNames = new Set(fullSkills.map((s) => s.name));
+      expect({
+        count: skills.length,
+        extra: skills.filter((n) => !fullNames.has(n)),
+        missing: [...fullNames].filter((n) => !skills.includes(n)),
+      }).toEqual({ count: fullSkills.length, extra: [], missing: [] });
 
       await installSkills([TEST_AGENT], {
         global: true,

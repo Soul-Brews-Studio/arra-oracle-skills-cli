@@ -3,8 +3,24 @@ pre-commit:
     update-table:
       run: bun run scripts/update-readme-table.ts
       stage_fixed: true
+    regen-manifest:
+      # Shelf changes must regenerate .claude-plugin/marketplace.json or the
+      # ci.yml drift gate rejects the PR. Explicit `git add` because lefthook's
+      # stage_fixed only stages files matching THIS command's glob (skills/**),
+      # which can never cover the manifest it regenerates.
+      glob: 'skills/**'
+      run: bun run compile && git add .claude-plugin/marketplace.json
     test:
-      run: bun test
+      # Fast unit suite only (~11s). Bare `bun test` would also pick up
+      # tests-e2e/ (dig-skill scans real ~/.claude/projects — 90s locally).
+      # CI runs the full suite via `bun run test:full`.
+      run: bun run test
     skill-convention:
-      glob: 'src/skills/**/*.md'
+      glob: '{skills,src/skills}/**/*.md'
       run: bash scripts/check_skill_convention.sh
+    skill-scripts-exec:
+      # Every .ts/.sh under {skills,src/skills}/*/scripts/ must be committed +x
+      # (mode 100755) or shebang scripts break with "permission denied". Runs on
+      # every commit — mode drift can arrive via checkout/rebase, not just
+      # script edits.
+      run: bash scripts/check_skill_scripts_exec.sh

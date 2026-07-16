@@ -4,6 +4,8 @@ description: 'Work on a GitHub issue with worktree isolation, or resume a killed
 argument-hint: "<#issue | --resume name>"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /workon — Work + Resume

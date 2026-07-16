@@ -4,6 +4,8 @@ description: 'Full skill development pipeline — create, compile, test, commit,
 argument-hint: "<name> [description]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /alpha-feature — Create Skill + Install Locally
@@ -31,7 +33,7 @@ If no arguments, ask:
 
 ### 2. Create Skill
 
-Create `src/skills/<name>/SKILL.md`:
+Create `skills/<name>/SKILL.md` (public shelf; vault src/skills/ is for secret/archived skills):
 
 ```markdown
 ---

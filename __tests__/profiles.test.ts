@@ -8,9 +8,10 @@ const ALL_SKILLS = [
   ...ZOMBIE_SKILLS,
   ...MINIMAL_ONLY_SKILLS,
   // Full/other skills (not standard, not lab-only, not minimal-only, not zombie)
+  // (standup moved to zombie 2026-07-06 — now covered by the ZOMBIE_SKILLS spread)
   "about-oracle", "create-shortcut", "incubate",
   "oracle-family-scan", "project",
-  "standup", "where-we-are", "who-are-you",
+  "where-we-are", "who-are-you",
 ].sort();
 
 const ZOMBIE_LIST = [...ZOMBIE_SKILLS] as string[];
@@ -52,12 +53,12 @@ describe("profiles", () => {
     expect([...STANDARD_SKILLS]).not.toContain("feel");
   });
 
-  it("LAB_SKILLS has 11 experimental skills (9 post-#327 + xray from standard + hey new)", () => {
-    expect(LAB_SKILLS).toHaveLength(11);
+  it("LAB_SKILLS has 3 experimental skills (zombie round 2 archived 8 of 11)", () => {
+    expect(LAB_SKILLS).toHaveLength(3);
   });
 
-  it("ZOMBIE_SKILLS has 31 archived candidates (28 prior + 3 lites killed)", () => {
-    expect(ZOMBIE_SKILLS).toHaveLength(31);
+  it("ZOMBIE_SKILLS has 41 archived candidates (32 prior + zombie round 2: 9 from usage census)", () => {
+    expect(ZOMBIE_SKILLS).toHaveLength(41);
   });
 
   it("labOnly matches LAB_SKILLS", () => {

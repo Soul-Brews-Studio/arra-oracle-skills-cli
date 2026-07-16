@@ -4,6 +4,7 @@ on:
   push:
     branches: [alpha]
     paths:
+      - 'skills/**/SKILL.md'
       - 'src/skills/**/SKILL.md'
       - 'src/skills/.archive/**/SKILL.md'
       - 'src/profiles.ts'

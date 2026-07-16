@@ -3,6 +3,8 @@ name: release-alpha
 description: "Cut an alpha pre-release — bump CalVer, PR to alpha branch, CI auto-tags + publishes to npm @alpha. Use when user says 'release alpha', 'cut alpha', '/release-alpha', or wants to publish an alpha version."
 argument-hint: ""
 secret: true
+metadata:
+  internal: true
 ---
 
 # /release-alpha

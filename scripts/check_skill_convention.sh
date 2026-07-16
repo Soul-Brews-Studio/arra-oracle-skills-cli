@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
 # check_skill_convention.sh — enforce the clickable-paths convention
-# (announce-mode) on every src/skills/*/SKILL.md.
+# (announce-mode) on every shelf (skills/) and vault (src/skills/, incl.
+# .archive/) SKILL.md.
 #
 # What it checks: every line in SKILL.md prose (NOT inside fenced ``` code
 # blocks) that begins with an announce marker (📍 📥 📤 📝 📊 🔬 ✅ 🪶)
@@ -14,12 +15,12 @@
 #   4. Ellipsis        ...   (truncated/non-clickable path)
 #   5. [PLACEHOLDER]   square-bracketed token in path position
 #
-# See: src/skills/CONVENTIONS.md
+# See: skills/CONVENTIONS.md
 # Spec: ψ/memory/mailbox/clickable-paths/convention-designer/2026-05-13_round3.md §5
 #
 set -euo pipefail
 FAIL=0
-for f in src/skills/*/SKILL.md; do
+for f in skills/*/SKILL.md src/skills/*/SKILL.md src/skills/.archive/*/SKILL.md; do
   [ -e "$f" ] || continue
   stripped=$(awk 'BEGIN{f=0} /^```/{f=!f; next} !f' "$f")
   patterns=(

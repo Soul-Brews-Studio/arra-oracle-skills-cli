@@ -1,6 +1,8 @@
 ---
 name: template
 description: Skill template with Bun Shell pattern. Copy this folder to create new skills.
+metadata:
+  internal: true
 ---
 
 # /template - Skill Template

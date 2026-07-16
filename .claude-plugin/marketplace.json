@@ -1,0 +1,50 @@
+{
+  "name": "oracle-skills",
+  "owner": {
+    "name": "Nat Weerawan",
+    "url": "https://github.com/Soul-Brews-Studio"
+  },
+  "metadata": {
+    "description": "Oracle Skills — symbiotic-intelligence skills for Claude Code and friends"
+  },
+  "plugins": [
+    {
+      "name": "oracle-skills",
+      "source": "./",
+      "description": "Curated Oracle skill set (secret/archived tiers are intentionally not listed)",
+      "strict": false,
+      "skills": [
+        "./skills/about-oracle",
+        "./skills/awaken",
+        "./skills/bampenpien",
+        "./skills/bud",
+        "./skills/calver",
+        "./skills/create-shortcut",
+        "./skills/dig",
+        "./skills/dream",
+        "./skills/forward",
+        "./skills/fyi",
+        "./skills/go",
+        "./skills/incubate",
+        "./skills/kien-thai",
+        "./skills/learn",
+        "./skills/oracle-cheatsheet",
+        "./skills/oracle-combine-blogs",
+        "./skills/oracle-family-scan",
+        "./skills/oracle-prism",
+        "./skills/oracle-title-forge",
+        "./skills/project",
+        "./skills/recap",
+        "./skills/resonance",
+        "./skills/rrr",
+        "./skills/talk-to",
+        "./skills/team-agents",
+        "./skills/trace",
+        "./skills/verification-gate-fail-closed",
+        "./skills/watch",
+        "./skills/where-we-are",
+        "./skills/who-are-you"
+      ]
+    }
+  ]
+}

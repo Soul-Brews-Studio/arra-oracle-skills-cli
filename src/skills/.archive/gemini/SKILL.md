@@ -4,6 +4,8 @@ description: 'Control Gemini browser tab via MQTT WebSocket — chat, transcribe
 argument-hint: "<command> [args]"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /gemini — Gemini MQTT Control

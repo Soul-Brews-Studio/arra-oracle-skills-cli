@@ -4,6 +4,8 @@ description: 'Deep Research via Gemini — opens new tab, selects Deep Research 
 argument-hint: "<topic>"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /deep-research — Deep Research via Gemini

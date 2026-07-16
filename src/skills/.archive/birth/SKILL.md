@@ -4,6 +4,8 @@ description: 'Prepare Oracle birth props for a new repo — Issue #1, MCP thread
 argument-hint: "<repo>"
 zombie: true
 origin: arra-symbiosis-skills
+metadata:
+  internal: true
 ---
 
 # /birth — Prepare Oracle Birth Props

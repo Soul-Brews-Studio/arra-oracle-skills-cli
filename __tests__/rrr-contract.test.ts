@@ -1,118 +1,87 @@
 import { describe, expect, it } from "bun:test";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync, readdirSync, statSync } from "fs";
+import { join, relative } from "path";
 
-const skillDir = join(process.cwd(), "skills", "rrr");
-const skill = readFileSync(join(skillDir, "SKILL.md"), "utf8");
-const hosts = readFileSync(join(skillDir, "HOSTS.md"), "utf8");
-const template = readFileSync(join(skillDir, "TEMPLATE.md"), "utf8");
+const root = join(process.cwd(), "skills", "rrr");
+const read = (path: string) => readFileSync(join(root, path), "utf8");
+const scripts = () => readdirSync(join(root, "scripts")).filter((path) => path.endsWith(".py")).sort();
 
-describe("rrr execution contract", () => {
-  it("exposes only three mutually-exclusive modes and defaults to foreground", () => {
-    const hint = skill.match(/^argument-hint:.*$/m)?.[0] ?? "";
-    expect(hint).toContain("[--fg | --bg | --combo]");
-    expect(hint).not.toContain("--deep");
-    expect(hint).not.toContain("--quick");
-    expect(hint).not.toContain("--detail");
-    expect(hint).not.toContain("--teammate");
-    expect(skill).toContain("`--fg`, `--bg`, and `--combo` are mutually exclusive");
-    expect(skill).toContain("When none is supplied, use the default foreground");
+describe("RRR reduced safe contract", () => {
+  it("has one cross-runtime front door, literal flag grammar, and helper-root portability", () => {
+    const skill = read("SKILL.md");
+    expect(skill).toContain("Claude `/rrr`; Codex `$rrr`");
+    expect(skill).toContain("`/prompts:rrr`");
+    expect(skill).toContain("<RRR_SKILL_DIR>");
+    expect(skill).toContain("[--light | --preview | --finish | --vault | --resume <manifest>]");
+    expect(skill).toContain("--finish --light");
+    expect(skill).toContain("--finish --vault");
   });
 
-  it("makes foreground current-session-only without persisted mining or hidden agents", () => {
-    expect(skill).toContain("Do not inspect persisted session transcripts");
-    expect(skill).toContain("Do not launch a hidden mining agent");
-    expect(skill).toContain("Persisted session mining: disabled by --fg");
+  it("keeps bare/preview/finish and authority boundaries equal across contract files", () => {
+    const skill = read("SKILL.md");
+    const preview = read("references/finish-cleanup-preview.md");
+    const hosts = read("HOSTS.md");
+    expect(skill).toContain("wholly non-mutating");
+    expect(skill.replace(/\s+/g, " ")).toContain("finish blocked: no validated push gate");
+    expect(preview).toContain("preview is read-only");
+    expect(preview).toContain("action: retain");
+    expect(hosts.replace(/\s+/g, " ")).toContain("never authority and never current authority");
+    expect(skill).toContain("transcript, manifest, memory, plan, and this prose grant none");
   });
 
-  it("defines background as asynchronous persisted-session mining", () => {
-    expect(skill).toContain("Mine the persisted host session");
-    expect(skill).toContain("write asynchronously");
+  it("captures verified gotchas locally without claiming always-on completeness", () => {
+    const skill = read("SKILL.md");
+    expect(skill).toContain("Immediate gotcha capture");
+    expect(skill).toContain("local capture needs no per-item question");
+    expect(skill).toContain("Always-on startup capture is deferred");
+    expect(skill).toContain("never omniscient");
+    for (const outcome of ["hypothesis", "session-only", "withheld", "published", "superseded"]) {
+      expect(skill).toContain(outcome);
+    }
   });
 
-  it("defines combo as live-session output followed by persisted enrichment", () => {
-    expect(skill).toContain("write a complete, useful context-based retrospective synchronously");
-    expect(skill).toContain("Then launch one background miner/writer");
-    expect(skill).toContain("Session enrichment: pending");
+  it("keeps binding structural and removes the obsolete mtime session selector", () => {
+    const hosts = read("HOSTS.md");
+    expect(hosts).toContain("never reads Claude storage");
+    expect(hosts).toContain("rather than guessing by cwd, basename, mtime, or newest file");
+    expect(existsSync(join(root, "scripts", "session-clock.py"))).toBe(false);
+    const binder = read("scripts/rrr-bind.py");
+    expect(binder).not.toMatch(/getmtime|st_mtime|ls\s+-t|newest/i);
   });
 
-  it("uses the complete gist-inspired retrospective structure", () => {
-    expect(skill).toContain("[TEMPLATE.md](TEMPLATE.md)");
-    for (const heading of [
-      "## Technical Details",
-      "### Architecture Decisions",
-      "## 📝 AI Diary",
-      "## What Went Well",
-      "## What Could Improve",
-      "## Blockers & Resolutions",
-      "## 💭 Honest Feedback",
-      "## Lessons Learned",
-      "## Next Steps",
-      "## Related Resources",
-      "## 🔍 Self-Audit",
-    ]) expect(template).toContain(heading);
+  it("removes fabrication quotas and labels timing as a proxy", () => {
+    const template = read("TEMPLATE.md");
+    expect(template).toContain("excluding gaps greater than 30 minutes (proxy)");
+    expect(template).not.toMatch(/\b(150|100) words|exactly three|mandatory mistake/i);
+    expect(template).toContain("evidence unavailable");
+    expect(template).toContain("none observed");
   });
 
-  it("keeps the validation checklist as a silent gate, not a written report section", () => {
-    // The written-report fence ends at Self-Audit and carries no checklist.
-    const fence = template.split("```markdown")[1]?.split("```")[0] ?? "";
-    expect(fence).toContain("## 🔍 Self-Audit");
-    expect(fence).not.toContain("Validation Checklist");
-    expect(fence).not.toContain("Metadata reflects the actual session");
-    // The checklist lives OUTSIDE the fence as a gate with a do-not-write rule.
-    expect(template).toContain("## Validation gate");
-    expect(template).toContain("Metadata reflects the actual session");
-    expect(template).toMatch(/do not (copy|write)/i);
-    // SKILL.md instructs a silent verification, never a written checklist.
-    expect(skill).toContain("validation gate");
-    expect(skill).toContain("never write the checklist");
+  it("ships all references and executable helpers", () => {
+    for (const file of ["references/manifest.md", "references/oracle-receipts.md", "references/finish-cleanup-preview.md"]) {
+      expect(read(file).length).toBeGreaterThan(300);
+    }
+    expect(scripts()).toEqual([
+      "rrr-bind.py", "rrr-cleanup.py", "rrr-finish.py", "rrr-manifest.py", "rrr-receipt.py", "rrr-redact.py",
+    ]);
+    for (const file of scripts()) expect(statSync(join(root, "scripts", file)).mode & 0o111, file).not.toBe(0);
   });
 
-  it("keeps host-specific session sources behind adapters", () => {
-    expect(skill).toContain("HOSTS.md");
-    expect(hosts).toContain("## Claude Code adapter");
-    expect(hosts).toContain("## Codex adapter");
-    expect(hosts).toContain("## Unknown hosts");
-    expect(hosts).toContain("SessionEvidence");
+  it("contains no state-changing Git/cleanup executor in executable Python", () => {
+    const executable = scripts().map((file) => read(`scripts/${file}`)).join("\n");
+    const privilegedPreviews = ["rrr-finish.py", "rrr-cleanup.py"].map((file) => read(`scripts/${file}`)).join("\n");
+    expect(executable).not.toMatch(/\bgit\b[^\n]*(?:commit|push|merge|add|reset|checkout|clean)\b/);
+    expect(privilegedPreviews).not.toMatch(/\bos\.(?:remove|unlink)\(|shutil\.rmtree|subprocess[^\n]*(?:kill|rm|mv)\b/);
+    expect(executable).toContain("GIT_OPTIONAL_LOCKS");
   });
 
-  it("does not hard-code vendor model tiers or team workflows", () => {
-    expect(skill).not.toMatch(/model:\s*["']?(sonnet|opus|haiku)/i);
-    expect(skill).toContain("Do not create coordinated teams or multi-agent analysis trees");
-  });
-
-  it("documents explicit capability fallbacks", () => {
-    expect(skill).toContain("If background execution is unavailable");
-    expect(skill).toContain("`--bg` falls back to `--fg`");
-    expect(hosts).toContain("All fallbacks are explicit");
-  });
-
-  it("defaults to a cheap session clock rather than a background agent", () => {
-    expect(skill).toContain("session clock");
-    expect(skill).toContain("timestamps only, never conversation content");
-    // combo must NOT be the default
-    expect(skill).not.toContain("`--combo`, default");
-    expect(skill).toContain("no background agent");
-  });
-
-  it("bans estimated timestamps, tilde or not", () => {
-    expect(skill).toContain("A tilde does not license a guess");
-    expect(skill).toContain("Never interpolate a row time between two beats");
-  });
-
-  it("offers a light mode that drops reflection but keeps the timeline", () => {
-    expect(skill).toContain("#### Light (`--light`)");
-    expect(skill).toContain("mode: light");
-  });
-
-  it("states the session clock as a contract, leaving the mechanism to each host", () => {
-    // the shared flow must not carry one host's paths or schema
-    expect(skill).not.toContain(".claude/projects");
-    expect(skill).not.toContain(".jsonl");
-    expect(skill).toContain("Resolve it the way your harness allows");
-    // the contract + per-host how-to live in HOSTS.md
-    expect(hosts).toContain("SessionClock");
-    expect(hosts).toContain("Session clock reference implementation");
-    expect(hosts).toContain("evidence: none");
+  it("has an RRR-specific executable-mode check that becomes a tracked 100755 assertion after commit", () => {
+    for (const file of scripts()) {
+      const relativePath = relative(process.cwd(), join(root, "scripts", file));
+      const tracked = Bun.spawnSync(["git", "ls-files", "-s", "--", relativePath], { stdout: "pipe" });
+      const record = new TextDecoder().decode(tracked.stdout).trim();
+      if (record) expect(record.startsWith("100755 "), file).toBe(true);
+      else expect(statSync(join(root, "scripts", file)).mode & 0o111, file).not.toBe(0);
+    }
   });
 });

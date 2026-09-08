@@ -70,7 +70,7 @@ bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -
 | 17 | **psi** | skill | Attach a code repo's ψ vault to a caretaker… |
 | 18 | **recap** | skill + code | Session orientation and awareness |
 | 19 | **resonance** | skill | Capture a resonance moment |
-| 20 | **rrr** | skill | Create a session retrospective with an AI… |
+| 20 | **rrr** | skill | Evidence-backed session retrospective and… |
 | 21 | **trace** | skill | Find projects, code, and knowledge across… |
 | 22 | **where-we-are** | skill | Session awareness |
 | 23 | **who-are-you** | skill | Know ourselves |

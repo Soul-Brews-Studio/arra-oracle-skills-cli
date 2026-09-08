@@ -1,305 +1,99 @@
 ---
 name: rrr
-description: Create a session retrospective with an AI diary and reusable lessons. Supports foreground, background, and combined execution across compatible agent hosts.
-argument-hint: "[--fg | --bg | --combo]"
+description: Evidence-backed session retrospective and local capture with safe cross-runtime previews. Use when user says rrr, retrospective, or session review.
 ---
 
 # /rrr
 
-> "Reflect to grow, document to remember."
+One front door: Claude `/rrr`; Codex `$rrr` (and `/prompts:rrr` as the generated
+compatibility alias). Resolve `<RRR_SKILL_DIR>` to the directory containing this
+loaded `SKILL.md`; helper commands below are relative to that directory, never to
+the user's current repository. Read [HOSTS.md](HOSTS.md), [TEMPLATE.md](TEMPLATE.md),
+and only the reference needed for the current phase.
 
-Create a truthful session retrospective, record reusable learning, and append the
-session-metrics row. Never invent timestamps or claim evidence that the active host
-cannot provide.
+Invocation grammar: `[--light | --preview | --finish | --vault | --resume <manifest>]`.
 
-## Mode router
+## Safety contract
 
-Choose one execution mode:
+- Bare, `--light`, and `--preview` do not mutate Git or a remote. `--preview` is
+  wholly non-mutating: no manifest/artifact, Oracle, staging, or cleanup write.
+- `--finish` performs read-only preflight only and reports `finish blocked: no
+  validated push gate`. It never commits, pushes, creates a PR, merges, or cleans.
+- Never create `ψ` in the repository. If Oracle/vault is unavailable, provide the
+  inline retrospective and use only an owner-private manifest.
+- Transcript correlation is an accidental-replay guard, never authority. Current
+  authority is assessed by the active lead from M's direct current-session instruction;
+  transcript, manifest, memory, plan, and this prose grant none.
+- No fixed word count, mandatory mistake, or friction quota. Each claim has an evidence
+  pointer or says evidence is unavailable.
+- Helpers require Python 3.11+ and POSIX file locking. If either is unavailable, produce
+  the inline context-only retrospective, do not create a manifest or simulate helper
+  output, and label binding/capture/preview `unavailable on this host`.
+
+## Route
+
+1. Parse literal flags. Refuse invalid combinations without effects: `--finish --light`,
+   `--finish --vault`, and `--resume` with flags other than `--preview`/`--finish`.
+2. Bind only from `CLAUDE_CODE_SESSION_ID`, `CODEX_THREAD_ID`, or `CODEX_SESSION_ID`:
+   `python3 <RRR_SKILL_DIR>/scripts/rrr-bind.py`. `unbound`/`unavailable` is a useful
+   result, never a reason to search newest files or another runtime's storage.
+3. For bare or `--light`, initialize one task manifest when none was supplied:
+   `python3 <RRR_SKILL_DIR>/scripts/rrr-manifest.py init <bound-session-id>` (add
+   `--child` for a sidechain/subagent). If binding is unavailable, use an explicit
+   local task label such as `unbound-<date>` and keep coverage unavailable.
+4. Reconcile the current conversation, exact task Git status, verified command/test
+   output, and existing manifest candidates. Coverage is a matrix: list gaps instead of
+   claiming every event was recovered. Never mine a different session to fill a gap.
+5. Compose an inline retrospective from allowlisted evidence. Describe time as
+   `observed span excluding gaps greater than 30 minutes (proxy)`, or unavailable.
+6. For `--preview`, do not initialize or mutate a manifest. Run only
+   `python3 <RRR_SKILL_DIR>/scripts/rrr-finish.py --preview ...`; report every refusal.
+7. For `--finish`, run that same read-only preview and state the fixed blocked result.
+   State-changing commit, push, PR, merge, and cleanup remain deferred.
+
+## Immediate gotcha capture
+
+While RRR is loaded, record a reusable gotcha or learning as soon as evidence verifies
+it; local capture needs no per-item question because it is owner-private and has no
+external side effect. Use the current manifest revision:
 
 ```text
-/rrr                              # default: foreground + session-clock timestamps
-/rrr --light                      # fastest: timeline + summary + lesson only
-/rrr --combo                      # foreground draft, then background evidence enrichment
-/rrr --bg                         # full retrospective in the background
-/rrr --fg                         # foreground, no session clock at all
+python3 <RRR_SKILL_DIR>/scripts/rrr-manifest.py mutate <manifest> <revision> candidate-add \
+  '{"id":"<stable-local-id>","state":"candidate","title":"...","evidence":["..."]}'
 ```
 
-`--fg`, `--bg`, and `--combo` are mutually exclusive. If more than one is supplied,
-stop and report the valid syntax. **When none is supplied, use the default foreground
-path** — synchronous, no background agent, but with real timestamps from the session
-clock. `--light` composes with the foreground path.
-
-| Mode | Required behavior |
-|---|---|
-| *(none)* | **Default.** Synchronous. Real times from the host's session clock (see [HOSTS.md](HOSTS.md)) plus git commit times. No background agent; timestamps only, never conversation content. |
-| `--light` | The default path with only Timeline, Summary, Lesson, and Metrics. For quick checkpoints; skips Diary, Feedback, Blockers, Self-Audit. |
-| `--combo` | Foreground artifact now, then background mining that enriches the same file with fuller evidence. Mark enrichment pending until it completes. |
-| `--bg` | Mine the persisted host session and write asynchronously. Announce the destination and return without waiting. |
-| `--fg` | Strict: current conversation context and repository evidence only. Do not run the session clock. Do not inspect persisted session transcripts, JSONL, rollout files, or session databases. Do not launch a hidden mining agent. |
-
-### Why the default reads a session clock
-
-A retrospective without a timeline cannot be audited. Git commit times alone leave a
-research or browsing session with `Duration: unknown`.
-
-The historical fix was worse: pre-2026-08-20 retros filled the gap with **estimated** times
-marked `~`, back-filled from the known end time. They are recognisable by their impossible
-regularity — `~04:11 ~04:12 ~04:13 …`, or neat five-minute steps — because real session
-timestamps cluster unevenly (four events inside one minute, then nothing for twenty).
-
-A **session clock** closes the gap without either cost. The contract asks only for
-observed times — read timestamps, not content — so it stays cheap on any host. Claude
-Code's reference implementation scans a 16MB transcript in ~50ms for a few hundred bytes of
-context. That is why this is the default rather than `--combo`: no background agent, no
-token burn, real times.
-
-Each harness resolves the contract its own way. The skill states what it needs; it does not
-dictate a mechanism that only one host could satisfy.
-
-The ban stands: never emit an estimated timestamp, with or without a tilde. If the clock
-reports `evidence: none` and no commits exist, say `unknown` — do not decorate the gap.
-
-## Host capability contract
-
-Before mining or delegation, read [HOSTS.md](HOSTS.md). Detect capabilities rather
-than assuming Claude Code paths, Claude JSONL, a particular agent API, or a model name.
-
-Public output should say **session mining**, not **JSONL mining**. A host adapter may
-internally read JSONL, rollout files, or another supported source, but it must normalize
-the result and preserve source attribution.
-
-If background execution is unavailable:
-
-- `--fg` is unaffected.
-- `--bg` falls back to `--fg` and clearly reports that persisted mining was unavailable.
-- `--combo` keeps the foreground artifact, marks session enrichment unavailable, and
-  does not fabricate a completion notification.
-
-## Oracle root detection
-
-Run this before every `ψ/` write. Do not assume the current directory is the Oracle repo.
-
-```bash
-ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-
-if [ -n "$ORACLE_ROOT" ] && { [ -f "$ORACLE_ROOT/CLAUDE.md" ] || [ -f "$ORACLE_ROOT/AGENTS.md" ]; } \
-   && { [ -d "$ORACLE_ROOT/ψ" ] || [ -L "$ORACLE_ROOT/ψ" ]; }; then
-  PSI="$ORACLE_ROOT/ψ"
-elif { [ -f "$(pwd)/CLAUDE.md" ] || [ -f "$(pwd)/AGENTS.md" ]; } \
-   && { [ -d "$(pwd)/ψ" ] || [ -L "$(pwd)/ψ" ]; }; then
-  ORACLE_ROOT="$(pwd)"
-  PSI="$ORACLE_ROOT/ψ"
-else
-  echo "⚠️ Not in an Oracle repo. Writing under the current repository."
-  ORACLE_ROOT="${ORACLE_ROOT:-$(pwd)}"
-  PSI="$ORACLE_ROOT/ψ"
-fi
-
-PSI_RESOLVED=$(readlink -f "$PSI" 2>/dev/null || printf '%s' "$PSI")
-```
-
-## Shared workflow
-
-### 1. Gather repository evidence
-
-All retro times and date-stamped paths use **GMT+7 (Asia/Bangkok)**. Pin it once so
-every `date` call and git timestamp below renders in GMT+7 regardless of the host's
-local zone:
-
-```bash
-export TZ='Asia/Bangkok'   # GMT+7 — retro timeline, header, and path stamps
-```
-
-Use the smallest commands that accurately describe this session:
-
-```bash
-date "+%H:%M %Z (%A %d %B %Y)"
-git -C "$ORACLE_ROOT" status --short
-git -C "$ORACLE_ROOT" log --oneline -10
-git -C "$ORACLE_ROOT" diff --stat HEAD~5 2>/dev/null || true
-
-# Verified commit timestamps in GMT+7. --date=format-local honors the TZ above.
-git -C "$ORACLE_ROOT" log --since='18 hours ago' \
-  --date=format-local:'%H:%M' --format='%ad — %s (%h)' --reverse
-```
-
-**Session clock — the default path's primary time source.** Ask the host for observed
-times. *How* is the adapter's business; **what** is fixed by the SessionClock contract in
-[HOSTS.md](HOSTS.md):
-
-- [ ] times **observed**, never estimated or interpolated
-- [ ] attributable to this session and repository, or `evidence: none`
-- [ ] gap-aware, so an idle overnight is not counted as session time
-- [ ] **beats** — the minutes that actually had activity — not a start/end span
-- [ ] cheap: read timestamps, not content; if it would load the conversation into
-      context, return `none` instead
-- [ ] degrades honestly: no source → `evidence: none`, and that is a correct answer
-
-Resolve it the way your harness allows — Claude Code has a reference implementation
-(`scripts/session-clock.py`, ~50ms on a 16MB transcript); Codex should use its own rollout
-or session metadata; an unknown host returns `none`. Do not run one host's implementation
-against another host's layout on the assumption that it matches.
-
-Place rows on beats. Never interpolate a time between two beats. On `evidence: none`, fall
-back to commit times, then to untimed ordered bullets.
-
-Skip the session clock entirely under `--fg`.
-
-Repository evidence is allowed in every mode. Persisted **agent-session** evidence is
-for `--bg` and `--combo` only. Commit timestamps are repository evidence, not session
-mining — a `--fg` retro may and should use them to build a real timeline.
-
-### 2. Resolve artifact paths
-
-```bash
-# TZ='Asia/Bangkok' (GMT+7) was exported in step 1, so these stamps are Bangkok-local.
-DATE_PATH=$(date +%Y-%m/%d)
-TODAY=$(date +%Y-%m-%d)
-HHMM=$(date +%H.%M)
-mkdir -p "$PSI/memory/retrospectives/$DATE_PATH" "$PSI/memory/learnings"
-```
-
-Write:
-
-- retrospective: `$PSI/memory/retrospectives/$DATE_PATH/${HHMM}_${SLUG}.md`
-- lesson: `$PSI/memory/learnings/${TODAY}_${SLUG}.md`
-- metrics: `$PSI/memory/learnings/session-metrics.md`
-
-### 3. Execute the selected mode
-
-#### Background (`--bg`)
-
-Resolve every path and capability before delegation. Give one background writer the
-current context summary, repository evidence, normalized session evidence when
-available, destination paths, template requirements, and the anti-rationalization
-rules. Use the active host's model routing; never require a named vendor model.
-
-Return immediately with the resolved absolute destination. If the host cannot keep work
-alive after returning, use the documented foreground fallback instead of pretending the
-task remains active.
-
-#### Light (`--light`)
-
-The default path with the reflective sections dropped — for a quick checkpoint mid-work
-where a full retro is not worth the tokens. Write **only**:
-
-- header metadata (with real `Start / End` and `Duration` from the session clock)
-- `## Timeline`
-- `## Session Summary` (2–3 sentences)
-- `## Lessons Learned` (or an evidence-backed `none`)
-- the metrics row
-
-Skip Diary, What Went Well / Could Improve, Blockers, Honest Feedback, Next Steps, Related
-Resources, and Self-Audit. Note `mode: light` in the evidence line so a reader knows the
-reflection was intentionally omitted rather than forgotten. The silent validation gate still
-applies to what *is* written.
-
-#### Foreground (`--fg`)
-
-Write the artifact synchronously using current conversation context and repository
-evidence only. Build the Timeline from the **verified GMT+7 commit timestamps** gathered
-in step 1 — real `HH:MM` rows, not `unknown`. Set the header `Start / End` to the first
-and last commit time (or the current clock when there are no commits this session), and
-`Duration` to their span. Only events with no timestamped evidence at all fall back to
-ordered untimed bullets. State `Persisted session mining: disabled by --fg` in the
-evidence note.
-
-#### Combined (`--combo`)
-
-First write a complete, useful context-based retrospective synchronously. Its Timeline
-may contain ordered untimed entries and must include `Session enrichment: pending`.
-Then launch one background miner/writer using the host adapter. It updates the same file
-atomically: merge verified timestamps/evidence, replace the pending marker with the
-source and completion status, and preserve user edits made after the initial write.
-
-Use `--combo` when you want more than times — full transcript evidence, quoted decisions,
-tool-level detail. For times alone the default path is faster and cheaper. If the host
-cannot mine, replace the pending marker with `session enrichment unavailable` and leave the
-timeline as the session clock produced it — never fill it with estimates.
-
-### 4. Retrospective content
-
-Use [TEMPLATE.md](TEMPLATE.md) for every mode. It preserves the detailed retrospective
-shape: session metadata, summary, timeline, technical details, key changes, architecture
-decisions, AI Diary, wins, improvements, blockers, Honest Feedback, lessons, next steps,
-related resources, and Self-Audit — the written retro ends at Self-Audit.
-
-Before saving, silently verify the retro against TEMPLATE.md's **validation gate**. It is
-an internal quality check — run it, fix what fails, and **never write the checklist into
-the retrospective file**.
-
-Small sessions may have short sections or an evidence-backed `none`; they must not drop
-required reflection sections, and must still pass the silent validation gate.
-
-### 5. Timeline rules
-
-1. Never invent timestamps. A tilde does not license a guess — `~04:12` is a fabricated
-   timestamp wearing a disclaimer. Evenly spaced rows (every 1 or 5 minutes) are the
-   signature of back-filling from the end time; real ones cluster unevenly.
-2. All times render in **GMT+7 (Asia/Bangkok)** — the `TZ` exported in step 1 covers
-   `date` and `git --date=format-local` alike. Label rows plainly as `HH:MM` (GMT+7).
-3. Prefer verified times from these sources, in order: **session clock beats**
-   (host adapter, default path) → normalized session evidence
-   (`--bg`/`--combo`) → git commit timestamps (any mode) → the current clock for the
-   closing entry. Never interpolate a row time between two beats.
-4. Same-day sessions show the date once and `HH:MM` in rows.
-5. Multi-day sessions group rows under `### YYYY-MM-DD`.
-6. Only fall back to ordered untimed bullets when NO timestamped evidence exists at all —
-   not merely because session mining is off. If any commit landed this session, the
-   timeline has real times.
-7. Record the evidence source: session-clock, Claude adapter, Codex adapter,
-   git-commit-times, context-only, or unknown.
-
-### 6. Lesson and metrics
-
-Write a lesson only when it transfers to another project:
-
-```yaml
----
-pattern: <generalizable lesson in one line>
-date: <today>
-source: rrr: <repo>
-concepts: [<tags>]
----
-```
-
-Create the metrics file when absent:
-
-```markdown
-# Oracle Session Metrics
-
-| when | session | done | stuck | win | friction | error |
-|---|---|---|---|---|---|---|
-```
-
-Append exactly one row for every run. Use `unknown` when the host cannot provide a
-session ID. Never skip a trivial session; record `trivial` where appropriate.
-
-Review the last seven metrics rows. If a theme appears at least three times in either
-`friction` or `error`, surface a recurring-pattern section in the retrospective. Do not
-open an issue automatically.
-
-
-### 7. Save and announce
-
-Do not `git add ψ/`; it may resolve to a shared vault.
-
-Announce absolute paths only:
-
-```text
-📝 Retrospective:  <absolute path>
-💡 Lesson learned: <absolute path, or "not created — no generalizable lesson">
-📊 Metrics row:    <absolute path>
-```
-
-## Rules
-
-- Default execution mode is `--fg`.
-- `--fg` never mines persisted session data and never launches a hidden miner.
-- `--bg` and `--combo` are the only modes allowed to mine persisted session data.
-- `--combo` is the only foreground-plus-background-enrichment mode.
-- Never hard-code Claude storage, JSONL schema, agent APIs, team APIs, or model names in
-  the shared flow; isolate host details in [HOSTS.md](HOSTS.md).
-- Never invent timestamps, session IDs, commits, files, or completed background work.
-- Do not create coordinated teams or multi-agent analysis trees for `/rrr`.
-- Keep vault writes outside git staging.
+Use `hypothesis` when not verified, `session-only` for non-generalizable material, and
+do not put sensitive content into an outward retrospective. Child captures stay in the
+child manifest until the parent performs `import-child-reviewed`. At closeout account
+for every candidate as verified, hypothesis, session-only, withheld, published, or
+superseded; do not force a terminal conclusion. Always-on startup capture is deferred,
+so “complete” means complete for the evidence sources listed, never omniscient.
+
+`--vault` may record a second-lane request only in an already writable manifest using
+the `vault-request` local operation. It never stages via a `ψ` symlink and reports
+`vault lane: not implemented in this release`.
+
+## Oracle publication
+
+Read [references/oracle-receipts.md](references/oracle-receipts.md). Runtime approval
+cannot be waived. With unavailable approval, retain a local candidate and report
+`withheld: runtime approval unavailable`; do not repeatedly prompt. Supersede is a
+separate approved write and is never automatic. Validate returned evidence locally with
+`python3 <RRR_SKILL_DIR>/scripts/rrr-receipt.py` through its importable `validate`
+function; the helper itself makes no Oracle call.
+
+## Preview scope
+
+Read [references/manifest.md](references/manifest.md) and
+[references/finish-cleanup-preview.md](references/finish-cleanup-preview.md). Cleanup
+is preview-only and only considers proven task-created regular scratch files. Directory,
+worktree, branch, PID/pane, remote-ref, and manifest removal are deferred.
+
+## Coverage labels
+
+Use independently: `implemented locally`, `fixture-verified`, `runtime-verified`,
+`blocked`, and `deferred`. Treat live installation and duplicate-loader precedence as
+run-specific evidence, not a permanent source claim: label each `runtime-verified` only
+after a literal fresh-process check of the current installed copies, otherwise
+`deferred`. Always-on capture, Oracle-v2 reindex control, vault Git, all finish
+execution, and real GitHub E2E remain deferred or blocked.

@@ -8,7 +8,7 @@
  * generated VFS module. In dev mode, skills are read from disk.
  */
 
-import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
+import { chmodSync, existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import type { Skill } from './types.js';
 
@@ -245,21 +245,40 @@ export async function writeSkillToDir(
     const { vfs } = await getVFS();
     const files = vfs.get(skillName);
     if (!files) return;
-
-    for (const [relPath, content] of files) {
-      const fullPath = join(destDir, relPath);
-      const dir = dirname(fullPath);
-      if (!existsSync(dir)) {
-        mkdirSync(dir, { recursive: true });
-      }
-      writeFileSync(fullPath, content);
-    }
+    writeVfsTree(files, destDir);
     return;
   }
 
   // Filesystem mode: use cpr (handled by caller)
   // This function is only needed for VFS mode — in fs mode,
   // the caller uses cpr() directly from the skill.path
+}
+
+/**
+ * Materialize one compiled skill tree while restoring executable script modes.
+ *
+ * The VFS stores text, not POSIX metadata. Without this step a compiled install
+ * delivered Python/shell helpers as 0644 even when the source was tracked 0755.
+ * Restrict mode restoration to shebang files below scripts/; ordinary skill and
+ * reference documents remain non-executable.
+ */
+export function writeVfsTree(files: Map<string, string>, destDir: string): void {
+  for (const [relPath, content] of files) {
+    const fullPath = join(destDir, relPath);
+    const dir = dirname(fullPath);
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+    writeFileSync(fullPath, content, { mode: 0o644 });
+    // `mode` only applies when writeFileSync creates a file. Normalize an
+    // existing destination too, so reinstalling cannot preserve stale execute
+    // bits on documents or on scripts that no longer have a shebang.
+    chmodSync(fullPath, 0o644);
+    const normalized = relPath.replaceAll('\\', '/');
+    if (normalized.startsWith('scripts/') && content.startsWith('#!')) {
+      chmodSync(fullPath, 0o755);
+    }
+  }
 }
 
 /** Check if a skill has hooks */
@@ -271,4 +290,3 @@ export async function skillHasHooks(skillName: string): Promise<boolean> {
   }
   return existsSync(join(resolveSkillDir(skillName), 'hooks', 'hooks.json'));
 }
-

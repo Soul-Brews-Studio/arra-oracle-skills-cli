@@ -1,129 +1,95 @@
 #!/usr/bin/env python3
-"""
-Audit-loop runner for the /rrr eval framework.
-
-For each eval in __tests__/rrr-evals/evals.json:
-  1. Run /rrr (currently stubbed — see TODO below)
-  2. Run pytest against the resulting ψ artifacts
-  3. If any test fails, inject the failure messages into the next /rrr attempt
-  4. Stop after `max_corrections` corrections (default 2 ⇒ 3 attempts total)
-
-Spec source: ψ/memory/mailbox/eval-architect/2026-05-13_brainstorm-recovered.md
-(Round 3 section 5).
-
-Usage:
-  python scripts/eval_rrr.py                # run all 7 registers
-  python scripts/eval_rrr.py bug-fix        # run a single register by name
-  python scripts/eval_rrr.py --fixture-only # don't run claude; just exercise fixtures
-
-Exit code: 0 if all registers PASS, 1 otherwise.
-"""
+"""Behavioral self-test for RRR; this runner never invokes a live installed skill."""
 from __future__ import annotations
 
 import argparse
-import json
+import re
 import subprocess
-import sys
+import tempfile
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent.parent
-EVALS_JSON = HERE / "__tests__" / "rrr-evals" / "evals.json"
-FIXTURE_PSI = HERE / "__tests__" / "rrr-evals" / "fixtures" / "ψ"
+ROOT = Path(__file__).resolve().parent.parent
+REQUIRED_HEADINGS = (
+    "# Session Retrospective",
+    "## Session Summary",
+    "## Timeline",
+    "## Technical Details",
+    "## Lessons Learned",
+    "## Self-Audit",
+)
+POSITIVE_CLAIM = re.compile(r"(?i)\b(?:completed|fixed|passed|published|shipped|success(?:ful(?:ly)?)?)\b")
+EVIDENCE = re.compile(r"(?i)(?:evidence(?: pointer)?\s*[:=]|`(?:git|test|file|tool):[^`]+`|evidence unavailable)")
 
 
-def load_evals() -> list[dict]:
-    return json.loads(EVALS_JSON.read_text())["evals"]
+def validate_artifact(path: Path) -> list[str]:
+    """Reject structurally plausible retrospectives with unsupported success claims."""
+    text = path.read_text()
+    errors = [f"missing heading: {heading}" for heading in REQUIRED_HEADINGS if heading not in text]
+    for number, line in enumerate(text.splitlines(), 1):
+        if POSITIVE_CLAIM.search(line) and not EVIDENCE.search(line):
+            errors.append(f"unsupported positive claim at line {number}")
+    if re.search(r"(?i)\b(?:exactly three|mandatory mistake|at least (?:100|150) words)\b", text):
+        errors.append("fabrication quota present")
+    return errors
 
 
-def run_rrr(register_prompt: str, extra_context: str = "") -> tuple[int, str]:
-    """Invoke /rrr via the claude CLI with the eval prompt as synthetic context.
-
-    The brainstorm spec stubs this as aspirational — the real wiring lands
-    when an eval harness exists. For now we no-op so the audit-loop structure
-    is testable. Replace with a real subprocess.run when ready.
-    """
-    # TODO: wire to real claude CLI when eval harness lands.
-    # Example shape:
-    #   prompt = f"{extra_context}\n\nContext: {register_prompt}\n\n/rrr"
-    #   result = subprocess.run(["claude", "--print", prompt],
-    #                           capture_output=True, text=True, timeout=600)
-    #   return result.returncode, result.stdout + result.stderr
-    return 0, "(stubbed) /rrr run skipped — eval harness not yet wired"
-
-
-def run_pytest(slug: str, psi: Path) -> tuple[bool, str]:
-    """Run the rrr-eval pytest suite against `psi` for a single slug.
-
-    Returns (passed, output).
-    """
-    cmd = [
-        sys.executable, "-m", "pytest",
-        str(HERE / "__tests__" / "rrr-evals"),
-        f"--psi={psi}",
-        f"--slug={slug}",
-        "-v", "--tb=short", "--no-header",
-    ]
-    proc = subprocess.run(cmd, capture_output=True, text=True)
-    return proc.returncode == 0, proc.stdout + proc.stderr
+def _fixture(summary: str) -> str:
+    return f"""# Session Retrospective
+## Session Summary
+{summary}
+## Timeline
+- ordered untimed event — evidence unavailable
+## Technical Details
+### Files Modified
+none observed
+### Architecture Decisions
+none observed
+## What Went Well
+none observed
+## What Could Improve
+evidence unavailable
+## Blockers & Resolutions
+none observed
+## Lessons Learned
+- none observed
+## Next Steps
+- [ ] none
+## Self-Audit
+- claims: evidence pointers or unavailable
+"""
 
 
-def eval_loop(entry: dict, max_corrections: int = 2, fixture_only: bool = False) -> bool:
-    """Run one register through the audit loop. Returns True if it passes."""
-    slug = entry["name"]
-    register = entry["register"]
-    correction_ctx = ""
-    psi = FIXTURE_PSI  # in fixture-only mode the artifact target IS the fixture
-    for attempt in range(max_corrections + 1):
-        if not fixture_only:
-            rc, rrr_output = run_rrr(entry["prompt"], extra_context=correction_ctx)
-            if rc != 0:
-                print(f"[{slug}] /rrr invocation failed (rc={rc}):\n{rrr_output}")
-                return False
-        # In fixture-only mode we don't have per-register fixtures, so route
-        # every register through the sample-good fixture to exercise the loop
-        # structure. When the real claude CLI is wired, the slug will match.
-        test_slug = "sample-good" if fixture_only else slug
-        passed, pytest_out = run_pytest(test_slug, psi)
-        if passed:
-            print(f"PASS [{register}] {slug} (attempt {attempt + 1})")
-            return True
-        if attempt < max_corrections:
-            print(f"FLAGS [{slug}] attempt {attempt + 1} — injecting correction context")
-            correction_ctx = (
-                "CORRECTION NEEDED — previous /rrr attempt failed the eval suite:\n"
-                f"{pytest_out}\n"
-                "Fix every flagged item in your next run."
-            )
-        else:
-            print(f"EVAL_FAIL [{register}] {slug} after {max_corrections + 1} attempts:")
-            print(pytest_out)
-            return False
-    return False
+def self_test() -> int:
+    checks: list[tuple[str, bool, str]] = []
+    with tempfile.TemporaryDirectory(prefix="rrr-eval-") as directory:
+        good = Path(directory) / "good.md"
+        bad = Path(directory) / "bad.md"
+        good.write_text(_fixture("Completed the safe slice — evidence: `test:rrr-runtime`."))
+        bad.write_text(_fixture("Completed every requested action successfully."))
+        checks.append(("supported retrospective fixture", not validate_artifact(good), str(validate_artifact(good))))
+        bad_errors = validate_artifact(bad)
+        checks.append(("unsupported conforming-looking fixture is rejected", any("unsupported positive claim" in item for item in bad_errors), str(bad_errors)))
+
+    process = subprocess.run(
+        ["bun", "test", "__tests__/rrr-contract.test.ts", "__tests__/rrr-runtime/"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    checks.append(("behavioral fixture suite", process.returncode == 0, process.stdout + process.stderr))
+    for name, passed, evidence in checks:
+        print(f"{'PASS' if passed else 'FAIL'}: {name}")
+        if not passed:
+            print(evidence[-2000:])
+    return 0 if all(passed for _, passed, _ in checks) else 1
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("register", nargs="?", help="Single register to run (default: all)")
-    ap.add_argument("--max-corrections", type=int, default=2)
-    ap.add_argument(
-        "--fixture-only",
-        action="store_true",
-        help="Skip /rrr invocation; exercise pytest against the fixture ψ only",
-    )
-    args = ap.parse_args()
-
-    evals = load_evals()
-    if args.register:
-        evals = [e for e in evals if e["name"] == args.register or e["register"] == args.register]
-        if not evals:
-            print(f"No eval matching '{args.register}' found in {EVALS_JSON}")
-            return 1
-
-    results = {e["name"]: eval_loop(e, args.max_corrections, args.fixture_only) for e in evals}
-    passed = sum(1 for v in results.values() if v)
-    print(f"\n{passed}/{len(results)} registers passed")
-    return 0 if passed == len(results) else 1
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--self-test", action="store_true", required=True)
+    parser.parse_args()
+    return self_test()
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

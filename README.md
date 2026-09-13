@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-23 skills for AI coding agents — persistent memory, session awareness, and collaborative tools.
+24 skills for AI coding agents — persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -47,7 +47,7 @@ bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -
 
 <!-- skills:start -->
 
-📚 **23 skills**
+📚 **24 skills**
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -59,21 +59,22 @@ bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -
 | 6 | **dig** | skill | Mine Claude Code sessions |
 | 7 | **feel** | skill | Capture how the system feels |
 | 8 | **forward** | skill | Hand off the current session to the next one |
-| 9 | **go** | skill | Manage Oracle skills |
-| 10 | **incubate** | skill | Clone or create repos for active development |
-| 11 | **learn** | skill + subagent | Explore a codebase with parallel Haiku… |
-| 12 | **oracle-cheatsheet** | skill | Generate a copy-paste cheat sheet from the… |
-| 13 | **oracle-family-scan** | skill + code | Oracle Family Registry |
-| 14 | **oracle-prism** | skill | Multi-perspective analysis |
-| 15 | **philosophy** | skill | Display Oracle philosophy |
-| 16 | **project** | skill + code | Clone and track external repos |
-| 17 | **psi** | skill | Attach a code repo's ψ vault to a caretaker… |
-| 18 | **recap** | skill + code | Session orientation and awareness |
-| 19 | **resonance** | skill | Capture a resonance moment |
-| 20 | **rrr** | skill | Create a session retrospective with an AI… |
-| 21 | **trace** | skill | Find projects, code, and knowledge across… |
-| 22 | **where-we-are** | skill | Session awareness |
-| 23 | **who-are-you** | skill | Know ourselves |
+| 9 | **gig-modern-app-architect** | skill | Select, explain, and scaffold a… |
+| 10 | **go** | skill | Manage Oracle skills |
+| 11 | **incubate** | skill | Clone or create repos for active development |
+| 12 | **learn** | skill + subagent | Explore a codebase with parallel Haiku… |
+| 13 | **oracle-cheatsheet** | skill | Generate a copy-paste cheat sheet from the… |
+| 14 | **oracle-family-scan** | skill + code | Oracle Family Registry |
+| 15 | **oracle-prism** | skill | Multi-perspective analysis |
+| 16 | **philosophy** | skill | Display Oracle philosophy |
+| 17 | **project** | skill + code | Clone and track external repos |
+| 18 | **psi** | skill | Attach a code repo's ψ vault to a caretaker… |
+| 19 | **recap** | skill + code | Session orientation and awareness |
+| 20 | **resonance** | skill | Capture a resonance moment |
+| 21 | **rrr** | skill | Create a session retrospective with an AI… |
+| 22 | **trace** | skill | Find projects, code, and knowledge across… |
+| 23 | **where-we-are** | skill | Session awareness |
+| 24 | **who-are-you** | skill | Know ourselves |
 
 <!-- skills:end -->
 
@@ -85,8 +86,8 @@ bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -
 |---------|-------|--------|
 | **minimal** | 7 | `about-oracle`, `forward`, `go`, `recap`, `rrr`, `trace`, `who-are-you` |
 | **standard** | 22 | `about-oracle`, `awaken`, `bampenpien`, `bud`, `create-shortcut`, `dig`, `feel`, `forward`, `go`, `incubate`, `learn`, `oracle-cheatsheet`, `oracle-family-scan`, `oracle-prism`, `oracle-write-complete-book`, `psi`, `recap`, `resonance`, `rrr`, `trace`, `where-we-are`, `who-are-you` |
-| **full** | 23 | all |
-| **lab** | 23 | all |
+| **full** | 24 | all |
+| **lab** | 24 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

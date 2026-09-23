@@ -14,6 +14,14 @@ Track and manage external repos: Learn (study) | Incubate (develop)
 
 Never copy. Always symlink. One source of truth.
 
+**Clone, never unpack.** External code enters only through `ghq get`; a clone
+does not carry the remote's `.git/config`. A repo that arrived as an archive,
+shared drive, or USB keeps an attacker-controlled `.git/` (`core.fsmonitor`,
+`core.hooksPath`, `diff.external`, `pager`, `alias` run programs on plain
+`git status`; GitSpawn, 2026-09). Before any agent touches it: `rm -rf .git
+&& git init`, or inspect with
+`git config --list --local | grep -E 'fsmonitor|hooksPath|sshCommand|external|textconv|pager|alias'`.
+
 ## When to Use
 
 Invoke this skill when:

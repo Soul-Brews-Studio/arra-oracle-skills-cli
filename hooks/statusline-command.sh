@@ -40,7 +40,7 @@ dir="${cwd/#$HOME\/Code\/github.com\//}"
 sid=$(echo "$input" | jq -r '.session_id // ""' 2>/dev/null | cut -c1-8)
 
 # Previous session ID
-ENCODED_CWD=$(echo "$cwd" | sed 's|/|-|g; s|\.|-|g')
+ENCODED_CWD=$(echo "$cwd" | sed 's|[^A-Za-z0-9]|-|g')
 PROJ_DIR="$HOME/.claude/projects/${ENCODED_CWD}"
 prev_sid=$(ls -t "$PROJ_DIR"/*.jsonl 2>/dev/null | head -2 | tail -1 | xargs -I{} basename {} .jsonl 2>/dev/null | cut -c1-8)
 prev_info=""

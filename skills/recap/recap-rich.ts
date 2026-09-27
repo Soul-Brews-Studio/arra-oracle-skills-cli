@@ -16,7 +16,7 @@ const month = now.toISOString().slice(0, 7);
 // Session detection
 let sessionLine = "";
 try {
-  const encodedPwd = ROOT.replace(/^\//, '-').replace(/[\/.]/g, '-');
+  const encodedPwd = ROOT.replace(/[^A-Za-z0-9]/g, '-');
   const claudeHome = process.env.CLAUDE_CONFIG_DIR || `${process.env.HOME}/.claude`;
   const projectDir = `${claudeHome}/projects/${encodedPwd}`;
   if (existsSync(projectDir)) {

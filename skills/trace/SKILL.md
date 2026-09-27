@@ -148,7 +148,7 @@ Return findings as text. Main agent compiles.
 You are mining session history for: [query]
 
 Run the dig script to get all sessions:
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
+ENCODED_PWD=$(pwd | sed 's|[^A-Za-z0-9]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
 

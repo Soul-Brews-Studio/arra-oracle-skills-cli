@@ -70,7 +70,7 @@ const untracked = lines.filter(l => l.startsWith('??'));
 // Session detection
 let sessionLine = "";
 try {
-  const encodedPwd = root.replace(/^\//, '-').replace(/[\/.]/g, '-');
+  const encodedPwd = root.replace(/[^A-Za-z0-9]/g, '-');
   const claudeHome = process.env.CLAUDE_CONFIG_DIR || `${process.env.HOME}/.claude`;
   const projectDir = `${claudeHome}/projects/${encodedPwd}`;
   if (existsSync(projectDir)) {

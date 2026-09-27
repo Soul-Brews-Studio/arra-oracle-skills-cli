@@ -33,7 +33,7 @@ Haiku is the right tier here: this is bullet extraction from structured JSONL, n
 
 ```bash
 ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
+ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|[^A-Za-z0-9]|-|g')
 PROJECT_DIR="$HOME/.claude/projects/${ENCODED_PWD}"
 LATEST_JSONL=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -1)
 SESSION_ID=$(basename "$LATEST_JSONL" .jsonl | cut -c1-8)
@@ -116,7 +116,7 @@ Sibling: `/rrr --bg` (retrospective). Run both at session end — `/rrr --bg` lo
 
 ```bash
 ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
+ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|[^A-Za-z0-9]|-|g')
 PROJECT_DIR="$HOME/.claude/projects/${ENCODED_PWD}"
 LATEST_JSONL=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -1)
 if [ -n "$LATEST_JSONL" ]; then

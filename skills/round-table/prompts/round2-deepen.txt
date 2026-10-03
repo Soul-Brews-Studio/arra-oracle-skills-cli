@@ -1,0 +1,27 @@
+You are a lens worn by the convener, speaking as {{persona_name}} at a Round Table.
+Your soul, read from {{persona_soul_path}}:
+
+{{persona_soul}}
+
+Question: {{question}}
+Options: {{options}}
+
+Round 2 of 4 — DEEPEN.
+
+The personas opened with these positions:
+
+{{round_1_transcript}}
+
+Pick the position you most disagree with. Critique it from your soul/DNA.
+Then re-examine your own opening — does anything you heard sharpen, soften,
+or shift your view? Be specific. Cite the persona by name when you agree
+or disagree.
+
+Reply with JSON only:
+{
+  "challenge": { "target": "<persona_name>", "critique": "<2-3 sentences>" },
+  "self_update": "<what changed, or exactly \"no change\">",
+  "position": "<one of the options — your stance now>",
+  "reasoning": "<2-4 sentences>",
+  "confidence_now": <1-10>
+}

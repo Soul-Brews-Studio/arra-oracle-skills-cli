@@ -1,0 +1,127 @@
+{
+  "id": "2026-05-16_adopt-a-pattern",
+  "question": "Should we adopt the borrowed persona pattern for our onboarding ritual?",
+  "options": [
+    "adopt-as-is",
+    "adopt-modified",
+    "reject"
+  ],
+  "aggregator": "weighted",
+  "agents": [
+    {
+      "name": "facilitator",
+      "soul": "(worked example — no soul file)",
+      "rounds": [
+        {
+          "round": 1,
+          "position": "adopt-modified",
+          "confidence": 6
+        },
+        {
+          "round": 2,
+          "position": "adopt-modified",
+          "confidence": 7,
+          "self_update": "firmer"
+        }
+      ],
+      "final": {
+        "vote": "adopt-modified",
+        "confidence": 8,
+        "rationale": "Honest synthesis of the borrowed pattern, adapted to our voice"
+      },
+      "dissent_note": null
+    },
+    {
+      "name": "brand",
+      "soul": "(worked example — no soul file)",
+      "rounds": [
+        {
+          "round": 1,
+          "position": "adopt-as-is",
+          "confidence": 8
+        },
+        {
+          "round": 2,
+          "position": "adopt-as-is",
+          "confidence": 7,
+          "self_update": "no change"
+        }
+      ],
+      "final": {
+        "vote": "adopt-modified",
+        "confidence": 6,
+        "rationale": "Compromise — would prefer as-is, but unity matters more"
+      },
+      "dissent_note": null
+    },
+    {
+      "name": "engineer",
+      "soul": "(worked example — no soul file)",
+      "rounds": [
+        {
+          "round": 1,
+          "position": "adopt-modified",
+          "confidence": 7
+        },
+        {
+          "round": 2,
+          "position": "adopt-modified",
+          "confidence": 7,
+          "self_update": "no change"
+        }
+      ],
+      "final": {
+        "vote": "adopt-modified",
+        "confidence": 9,
+        "rationale": "Implementation plan agreed; risk acceptable"
+      },
+      "dissent_note": null
+    },
+    {
+      "name": "editor",
+      "soul": "(worked example — no soul file)",
+      "rounds": [
+        {
+          "round": 1,
+          "position": "adopt-modified",
+          "confidence": 7
+        },
+        {
+          "round": 2,
+          "position": "adopt-modified",
+          "confidence": 7,
+          "self_update": "no change"
+        }
+      ],
+      "final": {
+        "vote": "adopt-modified",
+        "confidence": 8,
+        "rationale": "Thai polish layer added; quality protected"
+      },
+      "dissent_note": null
+    },
+    {
+      "name": "finance",
+      "soul": "(worked example — no soul file)",
+      "rounds": [
+        {
+          "round": 1,
+          "position": "reject",
+          "confidence": 4
+        },
+        {
+          "round": 2,
+          "position": "adopt-modified",
+          "confidence": 5,
+          "self_update": "open to it with a review"
+        }
+      ],
+      "final": {
+        "vote": "adopt-modified",
+        "confidence": 6,
+        "rationale": "30-day review scheduled; reversible"
+      },
+      "dissent_note": null
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # arra-oracle-skills-cli
 
-23 skills for AI coding agents — persistent memory, session awareness, and collaborative tools.
+24 skills for AI coding agents — persistent memory, session awareness, and collaborative tools.
 
 ## Install
 
@@ -47,7 +47,7 @@ bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -
 
 <!-- skills:start -->
 
-📚 **23 skills**
+📚 **24 skills**
 
 | # | Skill | Type | Description |
 |---|-------|------|-------------|
@@ -70,10 +70,11 @@ bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -
 | 17 | **psi** | skill | Attach a code repo's ψ vault to a caretaker… |
 | 18 | **recap** | skill + code | Session orientation and awareness |
 | 19 | **resonance** | skill | Capture a resonance moment |
-| 20 | **rrr** | skill | Create a session retrospective with an AI… |
-| 21 | **trace** | skill | Find projects, code, and knowledge across… |
-| 22 | **where-we-are** | skill | Session awareness |
-| 23 | **who-are-you** | skill | Know ourselves |
+| 20 | **round-table** | skill + code | Convene a Round Table (โต๊ะกลม): 3–8 souls |
+| 21 | **rrr** | skill | Create a session retrospective with an AI… |
+| 22 | **trace** | skill | Find projects, code, and knowledge across… |
+| 23 | **where-we-are** | skill | Session awareness |
+| 24 | **who-are-you** | skill | Know ourselves |
 
 <!-- skills:end -->
 
@@ -85,8 +86,8 @@ bunx --bun github:Soul-Brews-Studio/arra-oracle-skills-cli#alpha install -g -y -
 |---------|-------|--------|
 | **minimal** | 7 | `about-oracle`, `forward`, `go`, `recap`, `rrr`, `trace`, `who-are-you` |
 | **standard** | 22 | `about-oracle`, `awaken`, `bampenpien`, `bud`, `create-shortcut`, `dig`, `feel`, `forward`, `go`, `incubate`, `learn`, `oracle-cheatsheet`, `oracle-family-scan`, `oracle-prism`, `oracle-write-complete-book`, `psi`, `recap`, `resonance`, `rrr`, `trace`, `where-we-are`, `who-are-you` |
-| **full** | 23 | all |
-| **lab** | 23 | all |
+| **full** | 24 | all |
+| **lab** | 24 | all |
 
 Switch anytime: `/go standard`, `/go full`, `/go lab`
 

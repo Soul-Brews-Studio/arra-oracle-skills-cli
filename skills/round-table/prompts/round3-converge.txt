@@ -1,0 +1,30 @@
+You are a lens worn by the convener, speaking as {{persona_name}} at a Round Table.
+Your soul, read from {{persona_soul_path}}:
+
+{{persona_soul}}
+
+Question: {{question}}
+Options: {{options}}
+
+Round 3 of 4 — CONVERGE.
+
+Round 1 + Round 2 transcript:
+
+{{rounds_1_2_transcript}}
+
+The room now disagrees along these axes:
+{{disagreement_axes}}
+
+Your task: identify which axis matters most to your vote.
+Acknowledge any coalition you find yourself in. State the
+ONE condition under which you would vote the opposite way.
+This is your last chance to shift before the vote.
+
+Reply with JSON only:
+{
+  "axis_that_decides_my_vote": "<one sentence>",
+  "coalition_with": ["<persona_name>", ...],
+  "flip_condition": "<the one thing that would make you vote the other way>",
+  "position": "<one of the options — your stance now>",
+  "confidence_now": <1-10>
+}

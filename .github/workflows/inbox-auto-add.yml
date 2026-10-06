@@ -26,10 +26,12 @@ jobs:
       - name: Add to Pulse Inbox Board
         env:
           GH_TOKEN: ${{ secrets.PULSE_TOKEN }}
+          EVENT_URL: ${{ github.event.issue.html_url || github.event.pull_request.html_url }}
+          EVENT_TITLE: ${{ github.event.issue.title || github.event.pull_request.title }}
         run: |
           export PATH="/usr/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
-          URL="${{ github.event.issue.html_url || github.event.pull_request.html_url }}"
-          TITLE="${{ github.event.issue.title || github.event.pull_request.title }}"
+          URL="$EVENT_URL"
+          TITLE="$EVENT_TITLE"
           gh project item-add 8 --owner laris-co --url "$URL" || true
           echo "Added $TITLE to Pulse Inbox"
 
@@ -40,12 +42,17 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Notify Pulse of closed issue
+        env:
+          REPO_NAME: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
         run: |
           export PATH="/usr/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
-          REPO="${{ github.repository }}"
-          NUM="#${{ github.event.issue.number }}"
-          TITLE="${{ github.event.issue.title }}"
-          URL="${{ github.event.issue.html_url }}"
+          REPO="$REPO_NAME"
+          NUM="#$ISSUE_NUMBER"
+          TITLE="$ISSUE_TITLE"
+          URL="$ISSUE_URL"
           maw hey pulse-oracle "Issue closed: ${REPO} ${NUM} — ${TITLE} ${URL} — GitHub Actions" || true
           echo "Notified Pulse: ${REPO} ${NUM} closed"
 
@@ -59,14 +66,20 @@ jobs:
       - name: Notify Pulse of merged PR
         env:
           GH_TOKEN: ${{ secrets.PULSE_TOKEN }}
+          REPO_NAME: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           export PATH="/usr/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
-          REPO="${{ github.repository }}"
-          PR="#${{ github.event.pull_request.number }}"
-          TITLE="${{ github.event.pull_request.title }}"
-          AUTHOR="${{ github.event.pull_request.user.login }}"
-          BRANCH="${{ github.event.pull_request.head.ref }}"
-          URL="${{ github.event.pull_request.html_url }}"
+          REPO="$REPO_NAME"
+          PR="#$PR_NUMBER"
+          TITLE="$PR_TITLE"
+          AUTHOR="$PR_AUTHOR"
+          BRANCH="$PR_BRANCH"
+          URL="$PR_URL"
 
           BODY="### PR Merged
           - **Repo**: ${REPO}

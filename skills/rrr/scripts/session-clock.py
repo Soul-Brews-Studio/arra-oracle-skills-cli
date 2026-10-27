@@ -25,6 +25,7 @@ import datetime as dt
 import glob
 import json
 import os
+import re
 import sys
 
 TS_KEY = '"timestamp":"'
@@ -32,7 +33,8 @@ TS_KEY = '"timestamp":"'
 
 def find_transcript(cwd: str) -> str | None:
     """Locate the newest transcript for this working directory."""
-    encoded = "-" + cwd.lstrip("/").replace("/", "-").replace(".", "-")
+    # Claude Code maps every non-alphanumeric char (/, ., space, ...) to "-".
+    encoded = "-" + re.sub(r"[^A-Za-z0-9-]", "-", cwd.lstrip("/"))
     base = os.path.join(os.path.expanduser("~/.claude/projects"), encoded)
     files = sorted(glob.glob(os.path.join(base, "*.jsonl")), key=os.path.getmtime, reverse=True)
     return files[0] if files else None

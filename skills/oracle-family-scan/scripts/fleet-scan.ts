@@ -18,11 +18,11 @@ type Birth = { number: number; title: string; date: string; author: string };
 // Use gh api --paginate to fetch ALL issues (no 300-cap). GitHub /issues endpoint
 // includes PRs too, but BIRTH_PATTERN naturally excludes them — PRs don't match
 // "awaken|born|birth|..." title patterns.
-const birthIssuesRaw = await $`gh api --paginate "repos/${ORACLE_REPO}/issues?state=all&per_page=100" --jq '.[] | "\(.number)|\(.title)|\(.created_at[:10])|\(.user.login)"'`.text();
+const birthIssuesRaw = await $`gh api --paginate "repos/${ORACLE_REPO}/issues?state=all&per_page=100" --jq '.[] | [.number, .title, .created_at[:10], .user.login] | @tsv'`.text();
 
 const allBirths: Birth[] = birthIssuesRaw.trim().split("\n").filter(Boolean)
   .map(line => {
-    const [num, title, date, author] = line.split("|");
+    const [num, title, date, author] = line.split("\t");
     return { number: parseInt(num), title, date, author };
   })
   .filter(b => BIRTH_PATTERN.test(b.title));

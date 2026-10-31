@@ -10,6 +10,14 @@ Clone or create repos for active development → set up branches, make changes, 
 
 > "/learn reads the book. /incubate writes the next chapter."
 
+**Clone, never unpack (GitSpawn, 2026-09).** Every mother clone comes from
+`ghq get`. A tree delivered as an archive, shared drive, or USB carries its own
+`.git/config`, and keys that name a program (`core.fsmonitor`, `core.hooksPath`,
+`core.sshCommand`, `diff.external`, `pager`, `alias`) execute on the first
+`git status` the agent runs, before any trust prompt. Reset it (`rm -rf .git &&
+git init`) or inspect first:
+`git config --list --local | grep -E 'fsmonitor|hooksPath|sshCommand|external|textconv|pager|alias'`
+
 ## Usage
 
 ```

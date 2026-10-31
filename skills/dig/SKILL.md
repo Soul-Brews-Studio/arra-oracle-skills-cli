@@ -45,7 +45,7 @@ Output metadata includes detected timezone name and offset.
 
 ```bash
 date "+🕐 %H:%M %Z (%A %d %B %Y)"
-ENCODED_PWD=$(pwd | sed 's|^/|-|; s|[/.]|-|g')
+ENCODED_PWD=$(pwd | sed 's|[^A-Za-z0-9]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
 

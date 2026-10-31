@@ -124,7 +124,7 @@ ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 PSI="$ORACLE_ROOT/ψ"
 
 # Check if this session has been running long (many messages processed)
-ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
+ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|[^A-Za-z0-9]|-|g')
 PROJECT_DIR="$HOME/.claude/projects/${ENCODED_PWD}"
 LATEST_JSONL=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -1)
 if [ -n "$LATEST_JSONL" ]; then

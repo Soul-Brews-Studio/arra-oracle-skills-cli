@@ -95,7 +95,7 @@ Read those top 5 files. This recovers the same context `/compact` restores — h
 
 ```bash
 ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
+ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|[^A-Za-z0-9]|-|g')
 PROJECT_BASE=$(ls -d "$HOME/.claude/projects/${ENCODED_PWD}" 2>/dev/null | head -1)
 export PROJECT_DIRS="$PROJECT_BASE"
 

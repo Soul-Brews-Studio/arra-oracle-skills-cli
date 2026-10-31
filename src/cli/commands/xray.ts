@@ -6,7 +6,7 @@ import { profiles } from '../../profiles.js';
 
 /** Decode Claude Code project dir name, stripping $HOME prefix */
 function decodeProjName(encoded: string, home: string): string {
-  const homeEncoded = home.replace(/^\//, '-').replace(/[/.]/g, '-');
+  const homeEncoded = home.replace(/[^A-Za-z0-9]/g, '-');
   let name = encoded;
   if (name.startsWith(homeEncoded)) name = name.slice(homeEncoded.length);
   return name.replace(/^-+/, '').replace(/-/g, '/');
@@ -145,12 +145,12 @@ async function xrayMemory(project?: string, showAll?: boolean) {
 
   if (project) {
     // Normalize: convert slashes/dots to dashes for matching
-    const needle = project.replace(/[/.]/g, '-');
+    const needle = project.replace(/[^A-Za-z0-9]/g, '-');
     // Prefer exact end match, then shortest substring match
     const matches = allProjects.filter((p) => p.includes(needle));
     targetProject = matches.find((p) => p.endsWith(needle)) || matches.sort((a, b) => a.length - b.length)[0];
   } else {
-    const encoded = process.cwd().replace(/^\//, '-').replace(/[/.]/g, '-');
+    const encoded = process.cwd().replace(/[^A-Za-z0-9]/g, '-');
     targetProject = allProjects.find((p) => p === encoded);
     if (!targetProject) {
       targetProject = allProjects

@@ -41,7 +41,7 @@ description: "Generate a copy-paste cheat sheet from the current session — com
 
 ```bash
 ORACLE_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|^/|-|; s|[/.]|-|g')
+ENCODED_PWD=$(echo "$ORACLE_ROOT" | sed 's|[^A-Za-z0-9]|-|g')
 PROJECT_DIR="$HOME/.claude/projects/${ENCODED_PWD}"
 LATEST_JSONL=$(ls -t "$PROJECT_DIR"/*.jsonl 2>/dev/null | head -1)
 ```

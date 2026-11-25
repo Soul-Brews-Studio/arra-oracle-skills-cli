@@ -67,7 +67,17 @@ Use `--custom` to define your own, or pick a preset:
 
 ## Output Format
 
+**Answer first.** Before any lens, write three plain lines a non-developer can act on:
+the problem, the cause, the fix. No file paths, no tables, no lens names in those lines.
+The lenses below are the evidence for those three lines, not the answer.
+
 ```markdown
+**Problem:** [one plain sentence]
+**Cause:** [one plain sentence]
+**Fix:** [one plain sentence]
+
+---
+
 ## 🔍 Lens 1: Archaeologist — "What happened?"
 
 [Timeline table or narrative]
@@ -107,10 +117,12 @@ Use `--custom` to define your own, or pick a preset:
 2. **Each lens gets a section** with its emoji, name, and guiding question as header
 3. **Evidence required** — cite files, commits, commands, timestamps. No vague claims
 4. **Lenses disagree** — if the Architect says "clean" but the Auditor says "incomplete", show both. Don't harmonize
-5. **Cross-lens summary at the end** — what do multiple lenses converge on?
+5. **Answer at the top, cross-lens summary at the end** — the three plain lines open the report; the cross-lens summary closes it
 6. **Tables over prose** — use tables for timelines, status lists, before/after comparisons
 7. **Session context by default** — if no topic given, analyze the current session's work
 8. **3-7 lenses** — minimum 3, maximum 7. Default 5. Use `--lenses N` to adjust
+9. **Write for the person who asked** — if they will not read the code (owner, designer, user), keep each lens to 3-5 short bullets in plain words and move file:line citations to one `Evidence` list at the end
+10. **Pre-send check** — read only the top three lines: can the asker understand the problem and decide the next step from them alone? If not, rewrite them before sending
 
 ## When to Use
 
